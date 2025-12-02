@@ -1,6 +1,5 @@
 "use client";
-
-import * as React from "react";
+import { useState } from "react";
 import {
       IconCamera,
       IconChartBar,
@@ -8,14 +7,13 @@ import {
       IconDatabase,
       IconFileAi,
       IconFileDescription,
-      IconFileWord,
       IconFolder,
-      IconHelp,
       IconInnerShadowTop,
       IconListDetails,
       IconReport,
       IconSearch,
       IconSettings,
+      IconTag,
       IconUsers,
 } from "@tabler/icons-react";
 
@@ -42,28 +40,33 @@ const data = {
       navMain: [
             {
                   title: "Dashboard",
-                  url: "#",
+                  url: "/admin",
                   icon: IconDashboard,
             },
             {
-                  title: "Lifecycle",
-                  url: "#",
-                  icon: IconListDetails,
+                  title: "Products",
+                  url: "/admin/products",
+                  icon: IconTag,
             },
             {
-                  title: "Analytics",
-                  url: "#",
-                  icon: IconChartBar,
-            },
-            {
-                  title: "Projects",
-                  url: "#",
+                  title: "Orders",
+                  url: "/admin/orders",
                   icon: IconFolder,
             },
             {
-                  title: "Team",
-                  url: "#",
-                  icon: IconUsers,
+                  title: "Customers",
+                  url: "/admin/users/",
+                  icon: IconFolder,
+            },
+            {
+                  title: "Payments",
+                  url: "/admin/payments",
+                  icon: IconFolder,
+            },
+            {
+                  title: "Analytics",
+                  url: "/admin/analytics",
+                  icon: IconChartBar,
             },
       ],
       navClouds: [
@@ -121,11 +124,6 @@ const data = {
                   icon: IconSettings,
             },
             {
-                  title: "Get Help",
-                  url: "#",
-                  icon: IconHelp,
-            },
-            {
                   title: "Search",
                   url: "#",
                   icon: IconSearch,
@@ -133,40 +131,42 @@ const data = {
       ],
       documents: [
             {
-                  name: "Data Library",
-                  url: "#",
-                  icon: IconDatabase,
-            },
-            {
                   name: "Reports",
                   url: "#",
                   icon: IconReport,
             },
             {
-                  name: "Word Assistant",
+                  name: "Promotions & Coupons",
                   url: "#",
-                  icon: IconFileWord,
+                  icon: IconUsers,
+            },
+            {
+                  name: "Messages",
+                  url: "#",
+                  icon: IconUsers,
             },
       ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+      const [active, setActive] = useState("/admin");
+
       return (
             <Sidebar collapsible="offcanvas" {...props}>
                   <SidebarHeader>
                         <SidebarMenu>
-                              <SidebarMenuItem>
-                                    <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+                              <SidebarMenuItem className="flex justify-between">
+                                    <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
                                           <a href="#">
-                                                <IconInnerShadowTop className="!size-5" />
-                                                <span className="text-base font-semibold">Acme Inc.</span>
+                                                <IconInnerShadowTop className="size-5!" />
+                                                <span className="text-base font-semibold">Kazafi</span>
                                           </a>
                                     </SidebarMenuButton>
                               </SidebarMenuItem>
                         </SidebarMenu>
                   </SidebarHeader>
                   <SidebarContent>
-                        <NavMain items={data.navMain} />
+                        <NavMain items={data.navMain} active={active} setActive={setActive} />
                         <NavDocuments items={data.documents} />
                         <NavSecondary items={data.navSecondary} className="mt-auto" />
                   </SidebarContent>

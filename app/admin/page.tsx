@@ -1,37 +1,30 @@
-import { AppSidebar } from "@/components/features/app2-sidebar";
-import { ChartAreaInteractive } from "@/components/features/chart-area-interactive";
-import { DataTable } from "@/components/features/data-table";
-import { SectionCards } from "@/components/features/section-cards";
-import { SiteHeader } from "@/components/features/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { RevenueChart } from "@/components/features/chart-area-interactive";
+import { RecentActivityTable } from "@/components/features/data-table";
+import { ButtonGroupSelect } from "@/components/features/select-time";
 
-import data from "./data.json";
+import { UrgentTasks } from "@/components/features/urgent-tasks";
 
 export default function Page() {
       return (
-            <SidebarProvider
-                  style={
-                        {
-                              "--sidebar-width": "calc(var(--spacing) * 72)",
-                              "--header-height": "calc(var(--spacing) * 12)",
-                        } as React.CSSProperties
-                  }
-            >
-                  <AppSidebar variant="inset" />
-                  <SidebarInset>
-                        <SiteHeader />
-                        <div className="flex flex-1 flex-col">
-                              <div className="@container/main flex flex-1 flex-col gap-2">
-                                    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                                          <SectionCards />
-                                          <div className="px-4 lg:px-6">
-                                                <ChartAreaInteractive />
-                                          </div>
-                                          <DataTable data={data} />
-                                    </div>
-                              </div>
+            <div className="flex flex-1 flex-col bg-[#efefdc]">
+                  <div className="@container/main flex flex-1 flex-col gap-2">
+                        <div className="flex flex-col gap-4 py-4 px-4 lg:px-6 md:gap-6 md:py-6">
+                              <section>
+                                    <ButtonGroupSelect />
+                              </section>
+                              <section>
+                                    <RevenueChart />
+                              </section>
+                              <section>
+                                    <h2 className="font-semibold px-2">Things to do next</h2>
+                                    <UrgentTasks />
+                              </section>
+                              <section>
+                                    <h2 className="font-semibold px-2 pb-4">Recent Activity</h2>
+                                    <RecentActivityTable />
+                              </section>
                         </div>
-                  </SidebarInset>
-            </SidebarProvider>
+                  </div>
+            </div>
       );
 }

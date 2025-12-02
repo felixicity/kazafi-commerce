@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
@@ -9,8 +11,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             <div className={cn("flex flex-col gap-6", className)} {...props}>
                   <Card>
                         <CardHeader>
-                              <CardTitle>Login to your account</CardTitle>
-                              <CardDescription>Enter your email below to login to your account</CardDescription>
+                              <CardTitle className="text-lg text-center">Login to your account</CardTitle>
+                              <CardDescription className="text-sm text-center">
+                                    Enter your email below to login to your account
+                              </CardDescription>
                         </CardHeader>
                         <CardContent>
                               <form>
@@ -31,14 +35,27 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                                 </div>
                                                 <Input id="password" type="password" required />
                                           </Field>
-                                          <Field>
+                                          <Field className="gap-7">
                                                 <Button type="submit">Login</Button>
-                                                <Button variant="outline" type="button">
-                                                      Login with Google
+                                                <Button
+                                                      variant="outline"
+                                                      type="button"
+                                                      className="flex items-center justify-center gap-2"
+                                                >
+                                                      <Image
+                                                            src="/google_logo.png"
+                                                            height={20}
+                                                            width={20}
+                                                            alt="google logo"
+                                                      />
+                                                      <span>Login with Google</span>
                                                 </Button>
-                                                <FieldDescription className="text-center">
-                                                      Don&apos;t have an account? <a href="#">Sign up</a>
-                                                </FieldDescription>
+                                                <div className="flex items-center justify-center gap-2">
+                                                      <span>Don&apos;t have an account? </span>
+                                                      <Link href="/signup" className="underline text-sm">
+                                                            Create an account
+                                                      </Link>
+                                                </div>
                                           </Field>
                                     </FieldGroup>
                               </form>

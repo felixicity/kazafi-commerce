@@ -20,7 +20,7 @@ export function ItemDemo() {
                   <Item variant="outline" size="sm" asChild>
                         <a href="#">
                               <ItemMedia>
-                                    <BadgeCheckIcon className="size-5" />
+                                    <BadgeCheckIcon className="size-5 stroke-blue-500" />
                               </ItemMedia>
                               <ItemContent>
                                     <ItemTitle>Your profile has been verified.</ItemTitle>
