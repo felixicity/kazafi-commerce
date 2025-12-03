@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import { AppSidebar } from "@/components/features/app2-sidebar";
-import { SiteHeader } from "@/components/features/site-header";
+import { AdminSidebar } from "@/components/features/admin/admin-sidebar";
+import { AdminHeader } from "@/components/features/admin-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export const metadata: Metadata = {
@@ -18,9 +18,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                         } as React.CSSProperties
                   }
             >
-                  <AppSidebar variant="inset" />
+                  <AdminSidebar variant="inset" />
                   <SidebarInset>
-                        <SiteHeader />
+                        <AdminHeader />
                         {children}
                   </SidebarInset>
             </SidebarProvider>

@@ -14,7 +14,7 @@ import {
       IconTruckDelivery,
 } from "@tabler/icons-react";
 import { MOCK_PRODUCT_SINGLE } from "@/lib/store/cart-store";
-import { Rating } from "@/components/features/rating";
+import { Rating } from "@/components/features/client/rating";
 
 // =================================================================
 // PRODUCT DETAIL PAGE COMPONENT (The main content)

@@ -6,7 +6,7 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/s
 import { MOCK_PRODUCTS } from "@/lib/store/cart-store";
 import { SlidersHorizontal } from "lucide-react";
 import { FilterState, SortOption, ViewMode } from "@/lib/types";
-import { ProductCard } from "@/components/features/product-card";
+import { ProductCard } from "@/components/features/client/product-card";
 import { FiltersSidebar } from "@/components/features/filter-sidebar";
 import { SortDropdown } from "@/components/features/sort-items";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";

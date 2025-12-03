@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { Rating } from "./rating";
 import { Product, ViewMode } from "@/lib/types";
 // ProductCard (Refined Button/Styling usage)

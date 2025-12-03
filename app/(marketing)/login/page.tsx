@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/features/login-form";
+import { LoginForm } from "@/components/features/client/login-form";
 
 // Parent LoginPage.tsx
 export default function LoginPage() {

@@ -1,8 +1,8 @@
-import { RevenueChart } from "@/components/features/chart-area-interactive";
-import { RecentActivityTable } from "@/components/features/data-table";
-import { ButtonGroupSelect } from "@/components/features/select-time";
+import { RevenueChart } from "@/components/features/admin/admin-dashoard-chart";
+import { RecentActivityTable } from "@/components/features/admin/recent-activity-table";
+import { ButtonGroupSelect } from "@/components/features/admin/table-duration-switch";
 
-import { UrgentTasks } from "@/components/features/urgent-tasks";
+import { UrgentTasks } from "@/components/features/admin/urgent-tasks";
 
 export default function Page() {
       return (

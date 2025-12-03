@@ -14,6 +14,8 @@ const badgeVariants = cva(
                               "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
                         destructive:
                               "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+                        active: "bg-green-300 text-green-700 [a&]:hover:bg-green/90 ",
+                        draft: "bg-blue-100 text-blue-700 [a&]:hover:bg-blue/90",
                         delivered: "bg-green-100 text-green-700 [a&]:hover:bg-green/90",
                         shipped: "bg-blue-100 text-blue-700 [a&]:hover:bg-blue/90",
                         processing: "bg-yellow-100 text-yellow-700 [a&]:hover:bg-yellow/90",

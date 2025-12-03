@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DashboardWrapper } from "@/components/features/dashboardWrapper"; // Import the client wrapper
+import { DashboardWrapper } from "@/components/features/client/dashboardWrapper"; // Import the client wrapper
 
 export const metadata: Metadata = {
       title: "Dashboard",

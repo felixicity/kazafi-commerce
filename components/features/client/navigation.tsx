@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { IconShoppingBag } from "@tabler/icons-react";
 import { User2Icon } from "lucide-react";
-import { InputGroup, InputGroupText, InputGroupAddon, InputGroupInput } from "../ui/input-group";
+import { InputGroup, InputGroupText, InputGroupAddon, InputGroupInput } from "../../ui/input-group";
 import AjaxCartSheet from "./ajax-cart";
 
 const navItems = [

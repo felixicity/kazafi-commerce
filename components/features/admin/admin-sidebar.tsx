@@ -4,12 +4,10 @@ import {
       IconCamera,
       IconChartBar,
       IconDashboard,
-      IconDatabase,
       IconFileAi,
       IconFileDescription,
       IconFolder,
       IconInnerShadowTop,
-      IconListDetails,
       IconReport,
       IconSearch,
       IconSettings,
@@ -17,10 +15,10 @@ import {
       IconUsers,
 } from "@tabler/icons-react";
 
-import { NavDocuments } from "@/components/features/nav-documents";
-import { NavMain } from "@/components/features/nav-main";
-import { NavSecondary } from "@/components/features/nav-secondary";
-import { NavUser } from "@/components/features/nav-user";
+import { NavDocuments } from "@/components/features/admin/nav-documents";
+import { NavMain } from "@/components/features/admin/nav-main";
+import { NavSecondary } from "@/components/features/admin/nav-secondary";
+import { NavUser } from "@/components/features/admin/nav-user";
 import {
       Sidebar,
       SidebarContent,
@@ -101,21 +99,6 @@ const data = {
                         },
                   ],
             },
-            {
-                  title: "Prompts",
-                  icon: IconFileAi,
-                  url: "#",
-                  items: [
-                        {
-                              title: "Active Proposals",
-                              url: "#",
-                        },
-                        {
-                              title: "Archived",
-                              url: "#",
-                        },
-                  ],
-            },
       ],
       navSecondary: [
             {
@@ -148,7 +131,7 @@ const data = {
       ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       const [active, setActive] = useState("/admin");
 
       return (

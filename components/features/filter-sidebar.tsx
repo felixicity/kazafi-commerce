@@ -4,7 +4,7 @@ import { IconFilter, IconFilter2, IconFilter2Cog, IconFilter2Down, IconFilterDis
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { PriceSlider } from "@/components/features/price-slider";
+import { PriceSlider } from "@/components/features/client/price-slider";
 
 const MIN_PRICE = 0;
 const MAX_PRICE = 150;

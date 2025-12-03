@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Navigation } from "@/components/features/navigation";
+import { Navigation } from "@/components/features/client/navigation";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { ItemDemo } from "@/components/features/item-profile-example";
 import { Item, ItemContent, ItemDescription, ItemTitle, ItemActions } from "@/components/ui/item";
