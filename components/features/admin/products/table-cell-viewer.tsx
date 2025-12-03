@@ -51,9 +51,6 @@ export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                         <div className="border border-gray-300 w-12 h-12 rounded-sm">
                               <img src={item.image} alt={item.image} className="w-full" />
                         </div>
-                        {/* <Button variant="link" className="w-fit px-0 text-left">
-                              {item.image}
-                        </Button> */}
                   </DrawerTrigger>
                   <DrawerContent>
                         <DrawerHeader className="gap-1">

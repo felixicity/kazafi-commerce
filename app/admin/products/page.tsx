@@ -1,5 +1,4 @@
 import { ProductsTable } from "@/components/features/admin/products/products-table";
-import data from "@/app/admin/data.json";
 import { products } from "@/lib/store/cart-store";
 
 export default function AdminProduct() {
