@@ -1,6 +1,8 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { IconBell } from "@tabler/icons-react";
+import { IconBell, IconSearch } from "@tabler/icons-react";
+import { InputGroupAddon, InputGroupInput, InputGroup } from "../ui/input-group";
+import { SearchIcon } from "lucide-react";
 
 export function AdminHeader() {
       return (
@@ -9,7 +11,13 @@ export function AdminHeader() {
                         <SidebarTrigger className="-ml-1" />
                         <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
                         <h1 className="text-base font-medium">Admin</h1>
-                        <div className="relative ml-auto flex items-center gap-2">
+                        <div className="relative w-xs ml-auto flex items-center gap-2 mr-8">
+                              <InputGroup>
+                                    <InputGroupInput placeholder="Search..." />
+                                    <InputGroupAddon>
+                                          <SearchIcon />
+                                    </InputGroupAddon>
+                              </InputGroup>
                               <span className="sr-only">Notification</span>
                               <IconBell size={30} stroke="1.25px" />
                               {2 > 0 && (

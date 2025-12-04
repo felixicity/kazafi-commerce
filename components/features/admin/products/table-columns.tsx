@@ -12,7 +12,6 @@ import {
       DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical } from "@tabler/icons-react";
-import { Item } from "@radix-ui/react-select";
 
 export const schema = z.object({
       id: z.number(),
