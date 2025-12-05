@@ -2,8 +2,6 @@ import { TableCellViewer } from "../orders/order-table-viewer";
 import { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { IconDotsVertical } from "@tabler/icons-react";
 
 export const schema = z.object({
       id: z.string(),
@@ -12,13 +10,14 @@ export const schema = z.object({
       shipping: z.string(),
       createdAt: z.string(),
       amount: z.number(),
+      items: z.string(),
 });
 
 export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       {
             accessorKey: "id",
             header: "Order Id",
-            cell: ({ row }) => <TableCellViewer item={row.original} />,
+            cell: ({ row }) => <div>#PO-{row.original.id}</div>,
             enableHiding: false,
             enableSorting: false,
       },
@@ -64,10 +63,6 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       },
       {
             id: "actions",
-            cell: () => (
-                  <Button variant="outline" size="sm" className="rounded-md">
-                        view details <IconDotsVertical />
-                  </Button>
-            ),
+            cell: ({ row }) => <TableCellViewer item={row.original} />,
       },
 ];

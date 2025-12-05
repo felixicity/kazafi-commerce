@@ -93,7 +93,7 @@ export function OrdersTable({ data: initialData }) {
                               <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
                                     {table.getRowModel().rows.map((row) => (
                                           <TableRow
-                                                key={row.id}
+                                                key={row.index}
                                                 className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
                                           >
                                                 {row.getVisibleCells().map((cell) => (
