@@ -29,19 +29,20 @@ import { useState } from "react";
 
 export const schema = z.object({
       id: z.string(),
-      customer: z.string(),
-      payment: z.string(),
-      shipping: z.string(),
-      createdAt: z.string(),
-      amount: z.number(),
-      items: z.string(),
+      order: z.string(),
+      createdAt: z.string(), //ZodISODateTime
+      type: z.string(),
+      amount: z.string(),
+      status: z.string(),
+      email: z.email(),
+      method: z.string(),
 });
 
-const shipping = ["pending", "processing", "shipped", "delivered"];
+const payments = ["paid", "unpaid", "pending"];
 
-export function OrderStatus({ item }: { item: z.infer<typeof schema> }) {
+export function PaymentStatus({ item }: { item: z.infer<typeof schema> }) {
       const [showDialog, setShowDialog] = useState(false);
-      const [selectedOption, setSelectedOption] = useState(item.shipping);
+      const [selectedOption, setSelectedOption] = useState(item.status);
       const [newOption, setNewOption] = useState("");
 
       const handleShowDialog = (option: string) => {
@@ -56,10 +57,8 @@ export function OrderStatus({ item }: { item: z.infer<typeof schema> }) {
 
       return (
             <div className="flex items-center gap-8">
-                  <p>Shipping Status:</p>
-                  {selectedOption === "delivered" ? (
-                        <Badge variant={selectedOption}>{selectedOption}</Badge>
-                  ) : (
+                  <p>Payment status:</p>
+                  {
                         <div>
                               <DropdownMenu modal={false}>
                                     <DropdownMenuTrigger className="flex items-center gap-2">
@@ -71,14 +70,16 @@ export function OrderStatus({ item }: { item: z.infer<typeof schema> }) {
                                     <DropdownMenuContent>
                                           <DropdownMenuLabel>Update status</DropdownMenuLabel>
                                           <DropdownMenuSeparator />
-                                          {shipping.slice(shipping.indexOf(selectedOption) + 1).map((option) => (
-                                                <DropdownMenuItem
-                                                      key={option}
-                                                      onSelect={() => handleShowDialog(option)}
-                                                >
-                                                      {option}
-                                                </DropdownMenuItem>
-                                          ))}
+                                          {payments
+                                                .filter((payment) => payment !== selectedOption)
+                                                .map((option) => (
+                                                      <DropdownMenuItem
+                                                            key={option}
+                                                            onSelect={() => handleShowDialog(option)}
+                                                      >
+                                                            {option}
+                                                      </DropdownMenuItem>
+                                                ))}
                                     </DropdownMenuContent>
                               </DropdownMenu>
                               <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -115,7 +116,7 @@ export function OrderStatus({ item }: { item: z.infer<typeof schema> }) {
                                     </DialogContent>
                               </Dialog>
                         </div>
-                  )}
+                  }
             </div>
       );
 }

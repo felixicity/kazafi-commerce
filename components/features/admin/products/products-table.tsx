@@ -52,6 +52,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { columns } from "./table-columns";
+import Link from "next/link";
+import { ButtonGroup } from "@/components/ui/button-group";
 
 export const schema = z.object({
       id: z.number(),
@@ -188,13 +190,14 @@ export function ProductsTable({ data: initialData }: { data: z.infer<typeof sche
                                                 })}
                                     </DropdownMenuContent>
                               </DropdownMenu>
-                              <Button
-                                    className=" bg-[#5a31f4] hover:bg-[#4c29cc] transition-colors rounded-lg shadow-sm py-3 text-white cursor-pointer"
-                                    size="sm"
-                              >
+                              <ButtonGroup className=" flex items-center bg-[#5a31f4] hover:bg-[#4c29cc] transition-colors rounded-lg shadow-sm text-white cursor-pointer px-2">
                                     <IconPlus />
-                                    <span className="hidden lg:inline ">Add New Product</span>
-                              </Button>
+                                    <Button asChild variant="link">
+                                          <Link href="./products/add" className="text-white">
+                                                Add New Product
+                                          </Link>
+                                    </Button>
+                              </ButtonGroup>
                         </div>
                   </div>
                   <TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
