@@ -35,7 +35,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       {
             accessorKey: "createdAt",
             header: "Account created",
-            cell: ({ row }) => <Badge variant={row.original.createdAt}>{row.original.createdAt}</Badge>,
+            cell: ({ row }) => <div>{row.original.createdAt}</div>,
             enableHiding: false,
       },
       {

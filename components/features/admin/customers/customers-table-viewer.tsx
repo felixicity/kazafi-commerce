@@ -41,6 +41,7 @@ export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
                               <h2>Customer: {item.name}</h2>
                               <p>Email: {item.email}</p>
+                              <p>Role: {item.role}</p>
                               {/* {!isMobile && (
                                     <>
                                           <div> I&apos;m on Desktop dooal 😋 </div>

@@ -67,49 +67,11 @@ const data = {
                   icon: IconChartBar,
             },
       ],
-      navClouds: [
-            {
-                  title: "Capture",
-                  icon: IconCamera,
-                  isActive: true,
-                  url: "#",
-                  items: [
-                        {
-                              title: "Active Proposals",
-                              url: "#",
-                        },
-                        {
-                              title: "Archived",
-                              url: "#",
-                        },
-                  ],
-            },
-            {
-                  title: "Proposal",
-                  icon: IconFileDescription,
-                  url: "#",
-                  items: [
-                        {
-                              title: "Active Proposals",
-                              url: "#",
-                        },
-                        {
-                              title: "Archived",
-                              url: "#",
-                        },
-                  ],
-            },
-      ],
       navSecondary: [
             {
                   title: "Settings",
                   url: "#",
                   icon: IconSettings,
-            },
-            {
-                  title: "Search",
-                  url: "#",
-                  icon: IconSearch,
             },
       ],
       documents: [

@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { IconBell, IconSearch } from "@tabler/icons-react";
-import { InputGroupAddon, InputGroupInput, InputGroup } from "../ui/input-group";
+import { InputGroupAddon, InputGroupInput, InputGroup } from "../../ui/input-group";
 import { SearchIcon } from "lucide-react";
 
 export function AdminHeader() {

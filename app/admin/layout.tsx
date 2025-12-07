@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { AdminSidebar } from "@/components/features/admin/admin-sidebar";
-import { AdminHeader } from "@/components/features/admin-header";
+import { AdminHeader } from "@/components/features/admin/admin-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export const metadata: Metadata = {

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { CustomersTable } from "@/components/features/admin/customers/customers-table";
 
 const customersData = [
@@ -24,7 +26,12 @@ const customersData = [
 export default function AdminCustomers() {
       return (
             <div className="px-6 py-4">
-                  <h1 className="font-semibold text-xl">Customers</h1>
+                  <div className="flex items-center justify-between">
+                        <h1 className="font-semibold text-xl">Customers</h1>
+                        <Button asChild variant="link" className="bg-blue-500 text-white rounded-md">
+                              <Link href="./users/create">Create user</Link>
+                        </Button>
+                  </div>
                   <section>
                         <CustomersTable data={customersData} />
                   </section>
