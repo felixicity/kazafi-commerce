@@ -182,21 +182,23 @@ export const MOCK_PRODUCT_SINGLE: SingleProduct = {
       id: 1,
       name: "Essential Oversized Tee",
       category: "T-Shirts",
-      price: 45.0,
-      originalPrice: 60.0,
       description: "A classic fit tee made from organic cotton, perfect for everyday comfort.",
-      longDescription:
-            "The Essential Oversized Tee is crafted from 100% sustainably sourced organic cotton, offering a perfect blend of comfort and modern street style. Its relaxed, dropped-shoulder fit provides maximum breathability, making it ideal for everyday wear or light training. Available in core colors, this tee is a foundational piece for any modern wardrobe. Durable stitching ensures longevity and shape retention after multiple washes.",
-      imagePlaceholder: "/images/ada-sofas-39870048829662-Photoroom.png",
-      variants: {
-            color: [
-                  { name: "Black", hex: "#000000" },
-                  { name: "White", hex: "#FFFFFF" },
-                  { name: "Olive Green", hex: "#6B8E23" },
-                  { name: "Heather Gray", hex: "#C0C0C0" },
-            ],
-            sizes: ["S", "M", "L", "XL", "XXL"],
-      },
+      details: "The Essential Oversized Tee is crafted from 100% sustainably sourced organic cotton, offering a perfect blend of comfort and modern street style. Its relaxed, dropped-shoulder fit provides maximum breathability, making it ideal for everyday wear or light training. Available in core colors, this tee is a foundational piece for any modern wardrobe. Durable stitching ensures longevity and shape retention after multiple washes.",
+      variations: [
+            {
+                  color: { name: "Black", hex: "#000000" },
+                  price: 45000,
+                  discount: 10,
+                  imageURLs: [".imageseno-chair-occasional-chairs-39871458214110-Photoroom (1).png"],
+                  stock: 15,
+            },
+            {
+                  color: { name: "White", hex: "FFFFFF" },
+                  price: 43200,
+                  imageURLs: [".images\bosun-coffee-tables-39870899257566-Photoroom.png"],
+                  stock: 5,
+            },
+      ],
       reviews: { rating: 4.8, count: 124 },
       materials: [
             { title: "Composition", detail: "100% Organic, Ring-Spun Cotton" },

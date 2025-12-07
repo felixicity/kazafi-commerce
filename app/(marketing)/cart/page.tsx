@@ -5,6 +5,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { IconPlus,IconMinus,IconLoader } from "@tabler/icons-react";
 import { Card, CardAction, CardContent, CardFooter } from "@/components/ui/card";
+import { SingleProduct } from "@/lib/types";
+import { MOCK_PRODUCT_SINGLE } from "@/lib/store/cart-store";
+import { User } from "lucide-react";
 
 interface CartItem {
       id: string;
@@ -14,16 +17,15 @@ interface CartItem {
       image: string;
 }
 
+
 export default function Cart() {
        // Simulate Cart State (In a real app, use Zustand, Redux, or React Context)
-            const [items, setItems] = useState<CartItem[]>([
-                  { id: "1", name: "Wireless Headphones", price: 120.0, quantity: 1, image: "/placeholder-1.jpg" },
-                  { id: "2", name: "Mechanical Keyboard", price: 250.5, quantity: 1, image: "/placeholder-2.jpg" },
-            ]);
+           
+            const [items, setItems] = useState("");
             const [isLoading, setIsLoading] = useState<string | null>(null); // Stores ID of item being updated
       
             // Derived state
-            const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+            const subtotal = items.reduce((acc, item) => acc + item.pric * item.quantity, 0);
             const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
       
             // Simulate AJAX update
@@ -54,79 +56,79 @@ export default function Cart() {
       const cartItems = cart.items ?? [];
       //   console.log(cart)
 
-      let cartItemsList;
-      if (cartItems.product === "") {
-            cartItemsList = (
-                  <>
-                        <h2>Your Shopping Cart is Empty!</h2> <button>Check Our Collections</button>
-                  </>
-            );
-      } else {
-            // getCart.cart.items.product
-            cartItemsList = cartItems.map((item) => (
-                  <Card className="cart-product" key={item.variation._id}>
-                        <CardContent>
-                              <div className="cart-product-details">
-                                    <div>
-                                          <img src={item.variation?.imageURLs[0]} alt={item.product?.name} />
-                                    </div>
-                                    <div className="details">
-                                          <p className="product-name">{item.product?.name}</p>
-                                          <div className="chosen-product-color">
-                                                <span style={{ backgroundColor: `${item.variation?.hexCode}` }}></span>
-                                                {item.variation?.color}
-                                          </div>
-                                    </div>
-                                    <div>
-                                          <p className="product-price">&#8358;{item.variation.price}</p>
-                                    </div>
-                              </div>
-                        </CardContent>
-                        <CardFooter>
-                              <CardAction>
-                                    <Button>
-                                          <Link> Remove</Link>
-                                    </Button>
-                                   <div className="flex items-center justify-between mt-2">
-                                                                  <div className="flex items-center gap-2 border rounded-md p-1">
-                                                                        <Button
-                                                                              variant="ghost"
-                                                                              size="icon"
-                                                                              className="h-6 w-6"
-                                                                              disabled={isLoading === item.id}
-                                                                              onClick={() =>
-                                                                                    handleQuantityChange(item.id, -1)
-                                                                              }
-                                                                        >
-                                                                              <IconMinus className="h-3 w-3" />
-                                                                        </Button>
+    //   let cartItemsList;
+    //   if (cartItems.product === "") {
+    //         cartItemsList = (
+    //               <>
+    //                     <h2>Your Shopping Cart is Empty!</h2> <button>Check Our Collections</button>
+    //               </>
+    //         );
+    //   } else {
+    //         // getCart.cart.items.product
+    //         cartItemsList = cartItems.map((item) => (
+    //               <Card className="cart-product" key={item.variation._id}>
+    //                     <CardContent>
+    //                           <div className="cart-product-details">
+    //                                 <div>
+    //                                       <img src={item.variation?.imageURLs[0]} alt={item.product?.name} />
+    //                                 </div>
+    //                                 <div className="details">
+    //                                       <p className="product-name">{item.product?.name}</p>
+    //                                       <div className="chosen-product-color">
+    //                                             <span style={{ backgroundColor: `${item.variation?.hexCode}` }}></span>
+    //                                             {item.variation?.color}
+    //                                       </div>
+    //                                 </div>
+    //                                 <div>
+    //                                       <p className="product-price">&#8358;{item.variation.price}</p>
+    //                                 </div>
+    //                           </div>
+    //                     </CardContent>
+    //                     <CardFooter>
+    //                           <CardAction>
+    //                                 <Button>
+    //                                       <Link> Remove</Link>
+    //                                 </Button>
+    //                                <div className="flex items-center justify-between mt-2">
+    //                                                               <div className="flex items-center gap-2 border rounded-md p-1">
+    //                                                                     <Button
+    //                                                                           variant="ghost"
+    //                                                                           size="icon"
+    //                                                                           className="h-6 w-6"
+    //                                                                           disabled={isLoading === item.id}
+    //                                                                           onClick={() =>
+    //                                                                                 handleQuantityChange(item.id, -1)
+    //                                                                           }
+    //                                                                     >
+    //                                                                           <IconMinus className="h-3 w-3" />
+    //                                                                     </Button>
 
-                                                                        <span className="text-sm w-4 text-center">
-                                                                              {isLoading === item.id ? (
-                                                                                    <IconLoader className="h-3 w-3 animate-spin mx-auto" />
-                                                                              ) : (
-                                                                                    item.quantity
-                                                                              )}
-                                                                        </span>
+    //                                                                     <span className="text-sm w-4 text-center">
+    //                                                                           {isLoading === item.id ? (
+    //                                                                                 <IconLoader className="h-3 w-3 animate-spin mx-auto" />
+    //                                                                           ) : (
+    //                                                                                 item.quantity
+    //                                                                           )}
+    //                                                                     </span>
 
-                                                                        <Button
-                                                                              variant="ghost"
-                                                                              size="icon"
-                                                                              className="h-6 w-6"
-                                                                              disabled={isLoading === item.id}
-                                                                              onClick={() =>
-                                                                                    handleQuantityChange(item.id, 1)
-                                                                              }
-                                                                        >
-                                                                              <IconPlus className="h-3 w-3" />
-                                                                        </Button>
-                                                                  </div>
-
-                              </CardAction>
-                        </CardFooter>
-                  </Card>
-            ));
-      }
+    //                                                                     <Button
+    //                                                                           variant="ghost"
+    //                                                                           size="icon"
+    //                                                                           className="h-6 w-6"
+    //                                                                           disabled={isLoading === item.id}
+    //                                                                           onClick={() =>
+    //                                                                                 handleQuantityChange(item.id, 1)
+    //                                                                           }
+    //                                                                     >
+    //                                                                           <IconPlus className="h-3 w-3" />
+    //                                                                     </Button>
+    //                                                               </div>
+    //                                             </div>
+    //                           </CardAction>
+    //                     </CardFooter>
+    //               </Card>
+    //         ));
+    //   }
 
       return (
             <div className="shopping-cart wrapper">
@@ -135,7 +137,7 @@ export default function Cart() {
                               <h2>Shopping cart</h2> <span>{cartItems.length} items</span>
                         </header>
                         <hr />
-                        {cartItemsList}
+                        {/* {cartItemsList} */}
                   </div>
                   {cartItems.length && (
                         <aside className="order-summary">

@@ -27,15 +27,16 @@ export interface SingleProduct {
       id: number;
       name: string;
       category: string;
-      price: number;
-      originalPrice?: number;
       description: string;
-      longDescription: string;
-      imagePlaceholder: string;
-      variants: {
-            color: ProductColor[];
-            sizes: ProductSize[];
-      };
+      details: string;
+      variations: {
+            color: ProductColor;
+            sizes?: ProductSize[];
+            stock: number;
+            price: number;
+            discount?: number;
+            imageURLs: [string];
+      }[];
       reviews: ProductReview;
       materials: MaterialItem[];
 }
