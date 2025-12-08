@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -11,6 +12,17 @@ import { FiltersSidebar } from "@/components/features/filter-sidebar";
 import { SortDropdown } from "@/components/features/sort-items";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { IconSearch, IconLayoutGrid, IconList } from "@tabler/icons-react";
+
+// 1. Define the fetcher function (your call to the Express API)
+const fetchProducts = async () => {
+      // Use your public environment variable here
+      const API_URL = process.env.EXPRESS_API_INTERNAL_URL || "http://localhost:5000";
+      const res = await fetch(`${API_URL}/api/products`);
+      if (!res.ok) {
+            throw new Error("Network response was not ok");
+      }
+      return res.json();
+};
 
 const MIN_PRICE = 0;
 const MAX_PRICE = 150;
@@ -27,6 +39,13 @@ const ProductListingPage: React.FC = () => {
       const [sort, setSort] = useState<SortOption>("relevance");
       const [viewMode, setViewMode] = useState<ViewMode>("grid");
       const [searchQuery, setSearchQuery] = useState<string>("");
+
+      const { data, isLoading, error, isFetching } = useQuery({
+            queryKey: ["products"], // Unique key for caching
+            queryFn: fetchProducts,
+      });
+
+      console.log({ data });
 
       // 1. Filtered Products
       const filteredProducts = useMemo(() => {
@@ -89,6 +108,10 @@ const ProductListingPage: React.FC = () => {
             }
             return count;
       }, [filters]);
+
+      if (isLoading) return <div>Loading products...</div>;
+      if (error) return <div>Error: {error.message}</div>;
+
       return (
             <div className="min-h-screen">
                   {/* Header and Search Bar */}
