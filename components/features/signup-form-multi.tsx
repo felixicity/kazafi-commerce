@@ -8,12 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field, FieldLabel, FieldGroup, FieldDescription } from "../ui/field";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 
 export default function MultiStepSignup() {
       const [step, setStep] = useState(1);
       const [direction, setDirection] = useState(1); // Controls animation direction
 
       // Mock form state
+      const [email, setEmail] = useState("");
       const [formData, setFormData] = useState({
             email: "",
             password: "",
@@ -46,78 +49,96 @@ export default function MultiStepSignup() {
             }),
       };
 
+      const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            const newUserData = Object.fromEntries(formData.entries());
+            console.log(newUserData);
+      };
+
       return (
             <div className="flex items-center justify-center min-h-[400px]">
-                  <Card className="w-[380px] overflow-hidden">
+                  <Card className="w-[400px] overflow-hidden">
                         <CardHeader>
                               <CardTitle>
                                     {step === 1 && "Create Account"}
                                     {step === 2 && "Personal Details"}
-                                    {step === 3 && "Review & Finish"}
+                                    {step === 3 && "Verify Email"}
+                                    {step === 4 && "Finish Setup"}
                               </CardTitle>
-                              <CardDescription>Step {step} of 3</CardDescription>
                         </CardHeader>
 
                         <CardContent>
                               {/* AnimatePresence enables exit animations */}
-                              <AnimatePresence mode="wait" custom={direction}>
-                                    <motion.div
-                                          key={step}
-                                          custom={direction}
-                                          variants={variants}
-                                          initial="enter"
-                                          animate="center"
-                                          exit="exit"
-                                          transition={{ duration: 0.2 }}
-                                          className="space-y-4"
-                                    >
-                                          {/* STEP 1: CREDENTIALS */}
-                                          {step === 1 && (
-                                                <>
-                                                      <div className="space-y-2">
-                                                            <Label htmlFor="email" className="text-gray-700 text-sm">
-                                                                  Email
-                                                            </Label>
-                                                            <Input
-                                                                  id="email"
-                                                                  placeholder="hello@example.com"
-                                                                  value={formData.email}
-                                                                  onChange={(e) =>
-                                                                        setFormData({
-                                                                              ...formData,
-                                                                              email: e.target.value,
-                                                                        })
-                                                                  }
-                                                            />
-                                                      </div>
-                                                </>
-                                          )}
+                              <form onSubmit={(e) => handleSubmit(e)}>
+                                    <AnimatePresence mode="wait" custom={direction}>
+                                          <motion.div
+                                                key={step}
+                                                custom={direction}
+                                                variants={variants}
+                                                initial="enter"
+                                                animate="center"
+                                                exit="exit"
+                                                transition={{ duration: 0.2 }}
+                                                className="space-y-4"
+                                          >
+                                                {/* STEP 1: CREDENTIALS */}
+                                                {step === 1 && (
+                                                      <div>
+                                                            <Field>
+                                                                  <FieldLabel
+                                                                        htmlFor="email"
+                                                                        className="text-gray-700 text-sm"
+                                                                  >
+                                                                        Email
+                                                                  </FieldLabel>
+                                                                  <Input
+                                                                        id="email"
+                                                                        name="email"
+                                                                        placeholder="hello@example.com"
+                                                                        value={formData.email}
+                                                                        onChange={(e) =>
+                                                                              setFormData({
+                                                                                    ...formData,
+                                                                                    email: e.target.value,
+                                                                              })
+                                                                        }
+                                                                  />
+                                                            </Field>
 
-                                          {/* STEP 2: PROFILE */}
-                                          {step === 2 && (
-                                                <>
-                                                      <div className="space-y-2">
-                                                            <Label htmlFor="name" className="text-gray-700 text-sm">
-                                                                  Full Name
-                                                            </Label>
-                                                            <Input
-                                                                  id="name"
-                                                                  placeholder="John Doe"
-                                                                  value={formData.name}
-                                                                  onChange={(e) =>
-                                                                        setFormData({
-                                                                              ...formData,
-                                                                              name: e.target.value,
-                                                                        })
-                                                                  }
-                                                            />
+                                                            <Field className="mt-8">
+                                                                  <FieldLabel
+                                                                        htmlFor="name"
+                                                                        className="text-gray-700 text-sm"
+                                                                  >
+                                                                        Full Name
+                                                                  </FieldLabel>
+                                                                  <Input
+                                                                        id="name"
+                                                                        name="name"
+                                                                        placeholder="John Doe"
+                                                                        value={formData.name}
+                                                                        onChange={(e) =>
+                                                                              setFormData({
+                                                                                    ...formData,
+                                                                                    name: e.target.value,
+                                                                              })
+                                                                        }
+                                                                  />
+                                                            </Field>
+                                                            <Button>Submit</Button>
                                                       </div>
-                                                      <div className="space-y-2">
+                                                )}
+
+                                                {/* STEP 2: PROFILE */}
+                                                {step === 2 && (
+                                                      <Field className="space-y-2">
                                                             <Label htmlFor="password" className="text-gray-700 text-sm">
                                                                   Password
                                                             </Label>
                                                             <Input
                                                                   id="password"
+                                                                  name="password"
                                                                   type="password"
                                                                   value={formData.password}
                                                                   onChange={(e) =>
@@ -127,32 +148,82 @@ export default function MultiStepSignup() {
                                                                         })
                                                                   }
                                                             />
-                                                      </div>
-                                                </>
-                                          )}
+                                                            <Button>Submit</Button>
+                                                      </Field>
+                                                )}
 
-                                          {/* STEP 3: CONFIRMATION */}
-                                          {step === 3 && (
-                                                <div className="flex flex-col items-center justify-center space-y-4 py-4 text-center">
-                                                      <div className="rounded-full bg-green-100 p-3">
-                                                            <CheckCircle2 className="h-10 w-10 text-green-600" />
+                                                {/*STEP3: VERIFICATION */}
+                                                {step === 3 && (
+                                                      <div className="flex flex-col gap-4">
+                                                            <CardHeader className="text-center">
+                                                                  <CardTitle className="text-xl">
+                                                                        Enter verification code
+                                                                  </CardTitle>
+                                                                  <CardDescription>
+                                                                        We sent a 6-digit code to your email {email}.
+                                                                  </CardDescription>
+                                                            </CardHeader>
+                                                            <CardContent>
+                                                                  <FieldGroup>
+                                                                        <Field>
+                                                                              <FieldLabel
+                                                                                    htmlFor="otp"
+                                                                                    className="sr-only"
+                                                                              >
+                                                                                    Verification code
+                                                                              </FieldLabel>
+                                                                              <InputOTP
+                                                                                    maxLength={6}
+                                                                                    id="otp"
+                                                                                    name="otp"
+                                                                                    required
+                                                                              >
+                                                                                    <InputOTPGroup className="gap-2.5 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border">
+                                                                                          <InputOTPSlot index={0} />
+                                                                                          <InputOTPSlot index={1} />
+                                                                                          <InputOTPSlot index={2} />
+                                                                                          <InputOTPSlot index={3} />
+                                                                                          <InputOTPSlot index={4} />
+                                                                                          <InputOTPSlot index={5} />
+                                                                                    </InputOTPGroup>
+                                                                              </InputOTP>
+                                                                              <FieldDescription className="text-center">
+                                                                                    Enter the 6-digit code sent to your
+                                                                                    email.
+                                                                              </FieldDescription>
+                                                                        </Field>
+                                                                        <Button type="submit">Verify</Button>
+                                                                        <FieldDescription className="text-center">
+                                                                              Didn&apos;t receive the code?{" "}
+                                                                              <a href="#">Resend</a>
+                                                                        </FieldDescription>
+                                                                  </FieldGroup>
+                                                            </CardContent>
                                                       </div>
-                                                      <div className="space-y-1">
-                                                            <h3 className="font-semibold">All set!</h3>
-                                                            <p className="text-sm text-muted-foreground">
-                                                                  Click below to create your account for{" "}
-                                                                  <span className="text-foreground font-medium">
-                                                                        {formData.email}
-                                                                  </span>
-                                                                  .
-                                                            </p>
+                                                )}
+
+                                                {/* STEP 3: CONFIRMATION */}
+                                                {step === 4 && (
+                                                      <div className="flex flex-col items-center justify-center space-y-4 py-4 text-center">
+                                                            <div className="rounded-full bg-green-100 p-3">
+                                                                  <CheckCircle2 className="h-10 w-10 text-green-600" />
+                                                            </div>
+                                                            <div className="space-y-1">
+                                                                  <h3 className="font-semibold">All set!</h3>
+                                                                  <p className="text-sm text-muted-foreground">
+                                                                        Click below to create your account for{" "}
+                                                                        <span className="text-foreground font-medium">
+                                                                              {formData.email}
+                                                                        </span>
+                                                                        .
+                                                                  </p>
+                                                            </div>
                                                       </div>
-                                                </div>
-                                          )}
-                                    </motion.div>
-                              </AnimatePresence>
+                                                )}
+                                          </motion.div>
+                                    </AnimatePresence>
+                              </form>
                         </CardContent>
-
                         <CardFooter className="flex flex-col mt-8">
                               <div className={step > 1 ? "flex justify-between w-full" : "flex justify-end w-full"}>
                                     {step > 1 && (
@@ -161,7 +232,7 @@ export default function MultiStepSignup() {
                                           </Button>
                                     )}
 
-                                    {step < 3 ? (
+                                    {step < 4 ? (
                                           <Button onClick={handleNext}>
                                                 Continue <ArrowRight className="ml-2 h-4 w-4" />
                                           </Button>

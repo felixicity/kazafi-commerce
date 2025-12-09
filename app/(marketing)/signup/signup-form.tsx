@@ -10,13 +10,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createLoginMutation } from "@/lib/mutations/users";
+import { createSignUpMutation } from "@/lib/mutations/users";
 import { Spinner } from "@/components/ui/spinner";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { BadgeCheckIcon, TriangleAlertIcon, EyeIcon, EyeClosed } from "lucide-react";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+export function SignUpForm({ className, ...props }: React.ComponentProps<"div">) {
       const queryClient = useQueryClient();
       const [password, setPassword] = useState("");
       const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
       const router = useRouter();
 
       const { mutate, isError, isSuccess, isPending, error } = useMutation({
-            mutationFn: createLoginMutation,
+            mutationFn: createSignUpMutation,
             onSuccess: (data) => {
                   queryClient.invalidateQueries({ queryKey: ["user"] });
 
@@ -34,8 +34,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   setPassword("");
                   setEmail("");
                   setSuccessMessage(data.message);
-                  setTimeout(() => setSuccessMessage(""), 2000);
-                  router.push("/");
+                  router.push("/verify");
             },
       });
 
@@ -52,7 +51,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             <div className={cn("flex flex-col gap-6", className)} {...props}>
                   <Card>
                         <CardHeader>
-                              <CardTitle className="text-lg text-center">Login to your account</CardTitle>
+                              <CardTitle className="text-lg text-center">Create an account</CardTitle>
                               <CardDescription className="text-sm text-center">
                                     Enter your email below to login to your account
                               </CardDescription>
@@ -138,10 +137,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                                 <Button type="submit">
                                                       {isPending ? (
                                                             <>
-                                                                  <Spinner /> Logging in...
+                                                                  <Spinner /> Please wait...
                                                             </>
                                                       ) : (
-                                                            "Login"
+                                                            "Sign up"
                                                       )}
                                                 </Button>
 
