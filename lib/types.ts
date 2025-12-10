@@ -68,3 +68,38 @@ export interface Coupon {
       expiry: string;
       valid: boolean;
 }
+
+// =================================================================
+// TYPES & DATA (CART)
+// =================================================================
+
+// types.ts
+export interface CartVariation {
+      price: number;
+      color?: string;
+      quantity?: number; // Stock level, maybe
+      hexCode?: string;
+      imageURLs?: string[];
+      stock?: number;
+      _id: string; // The ID of the variation
+}
+
+export interface CartProduct {
+      name: string;
+      // Add other relevant product fields here
+}
+
+export interface CartItem {
+      _id: string; // Add the item's unique ID for updates/deletion
+      product: CartProduct;
+      quantity: number;
+      variation: CartVariation;
+}
+
+export interface CartData {
+      cart: {
+            _id: string;
+            items: CartItem[];
+            // Add other cart fields like userId, createdAt, etc.
+      };
+}
