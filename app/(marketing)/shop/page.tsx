@@ -4,25 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { MOCK_PRODUCTS } from "@/lib/store/cart-store";
 import { SlidersHorizontal } from "lucide-react";
 import { FilterState, SortOption, ViewMode } from "@/lib/types";
 import { ProductCard } from "@/components/features/client/product-card";
 import { FiltersSidebar } from "@/components/features/filter-sidebar";
 import { SortDropdown } from "@/components/features/sort-items";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { IconSearch, IconLayoutGrid, IconList } from "@tabler/icons-react";
-
-// 1. Define the fetcher function (your call to the Express API)
-const fetchProducts = async () => {
-      // Use your public environment variable here
-      const API_URL = process.env.EXPRESS_API_INTERNAL_URL || "http://localhost:5000";
-      const res = await fetch(`${API_URL}/api/products`);
-      if (!res.ok) {
-            throw new Error("Network response was not ok");
-      }
-      return res.json();
-};
+import { IconSearch, IconLayoutGrid, IconList, IconLoader, IconAlertTriangle } from "@tabler/icons-react";
+import { fetchProducts } from "@/lib/mutations/product";
+import { PRODUCT_QUERY_KEY } from "@/lib/mutations/product";
 
 const MIN_PRICE = 0;
 const MAX_PRICE = 150;
@@ -40,16 +30,37 @@ const ProductListingPage: React.FC = () => {
       const [viewMode, setViewMode] = useState<ViewMode>("grid");
       const [searchQuery, setSearchQuery] = useState<string>("");
 
-      const { data, isLoading, error, isFetching } = useQuery({
-            queryKey: ["products"], // Unique key for caching
+      const { data, isLoading, isError, error } = useQuery({
+            queryKey: PRODUCT_QUERY_KEY,
             queryFn: fetchProducts,
       });
 
-      console.log({ data });
+      console.log(data);
 
+      // 1. Loading State
+      if (isLoading) {
+            return (
+                  <div className="flex justify-center items-center h-96">
+                        <IconLoader className="animate-spin h-6 w-6 mr-2" />
+                        <p>Loading products...</p>
+                  </div>
+            );
+      }
+
+      // 2. Error State
+      if (isError) {
+            return (
+                  <div className="flex flex-col items-center justify-center h-96 text-red-600">
+                        <IconAlertTriangle className="h-10 w-10 mb-2" />
+                        <p className="font-bold">Error loading shop data.</p>
+                        {/* Display status code from custom error */}
+                        <p className="text-sm">{(error as any).message || "An unknown error occurred."}</p>
+                  </div>
+            );
+      }
       // 1. Filtered Products
       const filteredProducts = useMemo(() => {
-            return MOCK_PRODUCTS.filter((product) => {
+            return products.filter((product) => {
                   // Search Filter
                   if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) {
                         return false;
@@ -164,7 +175,7 @@ const ProductListingPage: React.FC = () => {
                                                       <FiltersSidebar
                                                             filters={filters}
                                                             setFilters={setFilters}
-                                                            allProducts={MOCK_PRODUCTS}
+                                                            allProducts={products}
                                                       />
                                                 </div>
                                                 {/* Fixed Footer */}
@@ -225,11 +236,7 @@ const ProductListingPage: React.FC = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
                               {/* Left Column (Filters - Desktop) */}
                               <div className="hidden lg:block lg:col-span-1">
-                                    <FiltersSidebar
-                                          filters={filters}
-                                          setFilters={setFilters}
-                                          allProducts={MOCK_PRODUCTS}
-                                    />
+                                    <FiltersSidebar filters={filters} setFilters={setFilters} allProducts={products} />
                               </div>
 
                               {/* Right Column (Product Grid) */}

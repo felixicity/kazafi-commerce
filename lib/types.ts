@@ -103,3 +103,28 @@ export interface CartData {
             // Add other cart fields like userId, createdAt, etc.
       };
 }
+
+// src/types/product.ts (or just types.ts)
+
+export interface Product {
+      _id: string;
+      name: string;
+      description: string;
+      variations: {
+            _id: string;
+            color: string;
+            size: string;
+            stock: number;
+            price: number;
+            discount?: number;
+            imageURLs: string[];
+      }[];
+      stock: number;
+}
+
+// Define the parameters for filtering/sorting
+export interface ProductParams {
+      category?: string;
+      sort?: "price_asc" | "price_desc" | "newest";
+      search?: string;
+}
