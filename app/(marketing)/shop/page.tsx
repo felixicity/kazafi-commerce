@@ -1,41 +1,28 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SlidersHorizontal } from "lucide-react";
-import { FilterState, SortOption, ViewMode } from "@/lib/types";
+import { useFilterManagement } from "@/hooks/useFilterManagement"; // The hook you created earlier (accepts queryParams)
 import { ProductCard } from "@/components/features/client/product-card";
 import { FiltersSidebar } from "@/components/features/filter-sidebar";
-import { SortDropdown } from "@/components/features/sort-items";
+// import { SortDropdown } from "@/components/features/sort-items";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { IconSearch, IconLayoutGrid, IconList, IconLoader, IconAlertTriangle } from "@tabler/icons-react";
-import { fetchProducts } from "@/lib/mutations/product";
-import { PRODUCT_QUERY_KEY } from "@/lib/mutations/product";
-
-const MIN_PRICE = 0;
-const MAX_PRICE = 150;
+import { useShopProducts } from "@/hooks/useShopProducts";
+import { FilterState, SortOption, ViewMode } from "@/lib/types";
+import { ProductParams } from "@/lib/types";
 
 // --- Main Component ---
 
 const ProductListingPage: React.FC = () => {
-      const [filters, setFilters] = useState<FilterState>({
-            category: [],
-            color: [],
-            size: [],
-            priceRange: [MIN_PRICE, MAX_PRICE],
-      });
-      const [sort, setSort] = useState<SortOption>("relevance");
       const [viewMode, setViewMode] = useState<ViewMode>("grid");
-      const [searchQuery, setSearchQuery] = useState<string>("");
 
-      const { data, isLoading, isError, error } = useQuery({
-            queryKey: PRODUCT_QUERY_KEY,
-            queryFn: fetchProducts,
-      });
+      const { filters, queryParams, handleToggleFilter, handlePriceChange, clearFilters, MAX_PRICE, MIN_PRICE } =
+            useFilterManagement();
 
-      console.log(data);
+      const { data, isLoading, isError, error } = useShopProducts(queryParams);
 
       // 1. Loading State
       if (isLoading) {
@@ -58,70 +45,6 @@ const ProductListingPage: React.FC = () => {
                   </div>
             );
       }
-      // 1. Filtered Products
-      const filteredProducts = useMemo(() => {
-            return products.filter((product) => {
-                  // Search Filter
-                  if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-                        return false;
-                  }
-
-                  // Category Filter
-                  if (filters.category.length > 0 && !filters.category.includes(product.category)) {
-                        return false;
-                  }
-
-                  // Price Range Filter (using both min and max from state)
-                  if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
-                        return false;
-                  }
-
-                  // Color Filter
-                  if (filters.color.length > 0) {
-                        const productColors = product.variants.color.map((c) => c.hex);
-                        if (!filters.color.some((hex) => productColors.includes(hex))) {
-                              return false;
-                        }
-                  }
-
-                  // Size Filter
-                  if (filters.size.length > 0) {
-                        if (!filters.size.some((size) => product.variants.sizes.includes(size))) {
-                              return false;
-                        }
-                  }
-
-                  return true;
-            });
-      }, [filters, searchQuery]);
-
-      // 2. Sorted Products
-      const sortedProducts = useMemo(() => {
-            const products = [...filteredProducts];
-            switch (sort) {
-                  case "price-asc":
-                        return products.sort((a, b) => a.price - b.price);
-                  case "price-desc":
-                        return products.sort((a, b) => b.price - a.price);
-                  case "rating-desc":
-                        return products.sort((a, b) => b.reviews.rating - a.reviews.rating);
-                  case "relevance":
-                  default:
-                        return products;
-            }
-      }, [filteredProducts, sort]);
-
-      const activeFilterCount = useMemo(() => {
-            let count = filters.category.length + filters.color.length + filters.size.length;
-            // Count price range filter if min is not 0 or max is not 150
-            if (filters.priceRange[0] !== MIN_PRICE || filters.priceRange[1] !== MAX_PRICE) {
-                  count += 1;
-            }
-            return count;
-      }, [filters]);
-
-      if (isLoading) return <div>Loading products...</div>;
-      if (error) return <div>Error: {error.message}</div>;
 
       return (
             <div className="min-h-screen">
@@ -129,15 +52,18 @@ const ProductListingPage: React.FC = () => {
                   <header className="bg-white shadow-md p-4 sticky top-0 z-10 border-b border-gray-100">
                         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                               <h1 className="text-xl font-extrabold tracking-tight text-gray-900">
-                                    {searchQuery ? `Results for "${searchQuery}"` : "All Products"}
+                                    {queryParams ? `Results for "${queryParams.search}"` : "All Products"}
                               </h1>
                               <div className="relative w-full md:w-96">
                                     <InputGroup>
                                           <InputGroupInput
                                                 placeholder="Search products..."
-                                                value={searchQuery}
+                                                value={queryParams.search}
                                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                                      setSearchQuery(e.target.value)
+                                                      setParams((prevParams) => ({
+                                                            ...prevParams,
+                                                            search: e.target.value,
+                                                      }))
                                                 }
                                                 className="pl-10 h-11"
                                           />
@@ -161,9 +87,9 @@ const ProductListingPage: React.FC = () => {
                                           >
                                                 <SlidersHorizontal size={16} />
                                                 Filters
-                                                {activeFilterCount > 0 && (
+                                                {filters?.length > 0 && (
                                                       <span className="ml-1 bg-black text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                                                            {activeFilterCount}
+                                                            {filters?.length}
                                                       </span>
                                                 )}
                                           </Button>
@@ -172,11 +98,16 @@ const ProductListingPage: React.FC = () => {
                                           <div className="flex flex-col h-full">
                                                 {/* Sheet Header & Filters Content */}
                                                 <div className="grow overflow-y-auto">
-                                                      <FiltersSidebar
-                                                            filters={filters}
-                                                            setFilters={setFilters}
-                                                            allProducts={products}
-                                                      />
+                                                      <div className="w-1/4 p-4 sticky top-0">
+                                                            <FiltersSidebar
+                                                                  filters={filters}
+                                                                  MIN_PRICE={MIN_PRICE}
+                                                                  MAX_PRICE={MAX_PRICE}
+                                                                  handleToggleFilter={handleToggleFilter}
+                                                                  handlePriceChange={handlePriceChange}
+                                                                  clearFilters={clearFilters}
+                                                            />
+                                                      </div>
                                                 </div>
                                                 {/* Fixed Footer */}
                                                 <SheetClose>
@@ -185,11 +116,11 @@ const ProductListingPage: React.FC = () => {
                                                                   variant="default"
                                                                   className="w-full font-bold py-3 h-auto"
                                                             >
-                                                                  Show {sortedProducts.length} Results
+                                                                  Show {data?.products.length} Results
                                                             </Button>
                                                       </div>
                                                 </SheetClose>
-                                                <SortDropdown sort={sort} setSort={setSort} />
+                                                {/* <SortDropdown sort={} setSort={setParams} /> */}
                                           </div>
                                     </SheetContent>
                               </Sheet>
@@ -198,10 +129,10 @@ const ProductListingPage: React.FC = () => {
                         {/* Desktop Filter Bar and Controls */}
                         <div className="hidden lg:flex justify-between items-center border-b pb-2 mb-6">
                               <p className="text-base font-medium text-gray-700">
-                                    Showing <span className="font-semibold">{sortedProducts.length}</span> results
+                                    Showing <span className="font-semibold">{data?.products.length}</span> results
                               </p>
                               <div className="flex items-center gap-4">
-                                    <SortDropdown sort={sort} setSort={setSort} />
+                                    {/* <SortDropdown sort={params.sort} setSort={setParams} /> */}
                                     <div className="flex border border-gray-300 rounded-lg overflow-hidden shadow-sm">
                                           <Button
                                                 variant="ghost"
@@ -236,12 +167,21 @@ const ProductListingPage: React.FC = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
                               {/* Left Column (Filters - Desktop) */}
                               <div className="hidden lg:block lg:col-span-1">
-                                    <FiltersSidebar filters={filters} setFilters={setFilters} allProducts={products} />
+                                    <div className="w-1/4 p-4 sticky top-0">
+                                          <FiltersSidebar
+                                                filters={filters}
+                                                MIN_PRICE={MIN_PRICE}
+                                                MAX_PRICE={MAX_PRICE}
+                                                handleToggleFilter={handleToggleFilter}
+                                                handlePriceChange={handlePriceChange}
+                                                clearFilters={clearFilters}
+                                          />
+                                    </div>
                               </div>
 
                               {/* Right Column (Product Grid) */}
                               <div className="lg:col-span-3">
-                                    {sortedProducts.length === 0 ? (
+                                    {data?.products.length === 0 ? (
                                           <div className="text-center py-20 bg-white rounded-xl shadow-inner border border-gray-100">
                                                 <h2 className="text-2xl font-semibold text-gray-700">
                                                       No products found
@@ -258,9 +198,9 @@ const ProductListingPage: React.FC = () => {
                                                             : "grid grid-cols-1 gap-6"
                                                 }
                                           >
-                                                {sortedProducts.map((product) => (
+                                                {data?.products?.map((product) => (
                                                       <ProductCard
-                                                            key={product.id}
+                                                            key={product.variations[0]._id}
                                                             product={product}
                                                             viewMode={viewMode}
                                                       />

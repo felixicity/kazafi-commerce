@@ -1,51 +1,49 @@
-import { FilterState, Product, ProductSize, ProductColor } from "@/lib/types";
-import { Button } from "../ui/button";
-import { IconFilter, IconFilter2, IconFilter2Cog, IconFilter2Down, IconFilterDiscount } from "@tabler/icons-react";
+import React from "react";
+import { FilterState, ProductColor, ProductSize } from "@/lib/types";
+import { useFilterOptions } from "../../hooks/useFilterOptions";
+import { IconFilterDiscount, IconLoader } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { PriceSlider } from "@/components/features/client/price-slider";
+import { PriceSlider } from "@/components/features/client/price-slider"; // Ensure this is correctly imported
 
-const MIN_PRICE = 0;
-const MAX_PRICE = 150;
+interface FiltersSidebarProps {
+      filters: FilterState; // Current filter state
+      MAX_PRICE: number;
+      MIN_PRICE: number;
+      handleToggleFilter: (key: keyof FilterState, value: string, isChecked: boolean) => void;
+      handlePriceChange: (value: [number, number]) => void;
+      clearFilters: () => void;
+}
 
-export const FiltersSidebar: React.FC<{
-      filters: FilterState;
-      setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
-      allProducts: Product[];
-}> = ({ filters, setFilters, allProducts }) => {
-      const handleCheckboxChange = (key: keyof FilterState, value: string | ProductSize, isChecked: boolean) => {
-            setFilters((prev) => {
-                  const currentValues = prev[key] as (string | ProductSize)[];
-                  return {
-                        ...prev,
-                        [key]: isChecked ? [...currentValues, value] : currentValues.filter((v) => v !== value),
-                  };
-            });
-      };
+export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
+      filters,
+      MAX_PRICE,
+      MIN_PRICE,
+      handleToggleFilter,
+      handlePriceChange,
+      clearFilters,
+}) => {
+      // 1. Fetch available options
+      const { data: options, isLoading, isError } = useFilterOptions();
 
-      const clearFilters = () => {
-            setFilters({
-                  category: [],
-                  color: [],
-                  size: [],
-                  priceRange: [MIN_PRICE, MAX_PRICE],
-            });
-      };
+      if (isLoading) {
+            return (
+                  <div className="flex justify-center items-center h-full min-h-64">
+                        <IconLoader className="h-6 w-6 animate-spin text-gray-500" />
+                  </div>
+            );
+      }
 
-      const getUniqueValues = (key: keyof Product["variants"]) => {
-            const values = allProducts.flatMap((p) => p.variants[key]);
-            if (key === "color") {
-                  const colorMap = new Map<string, ProductColor>();
-                  (values as ProductColor[]).forEach((c) => colorMap.set(c.hex, c));
-                  return Array.from(colorMap.values());
-            }
-            return Array.from(new Set(values));
-      };
+      if (isError || !options) {
+            return <div className="text-sm text-red-500">Error loading filters.</div>;
+      }
 
-      const uniqueCategories = Array.from(new Set(allProducts.map((p) => p.category)));
-      const uniqueColors = getUniqueValues("color") as ProductColor[];
-      const uniqueSizes = getUniqueValues("sizes") as ProductSize[];
+      const { categories, colors, sizes } = options;
+
+      // Helper to check if a filter value is currently active
+      const isActive = (key: keyof FilterState, value: string) => filters[key].includes(value);
 
       return (
             <div className="py-2 space-y-5 lg:sticky lg:top-4 bg-white lg:bg-transparent h-dvh overflow-y-auto">
@@ -54,23 +52,22 @@ export const FiltersSidebar: React.FC<{
                               <IconFilterDiscount size={20} />
                               Product Filters
                         </h2>
-                        <div className="flex items-center gap-2">
-                              <Button variant="ghost" className="text-sm text-gray-500" onClick={clearFilters}>
-                                    Clear All
-                              </Button>
-                        </div>
+                        <Button variant="ghost" className="text-sm text-gray-500" onClick={clearFilters}>
+                              Clear All
+                        </Button>
                   </div>
 
-                  {/* Category Filter */}
+                  {/* CATEGORY Filter */}
                   <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-gray-800 uppercase">Category</h3>
-                        {uniqueCategories.map((category) => (
+                        {categories.map((category) => (
                               <div key={category} className="flex items-center space-x-3">
                                     <Checkbox
                                           id={`cat-${category}`}
-                                          checked={filters.category.includes(category)}
+                                          checked={isActive("category", category)}
+                                          // Call the handler provided by the parent hook
                                           onCheckedChange={(checked: boolean) =>
-                                                handleCheckboxChange("category", category, checked)
+                                                handleToggleFilter("category", category, checked)
                                           }
                                     />
                                     <Label htmlFor={`cat-${category}`}>{category}</Label>
@@ -80,47 +77,40 @@ export const FiltersSidebar: React.FC<{
 
                   <Separator />
 
-                  {/* Price Range Filter (Using PriceSlider Mock) */}
+                  {/* PRICE RANGE Filter */}
                   <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-gray-800 uppercase">Price Range</h3>
                         <div className="flex justify-between text-sm font-semibold text-gray-900">
                               <span>${filters.priceRange[0].toFixed(2)}</span>
                               <span>${filters.priceRange[1].toFixed(2)}</span>
                         </div>
-                        {/* Note: The mock only controls the minimum price for simplicity */}
+                        {/* Ensure PriceSlider handles two values [min, max] */}
                         <PriceSlider
                               value={filters.priceRange}
-                              onValueChange={(val: [number]) =>
-                                    setFilters((prev) => ({ ...prev, priceRange: [val[0], MAX_PRICE] }))
-                              }
+                              onValueChange={handlePriceChange} // Call the unified price handler
                               min={MIN_PRICE}
                               max={MAX_PRICE}
                         />
-                        <p className="text-xs text-gray-500">Filtering from ${filters.priceRange[0].toFixed(2)}</p>
                   </div>
 
                   <Separator />
 
-                  {/* Color Filter */}
+                  {/* COLOR Filter */}
                   <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-gray-800 uppercase">Color</h3>
                         <div className="flex flex-wrap gap-3">
-                              {uniqueColors.map((color) => (
+                              {colors.map((color) => (
                                     <div
                                           key={color.hex}
                                           onClick={() =>
-                                                handleCheckboxChange(
-                                                      "color",
-                                                      color.hex,
-                                                      !filters.color.includes(color.hex)
-                                                )
+                                                handleToggleFilter("color", color.hex, !isActive("color", color.hex))
                                           }
                                           style={{
                                                 backgroundColor: color.hex,
                                                 borderColor: color.hex === "#FFFFFF" ? "#e5e7eb" : "transparent",
                                           }}
                                           className={`w-7 h-7 rounded-full border-2 cursor-pointer transition-all ${
-                                                filters.color.includes(color.hex)
+                                                isActive("color", color.hex)
                                                       ? "ring-2 ring-offset-2 ring-black"
                                                       : "hover:ring-1 ring-gray-400"
                                           }`}
@@ -132,22 +122,20 @@ export const FiltersSidebar: React.FC<{
 
                   <Separator />
 
-                  {/* Size Filter */}
+                  {/* SIZE Filter */}
                   <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-gray-800 uppercase">Size</h3>
                         <div className="flex flex-wrap gap-2">
-                              {uniqueSizes.map((size) => (
+                              {sizes.map((size) => (
                                     <Button
                                           key={size}
-                                          variant={filters.size.includes(size) ? "default" : "outline"}
+                                          variant={isActive("size", size) ? "default" : "outline"}
                                           className={`h-8 px-4 text-xs ${
-                                                filters.size.includes(size)
+                                                isActive("size", size)
                                                       ? "bg-black text-white"
                                                       : "bg-white hover:bg-gray-100"
                                           }`}
-                                          onClick={() =>
-                                                handleCheckboxChange("size", size, !filters.size.includes(size))
-                                          }
+                                          onClick={() => handleToggleFilter("size", size, !isActive("size", size))}
                                     >
                                           {size}
                                     </Button>

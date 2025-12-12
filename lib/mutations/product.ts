@@ -1,4 +1,5 @@
 // src/api/productApi.ts
+import { FilterState } from "@/hooks/useFilterManagement";
 import { Product } from "../types"; // Import the defined type
 import { ProductParams } from "../types";
 
@@ -22,7 +23,7 @@ export class FetchError extends Error {
  * Fetch function for retrieving all products.
  * @returns A promise that resolves to an array of Products.
  */
-export const fetchProducts = async (params: ProductParams): Promise<Product[]> => {
+export const fetchProducts = async (params: FilterState): Promise<Product[]> => {
       const queryString = new URLSearchParams(params as Record<string, string>).toString();
 
       const response = await fetch(`${BASE_URL}/api/products?${queryString}`);

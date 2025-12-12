@@ -17,7 +17,9 @@ export const SortDropdown: React.FC<{
             <div className="relative inline-block text-left">
                   <select
                         value={sort}
-                        onChange={(e) => setSort(e.target.value as SortOption)}
+                        onChange={(e) =>
+                              setSort((prevParams) => ({ ...prevParams, sort: e.target.value as SortOption }))
+                        }
                         className="appearance-none block w-full bg-white border border-gray-300 rounded-lg shadow-sm py-2.5 pl-4 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-black focus:border-black cursor-pointer transition-colors"
                   >
                         {options.map((option) => (
