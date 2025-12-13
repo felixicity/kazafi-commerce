@@ -17,7 +17,7 @@ export const ProductCard: React.FC<{ product: Product; viewMode: ViewMode }> = (
       );
       const salePrice = product.variations[0].discount ? (
             <span className="text-lg font-semibold text-red-600 ml-2">
-                  {new Intl.NumberFormat("NGN", { style: "currency", currency: "NGN" }).format(
+                  {new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(
                         parseFloat(
                               (
                                     product.variations[0].price.toFixed(2) -

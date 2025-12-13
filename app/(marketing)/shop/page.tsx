@@ -35,14 +35,14 @@ const ProductListingPage: React.FC = () => {
       // 2. Debounced state for the query hook (waits 300ms)
       const debouncedSearch = useDebounce(searchInput, 300);
 
-      const { data, isLoading, isError } = useShopProducts(queryParams);
+      const { data, isLoading, isError, error } = useShopProducts(queryParams);
 
       // --- Use this in your useFilterManagement/useShopProducts integration ---
       useEffect(() => {
             // Update the central filter state only when the debounced value changes
             setParams((prev) => ({
                   ...prev,
-                  search: debouncedSearch.trim() || undefined,
+                  search: debouncedSearch.trim(),
             }));
       }, [debouncedSearch, setParams]);
 
@@ -170,7 +170,13 @@ const ProductListingPage: React.FC = () => {
                               </div>
 
                               {/* Right Column (Product Grid) */}
-                              <ShopProducts data={data} isLoading={isLoading} isError={isError} viewMode={viewMode} />
+                              <ShopProducts
+                                    data={data}
+                                    isLoading={isLoading}
+                                    isError={isError}
+                                    viewMode={viewMode}
+                                    error={error}
+                              />
                         </div>
                   </div>
             </div>

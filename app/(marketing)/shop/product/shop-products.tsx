@@ -1,7 +1,7 @@
 import { ProductCard } from "@/components/features/client/product-card";
 import { IconLoader, IconAlertTriangle } from "@tabler/icons-react";
 
-export function ShopProducts({ data, isLoading, isError, viewMode }) {
+export function ShopProducts({ data, isLoading, isError, viewMode, error }) {
       // 1. Loading State
       if (isLoading) {
             return (
