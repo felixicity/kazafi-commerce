@@ -12,12 +12,23 @@ export interface FilterOptions {
 // NOTE: This fetcher should be implemented on your backend to return just the unique options
 const fetchFilterOptions = async (): Promise<FilterOptions> => {
       const API_URL = process.env.NEXT_PUBLIC_EXPRESS_API_URL || "http://localhost:5000";
-      const res = await fetch(`${API_URL}/api/products/options`);
+      //   const res = await fetch(`${API_URL}/api/products/options`);
+      //   const res = await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      if (!res.ok) {
-            throw new Error("Failed to fetch filter options.");
-      }
-      return res.json();
+      //   if (!res.ok) {
+      //         throw new Error("Failed to fetch filter options.");
+      //   }
+      return Promise.resolve({
+            categories: ["men", "women", "kids", "electronics", "clothing", "furniture"],
+            colors: [
+                  { name: "blue", hex: "#eee" },
+                  { name: "grey", hex: "#ccc" },
+                  { name: "white", hex: "#fff" },
+                  { name: "black", hex: "#000" },
+            ],
+            sizes: ["XS", "SM", "M", "L", "XL", "XXL"],
+            maxPrice: 150,
+      });
 };
 
 export const useFilterOptions = () => {

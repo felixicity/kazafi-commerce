@@ -1,50 +1,50 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SlidersHorizontal } from "lucide-react";
 import { useFilterManagement } from "@/hooks/useFilterManagement"; // The hook you created earlier (accepts queryParams)
-import { ProductCard } from "@/components/features/client/product-card";
 import { FiltersSidebar } from "@/components/features/filter-sidebar";
-// import { SortDropdown } from "@/components/features/sort-items";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { IconSearch, IconLayoutGrid, IconList, IconLoader, IconAlertTriangle } from "@tabler/icons-react";
+import { IconSearch, IconLayoutGrid, IconList } from "@tabler/icons-react";
 import { useShopProducts } from "@/hooks/useShopProducts";
-import { FilterState, SortOption, ViewMode } from "@/lib/types";
-import { ProductParams } from "@/lib/types";
+import { ViewMode } from "@/lib/types";
+import { ShopProducts } from "./product/shop-products";
 
 // --- Main Component ---
 
 const ProductListingPage: React.FC = () => {
+      // 1. Instant state for the input field
+      const [searchInput, setSearchInput] = useState("");
+
       const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
-      const { filters, queryParams, handleToggleFilter, handlePriceChange, clearFilters, MAX_PRICE, MIN_PRICE } =
-            useFilterManagement();
+      const {
+            filters,
+            queryParams,
+            handleToggleFilter,
+            handlePriceChange,
+            clearFilters,
+            MAX_PRICE,
+            MIN_PRICE,
+            setParams,
+      } = useFilterManagement();
 
-      const { data, isLoading, isError, error } = useShopProducts(queryParams);
+      // 2. Debounced state for the query hook (waits 300ms)
+      const debouncedSearch = useDebounce(searchInput, 300);
 
-      // 1. Loading State
-      if (isLoading) {
-            return (
-                  <div className="flex justify-center items-center h-96">
-                        <IconLoader className="animate-spin h-6 w-6 mr-2" />
-                        <p>Loading products...</p>
-                  </div>
-            );
-      }
+      const { data, isLoading, isError } = useShopProducts(queryParams);
 
-      // 2. Error State
-      if (isError) {
-            return (
-                  <div className="flex flex-col items-center justify-center h-96 text-red-600">
-                        <IconAlertTriangle className="h-10 w-10 mb-2" />
-                        <p className="font-bold">Error loading shop data.</p>
-                        {/* Display status code from custom error */}
-                        <p className="text-sm">{(error as any).message || "An unknown error occurred."}</p>
-                  </div>
-            );
-      }
+      // --- Use this in your useFilterManagement/useShopProducts integration ---
+      useEffect(() => {
+            // Update the central filter state only when the debounced value changes
+            setParams((prev) => ({
+                  ...prev,
+                  search: debouncedSearch.trim() || undefined,
+            }));
+      }, [debouncedSearch, setParams]);
 
       return (
             <div className="min-h-screen">
@@ -52,19 +52,14 @@ const ProductListingPage: React.FC = () => {
                   <header className="bg-white shadow-md p-4 sticky top-0 z-10 border-b border-gray-100">
                         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                               <h1 className="text-xl font-extrabold tracking-tight text-gray-900">
-                                    {queryParams ? `Results for "${queryParams.search}"` : "All Products"}
+                                    {searchInput !== "" ? `Results for "${searchInput}"` : "All Products"}
                               </h1>
                               <div className="relative w-full md:w-96">
                                     <InputGroup>
                                           <InputGroupInput
                                                 placeholder="Search products..."
-                                                value={queryParams.search}
-                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                                      setParams((prevParams) => ({
-                                                            ...prevParams,
-                                                            search: e.target.value,
-                                                      }))
-                                                }
+                                                value={searchInput}
+                                                onChange={(e) => setSearchInput(e.target.value)}
                                                 className="pl-10 h-11"
                                           />
                                           <InputGroupAddon>
@@ -87,18 +82,13 @@ const ProductListingPage: React.FC = () => {
                                           >
                                                 <SlidersHorizontal size={16} />
                                                 Filters
-                                                {filters?.length > 0 && (
-                                                      <span className="ml-1 bg-black text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                                                            {filters?.length}
-                                                      </span>
-                                                )}
                                           </Button>
                                     </SheetTrigger>
                                     <SheetContent>
                                           <div className="flex flex-col h-full">
                                                 {/* Sheet Header & Filters Content */}
                                                 <div className="grow overflow-y-auto">
-                                                      <div className="w-1/4 p-4 sticky top-0">
+                                                      <div className="p-4 sticky top-0">
                                                             <FiltersSidebar
                                                                   filters={filters}
                                                                   MIN_PRICE={MIN_PRICE}
@@ -116,7 +106,7 @@ const ProductListingPage: React.FC = () => {
                                                                   variant="default"
                                                                   className="w-full font-bold py-3 h-auto"
                                                             >
-                                                                  Show {data?.products.length} Results
+                                                                  Show {data?.length} Results
                                                             </Button>
                                                       </div>
                                                 </SheetClose>
@@ -129,7 +119,7 @@ const ProductListingPage: React.FC = () => {
                         {/* Desktop Filter Bar and Controls */}
                         <div className="hidden lg:flex justify-between items-center border-b pb-2 mb-6">
                               <p className="text-base font-medium text-gray-700">
-                                    Showing <span className="font-semibold">{data?.products.length}</span> results
+                                    Showing <span className="font-semibold">{data?.length}</span> results
                               </p>
                               <div className="flex items-center gap-4">
                                     {/* <SortDropdown sort={params.sort} setSort={setParams} /> */}
@@ -167,7 +157,7 @@ const ProductListingPage: React.FC = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
                               {/* Left Column (Filters - Desktop) */}
                               <div className="hidden lg:block lg:col-span-1">
-                                    <div className="w-1/4 p-4 sticky top-0">
+                                    <div className="w-full p-4 sticky top-0">
                                           <FiltersSidebar
                                                 filters={filters}
                                                 MIN_PRICE={MIN_PRICE}
@@ -180,34 +170,7 @@ const ProductListingPage: React.FC = () => {
                               </div>
 
                               {/* Right Column (Product Grid) */}
-                              <div className="lg:col-span-3">
-                                    {data?.products.length === 0 ? (
-                                          <div className="text-center py-20 bg-white rounded-xl shadow-inner border border-gray-100">
-                                                <h2 className="text-2xl font-semibold text-gray-700">
-                                                      No products found
-                                                </h2>
-                                                <p className="text-gray-500 mt-2">
-                                                      Try adjusting your filters or search query.
-                                                </p>
-                                          </div>
-                                    ) : (
-                                          <div
-                                                className={
-                                                      viewMode === "grid"
-                                                            ? "grid grid-cols-2 md:grid-cols-3 gap-6"
-                                                            : "grid grid-cols-1 gap-6"
-                                                }
-                                          >
-                                                {data?.products?.map((product) => (
-                                                      <ProductCard
-                                                            key={product.variations[0]._id}
-                                                            product={product}
-                                                            viewMode={viewMode}
-                                                      />
-                                                ))}
-                                          </div>
-                                    )}
-                              </div>
+                              <ShopProducts data={data} isLoading={isLoading} isError={isError} viewMode={viewMode} />
                         </div>
                   </div>
             </div>

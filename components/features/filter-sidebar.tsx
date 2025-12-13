@@ -1,12 +1,12 @@
 import React from "react";
-import { FilterState, ProductColor, ProductSize } from "@/lib/types";
 import { useFilterOptions } from "../../hooks/useFilterOptions";
 import { IconFilterDiscount, IconLoader } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { PriceSlider } from "@/components/features/client/price-slider"; // Ensure this is correctly imported
+import { PriceSlider } from "@/components/features/client/price-slider";
+import { FilterState } from "@/hooks/useFilterManagement"; // Ensure this is correctly imported
 
 interface FiltersSidebarProps {
       filters: FilterState; // Current filter state
@@ -50,7 +50,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
                   <div className="flex justify-between items-center pb-2 border-b lg:border-none">
                         <h2 className="text-lg flex items-center gap-2">
                               <IconFilterDiscount size={20} />
-                              Product Filters
+                              Filters
                         </h2>
                         <Button variant="ghost" className="text-sm text-gray-500" onClick={clearFilters}>
                               Clear All
@@ -137,7 +137,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
                                           }`}
                                           onClick={() => handleToggleFilter("size", size, !isActive("size", size))}
                                     >
-                                          {size}
+                                          {size.toUpperCase()}
                                     </Button>
                               ))}
                         </div>

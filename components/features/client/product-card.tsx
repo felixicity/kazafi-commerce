@@ -12,11 +12,20 @@ export const ProductCard: React.FC<{ product: Product; viewMode: ViewMode }> = (
       const priceClasses = product.variations[0].discount
             ? "text-sm text-gray-500 line-through"
             : "text-lg font-semibold text-gray-900";
-      const displayPrice = product.variations[0].discount
-            ? `$${product.variations[0].price.toFixed(2) - (product.variations[0].discount / 100) * product.variations[0].price.toFixed(2)}`
-            : `$${product.variations[0].price.toFixed(2)}`;
+      const displayPrice = new Intl.NumberFormat("NGN", { style: "currency", currency: "NGN" }).format(
+            parseFloat(product.variations[0].price.toFixed(2))
+      );
       const salePrice = product.variations[0].discount ? (
-            <span className="text-lg font-semibold text-red-600 ml-2">${product.variations[0].price.toFixed(2)}</span>
+            <span className="text-lg font-semibold text-red-600 ml-2">
+                  {new Intl.NumberFormat("NGN", { style: "currency", currency: "NGN" }).format(
+                        parseFloat(
+                              (
+                                    product.variations[0].price.toFixed(2) -
+                                    (product.variations[0].discount / 100) * product.variations[0].price.toFixed(2)
+                              ).toFixed(2)
+                        )
+                  )}
+            </span>
       ) : null;
 
       if (viewMode === "list") {
@@ -27,8 +36,8 @@ export const ProductCard: React.FC<{ product: Product; viewMode: ViewMode }> = (
                                     src={product.variations[0].imageURLs[0]}
                                     alt={product.name}
                                     className="w-full h-auto aspect-4/5 rounded-md"
-                                    width={50}
-                                    height={50}
+                                    width={300}
+                                    height={300}
                               />
                         </div>
                         <div className="flex-1 flex flex-col justify-between">
@@ -75,8 +84,8 @@ export const ProductCard: React.FC<{ product: Product; viewMode: ViewMode }> = (
                               src={product.variations[0].imageURLs[0]}
                               alt={product.name}
                               className="w-full h-auto aspect-5/5 object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                              width={50}
-                              height={50}
+                              width={300}
+                              height={300}
                         />
                         {product.originalPrice && (
                               <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
@@ -92,7 +101,7 @@ export const ProductCard: React.FC<{ product: Product; viewMode: ViewMode }> = (
                         </div>
                         <div className="flex items-baseline pt-1">
                               <span className={priceClasses}>{displayPrice}</span>
-                              {salePrice} (33k sold)
+                              {salePrice}
                         </div>
 
                         {/* Color Variants */}

@@ -7,6 +7,7 @@ export interface FilterState {
       color: string[]; // Use hex code string for simplicity
       size: string[];
       priceRange: [number, number];
+      search: string;
 }
 
 const MIN_PRICE = 0;
@@ -18,6 +19,7 @@ export const useFilterManagement = (
             color: [],
             size: [],
             priceRange: [MIN_PRICE, MAX_PRICE],
+            search: "",
       }
 ) => {
       const [filters, setFilters] = useState<FilterState>(initialState);
@@ -44,6 +46,7 @@ export const useFilterManagement = (
 
       // This object contains the current filters that should be passed to useShopProducts
       const queryParams = filters;
+      const setParams = setFilters;
 
       return {
             filters,
@@ -53,5 +56,6 @@ export const useFilterManagement = (
             clearFilters,
             MAX_PRICE,
             MIN_PRICE,
+            setParams,
       };
 };
