@@ -79,27 +79,12 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
 
                   {/* PRICE RANGE Filter */}
                   <div className="space-y-4">
-                        <h3 className="text-sm font-semibold text-gray-800 uppercase">Price Range</h3>
-                        <div className="flex justify-between text-sm font-semibold text-gray-900">
-                              <span>
-                                    {new Intl.NumberFormat("en-NG", {
-                                          style: "currency",
-                                          currency: "NGN",
-                                    }).format(filters.priceRange[0])}
-                              </span>
-                              <span>
-                                    {new Intl.NumberFormat("en-NG", {
-                                          style: "currency",
-                                          currency: "NGN",
-                                    }).format(filters.priceRange[1])}
-                              </span>
-                        </div>
-                        {/* Ensure PriceSlider handles two values [min, max] */}
                         <PriceSlider
                               value={filters.priceRange}
                               onValueChange={handlePriceChange} // Call the unified price handler
                               min={MIN_PRICE}
                               max={MAX_PRICE}
+                              filters={filters}
                         />
                   </div>
 

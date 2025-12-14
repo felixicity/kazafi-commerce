@@ -10,8 +10,8 @@ export interface FilterState {
       search: string;
 }
 
-const MIN_PRICE = 2500;
-const MAX_PRICE = 300000; // Should be dynamic, but fixed for the example
+const MIN_PRICE = 0;
+const MAX_PRICE = 1000000; // Should be dynamic, but fixed for the example
 
 export const useFilterManagement = (
       initialState: FilterState = {

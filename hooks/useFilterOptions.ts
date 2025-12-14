@@ -19,7 +19,7 @@ const fetchFilterOptions = async (): Promise<FilterOptions> => {
       //         throw new Error("Failed to fetch filter options.");
       //   }
       return Promise.resolve({
-            categories: ["men", "women", "kids", "electronics", "clothing", "furniture"],
+            categories: ["men", "women", "kids", "electronics", "clothing", "furniture", "chairs", "tables"],
             colors: [
                   { name: "blue", hex: "#eee" },
                   { name: "grey", hex: "#ccc" },
