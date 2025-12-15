@@ -11,7 +11,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { IconSearch, IconLayoutGrid, IconList } from "@tabler/icons-react";
 import { useShopProducts } from "@/hooks/useShopProducts";
 import { ViewMode } from "@/lib/types";
-import { ShopProducts } from "./product/shop-products";
+import { ShopProducts } from "./shop-products";
 
 // --- Main Component ---
 

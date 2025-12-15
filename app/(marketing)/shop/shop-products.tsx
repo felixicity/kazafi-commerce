@@ -1,7 +1,21 @@
+import { useRouter } from "next/navigation";
 import { ProductCard } from "@/components/features/client/product-card";
 import { IconLoader, IconAlertTriangle } from "@tabler/icons-react";
 
-export function ShopProducts({ data, isLoading, isError, viewMode, error }) {
+export function ShopProducts({
+      data,
+      isLoading,
+      isError,
+      viewMode,
+      error,
+}: {
+      data: { products } | undefined;
+      isLoading: boolean;
+      isError: boolean;
+      viewMode: "grid" | "list";
+      error: unknown;
+}) {
+      const router = useRouter();
       // 1. Loading State
       if (isLoading) {
             return (
@@ -40,11 +54,9 @@ export function ShopProducts({ data, isLoading, isError, viewMode, error }) {
                               }
                         >
                               {data?.products?.map((product) => (
-                                    <ProductCard
-                                          key={product.variations[0]._id}
-                                          product={product}
-                                          viewMode={viewMode}
-                                    />
+                                    <div key={product._id} onClick={() => router.push(`/shop/product/${product._id}`)}>
+                                          <ProductCard product={product} viewMode={viewMode} />
+                                    </div>
                               ))}
                         </div>
                   )}

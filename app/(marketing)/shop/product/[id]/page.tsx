@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -15,29 +18,43 @@ import {
 } from "@tabler/icons-react";
 import { MOCK_PRODUCT_SINGLE } from "@/lib/store/cart-store";
 import { Rating } from "@/components/features/client/rating";
-
-// =================================================================
-// PRODUCT DETAIL PAGE COMPONENT (The main content)
-// =================================================================
+import { fetchSingleProduct } from "@/lib/mutations/product";
 
 const ProductDetailPage: React.FC<{ product: SingleProduct }> = ({ product }) => {
-      const [selectedColor, setSelectedColor] = useState<ProductColor>(product.variants.color[0]);
-      const [selectedSize, setSelectedSize] = useState<ProductSize>(product.variants.sizes[1]); // Default to Medium
+      const pathname = usePathname();
+      const productId = pathname.split("/")[pathname.split("/").length - 1];
+
+      // Make a query to the dtb to get the product details based on productId
+      const {
+            data: productData,
+            isLoading,
+            isError,
+      } = useQuery({
+            queryKey: ["product", productId],
+            queryFn: () => fetchSingleProduct(productId),
+      });
+
+      console.log("Product Data:", productData);
+
+      console.log("Images:", productData?.variations[0].imageURLs);
+      console.log("Colors:", productData?.variations[0].color);
+
+      const [selectedColor, setSelectedColor] = useState(productData?.variations[0].color);
       const [quantity, setQuantity] = useState<number>(1);
 
-      const priceClasses = product.originalPrice
-            ? "text-2xl text-gray-500 line-through font-normal"
-            : "text-3xl font-bold text-gray-900";
-      const displayPrice = product.originalPrice
-            ? `$${product.originalPrice.toFixed(2)}`
-            : `$${product.price.toFixed(2)}`;
-      const salePrice = product.originalPrice ? (
-            <span className="text-3xl font-bold text-red-600 ml-4">${product.price.toFixed(2)}</span>
-      ) : null;
+      // const priceClasses = product.variations[0].discount
+      //       ? "text-2xl text-gray-500 line-through font-normal"
+      //       : "text-3xl font-bold text-gray-900";
+      // const displayPrice = product.variations[0].discount
+      //       ? `$${product.variations[0].price.toFixed(2)}`
+      //       : `$${product.variations[0].price.toFixed(2)}`;
+      // const salePrice = product.variations[0].discount ? (
+      //       <span className="text-3xl font-bold text-red-600 ml-4">${product.variations[0].price.toFixed(2)}</span>
+      // ) : null;
 
       const handleAddToCart = () => {
             // Mock add to cart logic
-            const message = `Added ${quantity} x ${product.name} (Color: ${selectedColor.name}, Size: ${selectedSize}) to cart!`;
+            const message = `Added ${quantity} x ${product.name} (Color: ${selectedColor} )to cart!`;
             alert(message); // Using a mock alert, replace with UI toast/modal in a real app
       };
 
@@ -58,22 +75,23 @@ const ProductDetailPage: React.FC<{ product: SingleProduct }> = ({ product }) =>
                               {/* Column 1: Product Image Gallery */}
                               <div className="lg:sticky lg:top-8">
                                     <div className="aspect-4/5 bg-gray-100 rounded-2xl overflow-hidden shadow-xl border border-gray-100">
-                                          <img
-                                                src={product.imagePlaceholder}
+                                          <Image
+                                                src={product.variations[0].imageURLs[0]}
                                                 alt={product.name}
+                                                width={500}
+                                                height={500}
                                                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.03]"
-                                                onError={(e) =>
-                                                      (e.currentTarget.src =
-                                                            "https://placehold.co/800x1000/EEEEEE/333333?text=Product+Image")
-                                                }
                                           />
                                     </div>
                                     {/* Mock small gallery thumbnails */}
                                     <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
-                                          {[1, 2, 3].map((i) => (
-                                                <img
-                                                      key={i}
-                                                      src={`https://placehold.co/100x125/F3F4F6/9CA3AF?text=View+${i}`}
+                                          {product.variations.map((variation, i) => (
+                                                <Image
+                                                      key={variation._id}
+                                                      src={variation.imageURLs[0]}
+                                                      alt={product.name}
+                                                      width={500}
+                                                      height={500}
                                                       className={`w-20 h-24 object-cover rounded-xl border-2 cursor-pointer transition-all ${
                                                             i === 1
                                                                   ? "border-black"
@@ -95,13 +113,16 @@ const ProductDetailPage: React.FC<{ product: SingleProduct }> = ({ product }) =>
                                           </h1>
 
                                           <div className="flex items-baseline pt-2">
-                                                <span className={priceClasses}>{displayPrice}</span>
-                                                {salePrice}
+                                                {/* <span className={priceClasses}>{displayPrice}</span> */}
+                                                {new Intl.NumberFormat("en-NG", {
+                                                      style: "currency",
+                                                      currency: "NGN",
+                                                }).format(product.variations[0].price)}
                                           </div>
 
-                                          <div className="pt-2 flex items-center gap-4">
-                                                <Rating rating={product.reviews.rating} count={product.reviews.count} />
-                                          </div>
+                                          {/* <div className="pt-2 flex items-center gap-4">
+                                                  <Rating rating={product.reviews.rating} count={product.reviews.count} />
+                                            </div> */}
                                     </div>
 
                                     {/* Short Description */}
@@ -113,58 +134,60 @@ const ProductDetailPage: React.FC<{ product: SingleProduct }> = ({ product }) =>
                                     <div className="space-y-4">
                                           <h2 className="text-xl font-bold text-gray-800">
                                                 Color:{" "}
-                                                <span className="font-medium text-black">{selectedColor.name}</span>
+                                                <span className="font-medium text-black">
+                                                      {product.variations[0].color}
+                                                </span>
                                           </h2>
                                           <div className="flex flex-wrap gap-4">
-                                                {product.variants.color.map((color) => (
+                                                {product.variations.map((variation) => (
                                                       <div
-                                                            key={color.hex}
-                                                            onClick={() => setSelectedColor(color)}
+                                                            key={variation.color}
+                                                            // onClick={() => setSelectedColor(variation.color)}
                                                             style={{
-                                                                  backgroundColor: color.hex,
+                                                                  backgroundColor: variation.hexCode,
                                                                   borderColor:
-                                                                        color.hex === "#FFFFFF"
+                                                                        variation.hexCode === "#FFFFFF"
                                                                               ? "#e5e7eb"
                                                                               : "transparent",
                                                             }}
                                                             className={`w-12 h-12 rounded-full border-2 cursor-pointer transition-all duration-200 ${
-                                                                  selectedColor.hex === color.hex
+                                                                  selectedColor === variation.color
                                                                         ? "ring-4 ring-offset-2 ring-black shadow-md"
                                                                         : "hover:ring-2 ring-gray-400"
                                                             }`}
-                                                            title={color.name}
+                                                            title={variation.color}
                                                       />
                                                 ))}
                                           </div>
                                     </div>
 
                                     {/* Size Selector */}
-                                    <div className="space-y-4">
-                                          <h2 className="text-xl font-bold text-gray-800">
-                                                Size: <span className="font-medium text-black">{selectedSize}</span>
-                                          </h2>
-                                          <div className="flex flex-wrap gap-3">
-                                                {product.variants.sizes.map((size) => (
-                                                      <Button
-                                                            key={size}
-                                                            variant={selectedSize === size ? "default" : "outline"}
-                                                            className={`h-11 w-16 text-sm font-bold ${
-                                                                  selectedSize === size
-                                                                        ? "bg-black text-white"
-                                                                        : "bg-white hover:bg-gray-100"
-                                                            }`}
-                                                            onClick={() => setSelectedSize(size)}
-                                                      >
-                                                            {size}
-                                                      </Button>
-                                                ))}
-                                          </div>
-                                          <p className="text-sm text-gray-500 hover:underline cursor-pointer">
-                                                Size Guide
-                                          </p>
-                                    </div>
+                                    {/* <div className="space-y-4">
+                                            <h2 className="text-xl font-bold text-gray-800">
+                                                  Size: <span className="font-medium text-black">{selectedSize}</span>
+                                            </h2>
+                                            <div className="flex flex-wrap gap-3">
+                                                  {product.variants.sizes.map((size) => (
+                                                        <Button
+                                                              key={size}
+                                                              variant={selectedSize === size ? "default" : "outline"}
+                                                              className={`h-11 w-16 text-sm font-bold ${
+                                                                    selectedSize === size
+                                                                          ? "bg-black text-white"
+                                                                          : "bg-white hover:bg-gray-100"
+                                                              }`}
+                                                              onClick={() => setSelectedSize(size)}
+                                                        >
+                                                              {size}
+                                                        </Button>
+                                                  ))}
+                                            </div>
+                                            <p className="text-sm text-gray-500 hover:underline cursor-pointer">
+                                                  Size Guide
+                                            </p>
+                                      </div>
 
-                                    <Separator />
+                                      <Separator /> */}
 
                                     {/* Add to Cart Section */}
                                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -221,7 +244,7 @@ const ProductDetailPage: React.FC<{ product: SingleProduct }> = ({ product }) =>
                                           <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
                                                 Product Details
                                           </h2>
-                                          <p className="text-gray-700 leading-relaxed">{product.longDescription}</p>
+                                          <p className="text-gray-700 leading-relaxed">{product.description}</p>
                                     </div>
 
                                     {/* Materials Section (Requested Detail) */}

@@ -2,6 +2,7 @@
 import { FilterState } from "@/hooks/useFilterManagement";
 import { Product } from "../types"; // Import the defined type
 import { ProductParams } from "../types";
+import { usePathname } from "next/navigation";
 
 // Use a *public* environment variable for client-side API calls
 // Next.js convention requires NEXT_PUBLIC_ prefix for client-side use
@@ -38,4 +39,23 @@ export const fetchProducts = async (params: FilterState): Promise<Product[]> => 
       const products: Product[] = await response.json();
 
       return products;
+};
+
+/*
+ * Fetch function for retrieving a single product.
+ * @returns A promise that resolves to a single Product.
+ */
+export const fetchSingleProduct = async (productId: string): Promise<Product> => {
+      const response = await fetch(`${BASE_URL}/api/products/${productId}`);
+
+      if (!response.ok) {
+            // Throw a custom error with the status code
+            const errorDetail = await response.text();
+            throw new FetchError(`Failed to fetch product (${response.status}): ${errorDetail}`, response.status);
+      }
+
+      // Explicitly cast the result to the desired type
+      const product: Product = await response.json();
+
+      return product;
 };
