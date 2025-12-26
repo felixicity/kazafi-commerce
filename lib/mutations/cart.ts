@@ -47,3 +47,18 @@ export const updateCartItemQuantity = async ({
 
       return response.json();
 };
+
+export const addItemToCart = async (item: CartItem): Promise<void> => {
+      const response = await fetch(`${CART_API_URL}/add`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(item),
+      });
+
+      if (!response.ok) {
+            throw new Error(`Failed to add item to cart: ${response.statusText}`);
+      }
+
+      return response.json();
+};

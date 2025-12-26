@@ -37,12 +37,8 @@ const products = [
       },
 ];
 export default function Page() {
-      const [openCart, setOpenCart] = useState(false);
       return (
             <div>
-                  <header>
-                        <Navigation openCart={openCart} setOpenCart={setOpenCart} />
-                  </header>
                   <main className="relative">
                         <section>
                               <Card className="mx-5 my-1  gap-1 bg-black text-white lg:mx-20 lg:gap-2">

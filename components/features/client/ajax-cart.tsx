@@ -28,14 +28,11 @@ export default function AjaxCartSheet() {
       // 2. Derive State
       const items: CartItem[] = data?.cart?.items || [];
 
-      const subtotal = items.reduce((acc, item) => acc + (item.variation?.price || 0) * item.quantity, 0);
+      const subtotal = new Intl.NumberFormat("en-NG", {
+            style: "currency",
+            currency: "NGN",
+      }).format(items.reduce((acc, item) => acc + (item.variation?.price || 0) * item.quantity, 0));
       const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
-
-      // 3. Handle Loading and Error States
-      //   if (isLoading) {
-      // Optionally, you can show a smaller loader inside the button or a skeletal view here
-      // For now, let's proceed with showing the button and fetching logic will handle the cart content
-      //   }
 
       if (error) {
             console.error("Error fetching cart data:", error);
@@ -94,7 +91,7 @@ export default function AjaxCartSheet() {
                                           </div>
                                           <div className="flex justify-between font-bold text-lg">
                                                 <span>Total</span>
-                                                <span>${subtotal.toFixed(2)}</span>
+                                                <span>{subtotal}</span>
                                           </div>
                                     </div>
 

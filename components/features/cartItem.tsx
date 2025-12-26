@@ -79,8 +79,14 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item }) => {
                   ? item.variation?.imageURLs[0]
                   : "/placeholder-image.png";
       const productName = item.product?.name || "Unknown Product";
-      const itemPrice = item.variation?.price || 0;
-      const subtotal = (itemPrice * currentQuantity).toFixed(2);
+      const itemPrice = new Intl.NumberFormat("en-NG", {
+            style: "currency",
+            currency: "NGN",
+      }).format(item.variation?.price || 0);
+      const subtotal = new Intl.NumberFormat("en-NG", {
+            style: "currency",
+            currency: "NGN",
+      }).format(item.variation?.price || 0 * currentQuantity);
 
       const handleUpdate = (delta: number) => {
             // You might add checks here (e.g., if delta is -1 and quantity is 1, maybe call a removal mutation instead)
@@ -122,7 +128,7 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item }) => {
                         {/* Name and Price */}
                         <div className="flex justify-between">
                               <h3 className="font-medium text-sm">{productName}</h3>
-                              <p className="font-bold text-sm">${subtotal}</p>
+                              <p className="font-bold text-sm">{subtotal}</p>
                         </div>
 
                         {/* Quantity Controls and Remove Button */}
