@@ -1,6 +1,7 @@
 // AjaxCartSheet.tsx (The main component)
 "use client";
 
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { IconShoppingBag, IconLoader } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ import { CartItem } from "../../../lib/types"; // Use the types
 
 export default function AjaxCartSheet() {
       // 1. Fetch Cart Data
-      const { data, error, isFetching, isLoading } = useQuery({
+      const { data, error, isLoading } = useQuery({
             queryKey: ["cart"],
             queryFn: fetchCartItems,
       });
@@ -33,6 +34,7 @@ export default function AjaxCartSheet() {
             currency: "NGN",
       }).format(items.reduce((acc, item) => acc + (item.variation?.price || 0) * item.quantity, 0));
       const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+      const uniqueItemsCount = items.length;
 
       if (error) {
             console.error("Error fetching cart data:", error);
@@ -96,10 +98,23 @@ export default function AjaxCartSheet() {
                                     </div>
 
                                     <SheetClose asChild>
-                                          <Button className="w-full bg-[#5a31f4] hover:bg-[#4c29cc] transition-colors rounded-md py-3 flex items-center justify-center shadow-sm h-auto">
-                                                Checkout
+                                          <Button
+                                                asChild
+                                                className="w-full bg-[#5a31f4] hover:bg-[#4c29cc] transition-colors rounded-md py-3 flex items-center justify-center shadow-sm h-auto"
+                                          >
+                                                <Link href="/checkout"> Checkout</Link>
                                           </Button>
                                     </SheetClose>
+                                    {uniqueItemsCount > 2 && (
+                                          <SheetClose asChild>
+                                                <Button
+                                                      asChild
+                                                      className="w-full bg-black hover:bg-transparent hover:border-black hover:border-2 hover:text-black transition-colors rounded-md py-3 flex items-center justify-center shadow-sm h-auto"
+                                                >
+                                                      <Link href="/cart"> View cart</Link>
+                                                </Button>
+                                          </SheetClose>
+                                    )}
                               </SheetFooter>
                         )}
                   </SheetContent>

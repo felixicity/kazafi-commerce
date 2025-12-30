@@ -15,11 +15,6 @@ const navItems = [
 ];
 
 export function Navigation({ openCart, setOpenCart }: { openCart: boolean; setOpenCart: (open: boolean) => void }) {
-      //   const showCart = () => {
-      //         // Implement cart display logic here
-      //         setOpenCart(!openCart);
-      //   };
-
       return (
             <header className="bg-background pt-2 sticky top-0 z-50 w-full">
                   <div className="mx-auto 3xl:fixed:px-0 lg:px-18">

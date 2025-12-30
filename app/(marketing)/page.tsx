@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Navigation } from "@/components/features/client/navigation";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { ItemDemo } from "@/components/features/item-profile-example";
 import { Item, ItemContent, ItemDescription, ItemTitle, ItemActions } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,9 +35,12 @@ const products = [
             image: "/images/alausa-sofas-39870436081886-Photoroom.png",
       },
 ];
+
 export default function Page() {
+      const [openCart, setOpenCart] = useState(false);
       return (
             <div>
+                  <Navigation openCart={openCart} setOpenCart={setOpenCart} />
                   <main className="relative">
                         <section>
                               <Card className="mx-5 my-1  gap-1 bg-black text-white lg:mx-20 lg:gap-2">

@@ -1,7 +1,7 @@
+const API_URL = process.env.EXPRESS_API_INTERNAL_URL || "http://localhost:5000";
+
 // Function to handle the POST request to your Express API
 export const createLoginMutation = async (newLoginData: { email: string; password: string }) => {
-      const API_URL = process.env.EXPRESS_API_INTERNAL_URL || "http://localhost:5000";
-
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
       const response = await fetch(`${API_URL}/api/users/login`, {
@@ -22,8 +22,6 @@ export const createLoginMutation = async (newLoginData: { email: string; passwor
 };
 
 export const createSignUpMutation = async (newSignUpData: { email: string; password: string }) => {
-      const API_URL = process.env.EXPRESS_API_INTERNAL_URL || "http://localhost:5000";
-
       const response = await fetch(`${API_URL}/api/users/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -37,5 +35,55 @@ export const createSignUpMutation = async (newSignUpData: { email: string; passw
       }
 
       // Return the data returned by your Express API (e.g., the newly created product)
+      return response.json();
+};
+
+export const fetchUserDetails = async () => {
+      const response = await fetch(`${API_URL}/api/users/profile`, {
+            method: "GET",
+            credentials: "include",
+      });
+      if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || "Failed to fetch user details.");
+      }
+      return response.json();
+};
+
+export const logoutUser = async () => {
+      const response = await fetch(`${API_URL}/api/users/logout`, {
+            method: "POST",
+            credentials: "include",
+      });
+      if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || "Failed to logout user.");
+      }
+      return response.json();
+};
+
+export const addUserAddress = async (address: {
+      name: string;
+      phone: string;
+      street: string;
+      city: string;
+      state: string;
+      postCode: string;
+      country: string;
+}) => {
+      console.log("addressData :", address);
+
+      const response = await fetch(`${API_URL}/api/users/addresses`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(address),
+            credentials: "include",
+      });
+
+      if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || "Failed to add address.");
+      }
+
       return response.json();
 };

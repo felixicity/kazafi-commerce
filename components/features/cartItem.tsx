@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IconTrash, IconPlus, IconMinus, IconLoader } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { CartItem } from "../../lib/types";
-import { updateCartItemQuantity } from "../../lib/mutations/cart"; // Import the mutation function
+import { updateCartItemQuantity, removeCartItem } from "../../lib/mutations/cart"; // Import the mutation function
 import Image from "next/image";
 
 interface CartItemProps {
@@ -39,12 +39,57 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item }) => {
                               .map((cartItem: CartItem) => {
                                     if (cartItem.variation._id === itemId) {
                                           // Apply the delta to the quantity
-                                          return { ...cartItem, quantity: Math.max(0, cartItem.quantity + quantity) };
+                                          return { ...cartItem, quantity: cartItem.quantity + quantity };
                                     }
                                     return cartItem;
                               })
                               // Filter out items where quantity is 0 (or less, but Math.max prevents less than 0)
                               .filter((cartItem: CartItem) => cartItem.quantity > 0);
+
+                        return {
+                              ...oldData,
+                              cart: {
+                                    ...oldData.cart,
+                                    items: updatedItems,
+                              },
+                        };
+                  });
+
+                  // Return a context object with the snapshot value
+                  return { previousCart };
+            },
+
+            // If the mutation fails, use the context returned from onMutate to roll back
+            onError: (err, newTodo, context) => {
+                  queryClient.setQueryData(["cart"], context?.previousCart);
+                  console.error("Failed to update cart quantity:", err);
+                  // Optionally: show a toast/notification
+            },
+
+            // Always re-fetch after error or success to ensure client state matches server state
+            onSettled: () => {
+                  queryClient.invalidateQueries({ queryKey: ["cart"] });
+            },
+      });
+
+      const { mutate: removeItemMutation } = useMutation({
+            mutationFn: () => removeCartItem(itemId),
+
+            // --- Optimistic Update ---
+            onMutate: async ({ itemId }) => {
+                  // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+                  await queryClient.cancelQueries({ queryKey: ["cart"] });
+
+                  // Snapshot the previous value
+                  const previousCart: any = queryClient.getQueryData(["cart"]);
+
+                  // Optimistically update the cart data
+                  queryClient.setQueryData(["cart"], (oldData: any) => {
+                        if (!oldData) return oldData;
+
+                        const updatedItems = oldData.cart.items.filter(
+                              (cartItem: CartItem) => cartItem.variation._id !== itemId
+                        );
 
                         return {
                               ...oldData,
@@ -91,28 +136,24 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item }) => {
       const handleUpdate = (delta: number) => {
             // You might add checks here (e.g., if delta is -1 and quantity is 1, maybe call a removal mutation instead)
             let quantity = currentQuantity;
-            console.log("delta:", delta);
-            console.log("quantity:", quantity);
+
             if (delta === 0) return;
             if (delta === -1 && quantity > 1) {
                   quantity -= 1;
-                  console.log("quantityMinus:", quantity);
                   return mutate({ itemId, quantity });
             }
             if (delta === 1) {
                   quantity += 1;
-                  console.log("quantityPlus:", quantity);
                   return mutate({ itemId, quantity });
             }
             if (delta === -1 && quantity === 1) {
-                  return mutate({ itemId, delta: quantity });
+                  return;
             }
       };
 
       const handleRemove = () => {
-            // Pass a large delta to ensure removal based on your logic, or a specific delete API call
-            // For simplicity, we use the update function with a large delta.
-            handleUpdate(-item.quantity);
+            // remove an item from the cart
+            return removeItemMutation(itemId);
       };
 
       // Loading state logic

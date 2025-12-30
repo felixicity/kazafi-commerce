@@ -62,3 +62,16 @@ export const addItemToCart = async (item: CartItem): Promise<void> => {
 
       return response.json();
 };
+
+export const removeCartItem = async (itemId: string): Promise<void> => {
+      const response = await fetch(`${CART_API_URL}/remove/${itemId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+      });
+
+      if (!response.ok) {
+            throw new Error(`Failed to add item to cart: ${response.statusText}`);
+      }
+      return response.json();
+};

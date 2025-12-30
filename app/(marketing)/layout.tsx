@@ -8,12 +8,5 @@ export default function RootLayout({
 }: Readonly<{
       children: React.ReactNode;
 }>) {
-      const [openCart, setOpenCart] = useState(false);
-      return (
-            <div>
-                  {/* Navigation Bar */}
-                  <Navigation openCart={openCart} setOpenCart={setOpenCart} />
-                  {children}
-            </div>
-      );
+      return <div>{children}</div>;
 }
