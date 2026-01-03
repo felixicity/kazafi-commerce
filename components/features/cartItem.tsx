@@ -131,7 +131,7 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item }) => {
       const subtotal = new Intl.NumberFormat("en-NG", {
             style: "currency",
             currency: "NGN",
-      }).format(item.variation?.price || 0 * currentQuantity);
+      }).format(item.variation?.price * currentQuantity || 0);
 
       const handleUpdate = (delta: number) => {
             // You might add checks here (e.g., if delta is -1 and quantity is 1, maybe call a removal mutation instead)
@@ -140,11 +140,13 @@ const CartItemComponent: React.FC<CartItemProps> = ({ item }) => {
             if (delta === 0) return;
             if (delta === -1 && quantity > 1) {
                   quantity -= 1;
-                  return mutate({ itemId, quantity });
+                  mutate({ itemId, quantity });
+                  return;
             }
             if (delta === 1) {
                   quantity += 1;
-                  return mutate({ itemId, quantity });
+                  mutate({ itemId, quantity });
+                  return;
             }
             if (delta === -1 && quantity === 1) {
                   return;

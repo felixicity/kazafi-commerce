@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addUserAddress } from "@/lib/mutations/users";
 import { fetchCartItems } from "../../../lib/mutations/cart"; // Abstracted fetcher
@@ -17,8 +18,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { fetchUserDetails } from "@/lib/mutations/users";
 import { AddressConfirmationDialog } from "@/components/features/address-confirmation-dialog";
 import { createPaymentIntent } from "@/lib/mutations/payment";
-import { createOrder } from "@/lib/mutations/order";
+import { createOrder, pollingInterval } from "@/lib/mutations/order";
 import { count } from "console";
+import { nullish } from "zod";
+import { Spinner } from "@/components/ui/spinner";
 
 const initialShippingOptions: PaymentShippingOption[] = [];
 
@@ -99,21 +102,33 @@ const CheckoutPage: React.FC = () => {
 
       const queryClient = useQueryClient();
 
-      const { mutate: saveAddressMutation, error: saveAddressError } = useMutation({
+      const {
+            mutate: saveAddressMutation,
+            isPending,
+            error: saveAddressError,
+      } = useMutation({
             mutationFn: addUserAddress,
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["user"] });
             },
       });
 
-      const { mutate: orderMutation, error: orderError } = useMutation({
+      const {
+            mutateAsync: orderMutation,
+            isPending: orderPlacementIsPending,
+            error: orderError,
+      } = useMutation({
             mutationFn: createOrder,
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["orders"] });
             },
       });
 
-      const { mutate: PaymentMutation, error: paymentError } = useMutation({
+      const {
+            mutateAsync: PaymentMutation,
+            isPending: paymentProcessisPending,
+            error: paymentError,
+      } = useMutation({
             mutationFn: createPaymentIntent,
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["payments"] });
@@ -152,7 +167,7 @@ const CheckoutPage: React.FC = () => {
             currency: "NGN",
       }).format(cartItems.reduce((acc, item) => acc + (item.variation?.price || 0) * item.quantity, 0));
 
-      function handleSubmit(e: HTMLFormElement) {
+      async function handleSubmit(e: HTMLFormElement) {
             e.preventDefault();
             // If there's no address, collect form data and save it
             let newAddress = null;
@@ -173,9 +188,13 @@ const CheckoutPage: React.FC = () => {
                   saveAddressMutation(addressData);
             }
 
-            const res = orderMutation(address || newAddress);
-            console.log("order res:", res);
-            // PaymentMutation(address);
+            const res = await orderMutation(newAddress || fullAddress);
+
+            const payment = await PaymentMutation({ orderId: res.order._id, provider: "paystack" });
+
+            if (payment) {
+                  window.location.href = payment.paymentUrl;
+            }
       }
 
       const handleLocationChange = (e) => {
@@ -440,7 +459,12 @@ const CheckoutPage: React.FC = () => {
                                                 type="submit"
                                                 className="w-full bg-black hover:bg-gray-800 text-white font-medium py-4 rounded-md shadow-lg transition-transform active:scale-[0.99] h-auto"
                                           >
-                                                Pay now
+                                                Pay now {subtotal}{" "}
+                                                {paymentProcessisPending || orderPlacementIsPending || isPending ? (
+                                                      <Spinner />
+                                                ) : (
+                                                      ""
+                                                )}
                                           </Button>
 
                                           <div className="text-xs text-gray-500 leading-relaxed">

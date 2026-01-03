@@ -10,9 +10,6 @@ import { SingleProductPage } from "./single-product";
 const SingleProductRoute: React.FC<{ product: SingleProduct }> = () => {
       const params = useParams();
       const productId = params.id as string; // Ensure this matches your [productId] folder name
-      //   const pathname = usePathname();
-      //   const productId = pathname.split("/")[pathname.split("/").length - 1];
-      console.log("productId:", productId);
 
       // Make a query to the dtb to get the product details based on productId
       const {
@@ -28,16 +25,9 @@ const SingleProductRoute: React.FC<{ product: SingleProduct }> = () => {
 
       console.log("Fetched product data:", product);
 
-      const [selectedColor, setSelectedColor] = useState<string>("");
-      const [selectedSize, setSelectedSize] = useState<string>("");
+      const [selectedColor, setSelectedColor] = useState<string>(product?.variations[0]?.color || "");
+      const [selectedSize, setSelectedSize] = useState<string>(product?.variations[0]?.size || "M");
       const [quantity, setQuantity] = useState<number>(1);
-
-      useEffect(() => {
-            if (product?.variations?.length > 0) {
-                  setSelectedColor(product.variations[0].color);
-                  setSelectedSize(product.variations[0].size || "M");
-            }
-      }, [product]);
 
       if (isError) {
             console.error("Error fetching product:", error);
@@ -64,15 +54,15 @@ const SingleProductRoute: React.FC<{ product: SingleProduct }> = () => {
             );
       }
 
-      const priceClasses = product.variations[0].discount
-            ? "text-2xl text-gray-500 line-through font-normal"
-            : "text-3xl font-bold text-gray-900";
-      const displayPrice = product.variations[0].discount
-            ? `$${product.variations[0].price.toFixed(2)}`
-            : `$${product.variations[0].price.toFixed(2)}`;
-      const salePrice = product.variations[0].discount ? (
-            <span className="text-3xl font-bold text-red-600 ml-4">${product.variations[0].price.toFixed(2)}</span>
-      ) : null;
+      //   const priceClasses = product.variations[0].discount
+      //         ? "text-2xl text-gray-500 line-through font-normal"
+      //         : "text-3xl font-bold text-gray-900";
+      //   const displayPrice = product.variations[0].discount
+      //         ? `$${product.variations[0].price.toFixed(2)}`
+      //         : `$${product.variations[0].price.toFixed(2)}`;
+      //   const salePrice = product.variations[0].discount ? (
+      //         <span className="text-3xl font-bold text-red-600 ml-4">${product.variations[0].price.toFixed(2)}</span>
+      //   ) : null;
 
       return (
             <div className="min-h-screen sm:p-12">

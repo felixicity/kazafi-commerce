@@ -4,7 +4,7 @@ export const createOrder = async (address: string) => {
       const response = await fetch(`${API_URL}/api/orders`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(address),
+            body: JSON.stringify({ address }),
             credentials: "include",
       });
 
@@ -13,5 +13,18 @@ export const createOrder = async (address: string) => {
             throw new Error(errorBody.message || "Failed to add address.");
       }
 
+      return response.json();
+};
+
+export const getRecentOrders = async () => {
+      const response = await fetch(`${API_URL}/api/orders`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+      });
+      if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || "Failed to fetch orders.");
+      }
       return response.json();
 };

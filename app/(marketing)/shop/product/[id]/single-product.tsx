@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { Product } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -60,11 +61,6 @@ export function SingleProductPage({
             );
       }
 
-      if (isSuccess) {
-            const message = `Added ${quantity} x ${product.name} - ${selectedColor} added to cart sucessfully!`;
-            alert(message);
-      }
-
       const productImageURL =
             product.variations.filter((variation) => variation.color === selectedColor)[0]?.imageURLs[0] ||
             product.variations[0].imageURLs[0];
@@ -74,6 +70,7 @@ export function SingleProductPage({
 
       return (
             <div className="max-w-7xl mx-auto p-6 sm:p-10 lg:py-12">
+                  {isSuccess && toast.success(`Item added to cart successfully!`)}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
                         {/* Column 1: Product Image Gallery */}
                         <div className="lg:sticky lg:top-8">
