@@ -35,3 +35,16 @@ export async function checkPaymentStatus(reference: string) {
             console.error("Error checking status:", error);
       }
 }
+
+export const getAllPayments = async () => {
+      const response = await fetch(`${API_URL}/api/payments/admin/payments`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+      });
+      if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || "Failed to fetch payments.");
+      }
+      return response.json();
+};

@@ -18,7 +18,7 @@ export function DashboardWrapper({
 
       const handleNavClick = (section: DashboardSection) => {
             setActiveSection(section);
-            router.push(`./${section}`);
+            router.push(`/dashboard/${section}`);
       };
 
       return (

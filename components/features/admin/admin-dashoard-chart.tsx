@@ -54,7 +54,7 @@ const chartConfig = {
       },
 } satisfies ChartConfig;
 
-export function RevenueChart() {
+export function RevenueChart({ totalOrders, paymentsData }: { totalOrders: number; paymentsData: string }) {
       const currentTotal = revenueData.reduce((sum, item) => sum + item.currentRevenue, 0);
       const formattedTotal = new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(
             currentTotal
@@ -66,7 +66,7 @@ export function RevenueChart() {
 
       return (
             <Card className="col-span-4 shadow-lg p-4">
-                  <SectionCards />
+                  <SectionCards totalOrders={totalOrders} paymentsData={paymentsData} />
                   <CardHeader className="px-0">
                         <CardTitle>Total Revenue Trend (Last 30 Days)</CardTitle>
                         <div className="flex items-baseline space-x-2">

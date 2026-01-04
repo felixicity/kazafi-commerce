@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addUserAddress } from "@/lib/mutations/users";
 import { fetchCartItems } from "../../../lib/mutations/cart"; // Abstracted fetcher
 import Link from "next/link";
-import { MobileOrderSummaryToggle, SelectField, FormField, OrderSummary } from "./mobile-summary";
+import { MobileOrderSummaryToggle } from "./mobile-summary";
+import { SelectField, FormField } from "@/components/features/client/checkout-form-feilds";
+import OrderSummary from "@/components/features/client/order-summary";
 import { Lock, HelpCircle } from "lucide-react";
 
 // Shadcn/ui Imports (assuming these are available under the specified paths)
@@ -18,9 +19,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { fetchUserDetails } from "@/lib/mutations/users";
 import { AddressConfirmationDialog } from "@/components/features/address-confirmation-dialog";
 import { createPaymentIntent } from "@/lib/mutations/payment";
-import { createOrder, pollingInterval } from "@/lib/mutations/order";
-import { count } from "console";
-import { nullish } from "zod";
+import { createOrder } from "@/lib/mutations/order";
 import { Spinner } from "@/components/ui/spinner";
 
 const initialShippingOptions: PaymentShippingOption[] = [];
@@ -216,278 +215,297 @@ const CheckoutPage: React.FC = () => {
                   >
                         <OrderSummary cartItems={cartItems} subtotal={subtotal} />
                   </MobileOrderSummaryToggle>
-                  <form
-                        className="min-h-screen bg-white font-sans text-gray-900 flex flex-col lg:flex-row"
-                        onSubmit={(e) => handleSubmit(e)}
-                  >
-                        {/* Address Confirmation Dialog */}
+                  <div className="flex justify-between">
+                        <form
+                              className="min-h-screen bg-white font-sans text-gray-900 lg:flex-row flex-1 flex flex-col items-center lg:ml-16 pt-8 pb-12 px-4 sm:px-6 lg:px-8 lg:pt-12 order-2 lg:order-1 border-r border-gray-200"
+                              onSubmit={(e) => handleSubmit(e)}
+                        >
+                              {/* Address Confirmation Dialog */}
 
-                        {address && (
-                              <AddressConfirmationDialog
-                                    addressConfirmOpen={addressConfirmOpen}
-                                    setAddressConfirmOpen={setAddressConfirmOpen}
-                                    setDefaultAddress={setDefaultAddress}
-                                    fullAddress={fullAddress}
-                              />
-                        )}
+                              {address && (
+                                    <AddressConfirmationDialog
+                                          addressConfirmOpen={addressConfirmOpen}
+                                          setAddressConfirmOpen={setAddressConfirmOpen}
+                                          setDefaultAddress={setDefaultAddress}
+                                          fullAddress={fullAddress}
+                                    />
+                              )}
 
-                        {/* Left Column: Form Section */}
-                        <div className="flex-1 flex flex-col items-center pt-8 pb-12 px-4 sm:px-6 lg:px-8 lg:pt-12 order-2 lg:order-1 border-r border-gray-200">
-                              <div className="w-full max-w-lg space-y-8">
-                                    {/* Desktop Header */}
-                                    <div className="hidden lg:block mb-8">
-                                          <h1 className="text-3xl font-black tracking-tighter">Kazafi</h1>
-                                    </div>
-
-                                    {/* Contact Section */}
-                                    {!userData && (
-                                          <FieldGroup className="gap-1">
-                                                <div className="flex justify-between items-center mb-8">
-                                                      <FieldTitle className="text-lg font-medium">Contact</FieldTitle>
-                                                      <Link href="#" className="text-sm text-blue-600 hover:underline">
-                                                            Log in
-                                                      </Link>
-                                                </div>
-                                                <div className="space-y-3">
-                                                      <FormField
-                                                            id="email"
-                                                            name="email"
-                                                            placeholder="Email or mobile phone number"
-                                                            type="email"
-                                                      />
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                      <Checkbox
-                                                            id="newsletter"
-                                                            className="border-gray-300 data-[state=checked]:bg-black data-[state=checked]:text-white"
-                                                      />
-                                                      <FieldLabel
-                                                            htmlFor="newsletter"
-                                                            className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                      >
-                                                            Email me with news and offers
-                                                      </FieldLabel>
-                                                </div>
-                                                {/* <FieldError>No email</FieldError> */}
-                                          </FieldGroup>
-                                    )}
-
-                                    {defaultAddress && (
-                                          <div>
-                                                <h4 className="">{fullAddress} </h4>
-                                                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md text-sm text-green-800">
-                                                      This address will be used for this order.
-                                                </div>
+                              {/* Left Column: Form Section */}
+                              <div>
+                                    <div className="w-full max-w-lg space-y-8">
+                                          {/* Desktop Header */}
+                                          <div className="hidden lg:block mb-8">
+                                                <h1 className="text-3xl font-black tracking-tighter">Kazafi</h1>
                                           </div>
-                                    )}
 
-                                    {/* Delivery Section */}
-
-                                    {!defaultAddress && (
-                                          <FieldGroup className="gap-1">
-                                                <FieldTitle className="text-lg font-medium mb-4 mt-4">
-                                                      Address Information
-                                                </FieldTitle>
-                                                <div className="space-y-3">
-                                                      <SelectField
-                                                            id="country"
-                                                            label="Country/Region"
-                                                            options={["Nigeria", "Ghana", "Benin Republic"]}
-                                                            name="country"
-                                                      />
-
-                                                      <div className="grid grid-cols-2 gap-3">
+                                          {/* Contact Section */}
+                                          {!userData && (
+                                                <FieldGroup className="gap-1">
+                                                      <div className="flex justify-between items-center mb-8">
+                                                            <FieldTitle className="text-lg font-medium">
+                                                                  Contact
+                                                            </FieldTitle>
+                                                            <Link
+                                                                  href="#"
+                                                                  className="text-sm text-blue-600 hover:underline"
+                                                            >
+                                                                  Log in
+                                                            </Link>
+                                                      </div>
+                                                      <div className="space-y-3">
                                                             <FormField
-                                                                  id="firstName"
-                                                                  name="firstname"
-                                                                  placeholder="First name (optional)"
-                                                            />
-                                                            <FormField
-                                                                  id="lastName"
-                                                                  placeholder="Last name"
-                                                                  name="lastname"
-                                                                  required
+                                                                  id="email"
+                                                                  name="email"
+                                                                  placeholder="Email or mobile phone number"
+                                                                  type="email"
                                                             />
                                                       </div>
-
-                                                      <FormField
-                                                            id="street"
-                                                            name="street"
-                                                            placeholder="Address"
-                                                            type="text"
-                                                            required
-                                                      />
-
-                                                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                                            <FormField
-                                                                  id="city"
-                                                                  placeholder="City"
-                                                                  type="text"
-                                                                  name="city"
-                                                                  className="sm:col-span-1"
-                                                                  onMouseLeave={(e) => handleLocationChange(e)}
-                                                                  required
-                                                            />
-                                                            <FormField
-                                                                  id="zip"
-                                                                  name="Postcode"
-                                                                  placeholder="Postcode"
-                                                                  type="text"
-                                                                  className="sm:col-span-1"
-                                                            />
-                                                      </div>
-
-                                                      <FormField
-                                                            id="phone"
-                                                            placeholder="Phone"
-                                                            type="tel"
-                                                            name="phone"
-                                                            icon={<HelpCircle size={16} />}
-                                                      />
-                                                </div>
-                                                {/* <FieldError></FieldError> */}
-                                          </FieldGroup>
-                                    )}
-                                    {/* Shipping Method Placeholder */}
-
-                                    <FieldGroup className="mt-8">
-                                          <FieldTitle className="text-lg font-medium mb-4">Shipping method</FieldTitle>
-                                          <FieldDescription className="bg-gray-50 rounded-md p-4 text-sm text-gray-500 flex items-center justify-center text-center">
-                                                {availableOptions.length > 0
-                                                      ? "Pick an option for shipping method"
-                                                      : "Enter your shipping address to view available shipping methods."}
-                                          </FieldDescription>
-                                          <RadioGroup
-                                                defaultValue="delivery"
-                                                // onValueChange={(value) => console.log(value)}
-                                                name="shippingOption"
-                                          >
-                                                <div className="grid grid-cols-2 gap-8">
-                                                      {availableOptions.length > 0 &&
-                                                            availableOptions.map((option) => (
-                                                                  <FieldLabel htmlFor={option.label} key={option.id}>
-                                                                        <Field orientation="horizontal">
-                                                                              <FieldContent>
-                                                                                    <FieldTitle>
-                                                                                          <RadioGroupItem
-                                                                                                value={option.label}
-                                                                                                id={option.label}
-                                                                                                aria-label={
-                                                                                                      option.label
-                                                                                                }
-                                                                                          />
-                                                                                          {option.label}
-                                                                                    </FieldTitle>
-
-                                                                                    <FieldDescription className="my-3">
-                                                                                          {option.estimatedDeliveryTime}
-                                                                                    </FieldDescription>
-
-                                                                                    <h3>
-                                                                                          {new Intl.NumberFormat(
-                                                                                                "en-NG",
-                                                                                                {
-                                                                                                      style: "currency",
-                                                                                                      currency: option
-                                                                                                            .amount
-                                                                                                            .currency,
-                                                                                                }
-                                                                                          ).format(
-                                                                                                Number(
-                                                                                                      option.amount
-                                                                                                            .value
-                                                                                                )
-                                                                                          )}
-                                                                                    </h3>
-                                                                              </FieldContent>
-                                                                        </Field>
-                                                                  </FieldLabel>
-                                                            ))}
-                                                </div>
-                                          </RadioGroup>
-                                    </FieldGroup>
-
-                                    {/* Remember Me */}
-                                    {!userData && (
-                                          <FieldGroup className="mt-8">
-                                                <h2 className="text-lg font-medium mb-4">Remember me</h2>
-                                                <div className="border border-gray-200 rounded-md p-4 space-y-4">
                                                       <div className="flex items-center gap-2">
                                                             <Checkbox
-                                                                  id="remember"
+                                                                  id="newsletter"
                                                                   className="border-gray-300 data-[state=checked]:bg-black data-[state=checked]:text-white"
                                                             />
                                                             <FieldLabel
-                                                                  htmlFor="remember"
+                                                                  htmlFor="newsletter"
                                                                   className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                                             >
-                                                                  Save my information for a faster checkout with a
-                                                                  Kazafi account
+                                                                  Email me with news and offers
                                                             </FieldLabel>
                                                       </div>
+                                                      {/* <FieldError>No email</FieldError> */}
+                                                </FieldGroup>
+                                          )}
 
-                                                      <div className="space-y-3 pt-2">
-                                                            <FormField
-                                                                  id="shop-fname"
-                                                                  placeholder="First name"
-                                                                  type="text"
-                                                            />
-                                                            <FormField
-                                                                  id="shop-phone"
-                                                                  placeholder="Mobile phone number"
-                                                                  type="tel"
-                                                            />
+                                          {defaultAddress && (
+                                                <div>
+                                                      <h4 className="">{fullAddress} </h4>
+                                                      <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md text-sm text-green-800">
+                                                            This address will be used for this order.
                                                       </div>
                                                 </div>
+                                          )}
 
-                                                <div className="mt-4 flex items-center justify-center gap-1 text-xs text-gray-400">
-                                                      <Lock size={10} />
-                                                      <span>Secure and encrypted</span>
-                                                </div>
+                                          {/* Delivery Section */}
 
-                                                <div className="flex justify-end mt-1">
-                                                      <span className="font-black italic text-gray-400 text-xs tracking-tight">
-                                                            kazafi
-                                                      </span>
-                                                </div>
+                                          {!defaultAddress && (
+                                                <FieldGroup className="gap-1">
+                                                      <FieldTitle className="text-lg font-medium mb-4 mt-4">
+                                                            Address Information
+                                                      </FieldTitle>
+                                                      <div className="space-y-3">
+                                                            <SelectField
+                                                                  id="country"
+                                                                  label="Country/Region"
+                                                                  options={["Nigeria", "Ghana", "Benin Republic"]}
+                                                                  name="country"
+                                                            />
+
+                                                            <div className="grid grid-cols-2 gap-3">
+                                                                  <FormField
+                                                                        id="firstName"
+                                                                        name="firstname"
+                                                                        placeholder="First name (optional)"
+                                                                  />
+                                                                  <FormField
+                                                                        id="lastName"
+                                                                        placeholder="Last name"
+                                                                        name="lastname"
+                                                                        required
+                                                                  />
+                                                            </div>
+
+                                                            <FormField
+                                                                  id="street"
+                                                                  name="street"
+                                                                  placeholder="Address"
+                                                                  type="text"
+                                                                  required
+                                                            />
+
+                                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                                  <FormField
+                                                                        id="city"
+                                                                        placeholder="City"
+                                                                        type="text"
+                                                                        name="city"
+                                                                        className="sm:col-span-1"
+                                                                        onMouseLeave={(e) => handleLocationChange(e)}
+                                                                        required
+                                                                  />
+                                                                  <FormField
+                                                                        id="zip"
+                                                                        name="Postcode"
+                                                                        placeholder="Postcode"
+                                                                        type="text"
+                                                                        className="sm:col-span-1"
+                                                                  />
+                                                            </div>
+
+                                                            <FormField
+                                                                  id="phone"
+                                                                  placeholder="Phone"
+                                                                  type="tel"
+                                                                  name="phone"
+                                                                  icon={<HelpCircle size={16} />}
+                                                            />
+                                                      </div>
+                                                      {/* <FieldError></FieldError> */}
+                                                </FieldGroup>
+                                          )}
+                                          {/* Shipping Method Placeholder */}
+
+                                          <FieldGroup className="mt-8">
+                                                <FieldTitle className="text-lg font-medium mb-4">
+                                                      Shipping method
+                                                </FieldTitle>
+                                                <FieldDescription className="bg-gray-50 rounded-md p-4 text-sm text-gray-500 flex items-center justify-center text-center">
+                                                      {availableOptions.length > 0
+                                                            ? "Pick an option for shipping method"
+                                                            : "Enter your shipping address to view available shipping methods."}
+                                                </FieldDescription>
+                                                <RadioGroup
+                                                      defaultValue="delivery"
+                                                      // onValueChange={(value) => console.log(value)}
+                                                      name="shippingOption"
+                                                >
+                                                      <div className="grid grid-cols-2 gap-8">
+                                                            {availableOptions.length > 0 &&
+                                                                  availableOptions.map((option) => (
+                                                                        <FieldLabel
+                                                                              htmlFor={option.label}
+                                                                              key={option.id}
+                                                                        >
+                                                                              <Field orientation="horizontal">
+                                                                                    <FieldContent>
+                                                                                          <FieldTitle>
+                                                                                                <RadioGroupItem
+                                                                                                      value={
+                                                                                                            option.label
+                                                                                                      }
+                                                                                                      id={option.label}
+                                                                                                      aria-label={
+                                                                                                            option.label
+                                                                                                      }
+                                                                                                />
+                                                                                                {option.label}
+                                                                                          </FieldTitle>
+
+                                                                                          <FieldDescription className="my-3">
+                                                                                                {
+                                                                                                      option.estimatedDeliveryTime
+                                                                                                }
+                                                                                          </FieldDescription>
+
+                                                                                          <h3>
+                                                                                                {new Intl.NumberFormat(
+                                                                                                      "en-NG",
+                                                                                                      {
+                                                                                                            style: "currency",
+                                                                                                            currency: option
+                                                                                                                  .amount
+                                                                                                                  .currency,
+                                                                                                      }
+                                                                                                ).format(
+                                                                                                      Number(
+                                                                                                            option
+                                                                                                                  .amount
+                                                                                                                  .value
+                                                                                                      )
+                                                                                                )}
+                                                                                          </h3>
+                                                                                    </FieldContent>
+                                                                              </Field>
+                                                                        </FieldLabel>
+                                                                  ))}
+                                                      </div>
+                                                </RadioGroup>
                                           </FieldGroup>
-                                    )}
 
-                                    {/* Footer Actions */}
-                                    <div className="mt-8 space-y-6">
-                                          <Button
-                                                type="submit"
-                                                className="w-full bg-black hover:bg-gray-800 text-white font-medium py-4 rounded-md shadow-lg transition-transform active:scale-[0.99] h-auto"
-                                          >
-                                                Pay now {subtotal}{" "}
-                                                {paymentProcessisPending || orderPlacementIsPending || isPending ? (
-                                                      <Spinner />
-                                                ) : (
-                                                      ""
-                                                )}
-                                          </Button>
+                                          {/* Remember Me */}
+                                          {!userData && (
+                                                <FieldGroup className="mt-8">
+                                                      <h2 className="text-lg font-medium mb-4">Remember me</h2>
+                                                      <div className="border border-gray-200 rounded-md p-4 space-y-4">
+                                                            <div className="flex items-center gap-2">
+                                                                  <Checkbox
+                                                                        id="remember"
+                                                                        className="border-gray-300 data-[state=checked]:bg-black data-[state=checked]:text-white"
+                                                                  />
+                                                                  <FieldLabel
+                                                                        htmlFor="remember"
+                                                                        className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                                  >
+                                                                        Save my information for a faster checkout with a
+                                                                        Kazafi account
+                                                                  </FieldLabel>
+                                                            </div>
 
-                                          <div className="text-xs text-gray-500 leading-relaxed">
-                                                Your info will be saved to a Kazafi account. By continuing, you agree to
-                                                Kazafi’s{" "}
-                                                <Link href="#" className="underline">
-                                                      Terms of Service
-                                                </Link>{" "}
-                                                and acknowledge the{" "}
-                                                <Link href="#" className="underline">
-                                                      Privacy Policy
-                                                </Link>
-                                                .
-                                          </div>
+                                                            <div className="space-y-3 pt-2">
+                                                                  <FormField
+                                                                        id="shop-fname"
+                                                                        placeholder="First name"
+                                                                        type="text"
+                                                                  />
+                                                                  <FormField
+                                                                        id="shop-phone"
+                                                                        placeholder="Mobile phone number"
+                                                                        type="tel"
+                                                                  />
+                                                            </div>
+                                                      </div>
 
-                                          <div className="pt-6 border-t border-gray-200">
-                                                <Link href="#" className="text-xs text-blue-600 hover:underline">
-                                                      Privacy policy
-                                                </Link>
+                                                      <div className="mt-4 flex items-center justify-center gap-1 text-xs text-gray-400">
+                                                            <Lock size={10} />
+                                                            <span>Secure and encrypted</span>
+                                                      </div>
+
+                                                      <div className="flex justify-end mt-1">
+                                                            <span className="font-black italic text-gray-400 text-xs tracking-tight">
+                                                                  kazafi
+                                                            </span>
+                                                      </div>
+                                                </FieldGroup>
+                                          )}
+
+                                          {/* Footer Actions */}
+                                          <div className="mt-8 space-y-6">
+                                                <Button
+                                                      type="submit"
+                                                      className="w-full bg-black hover:bg-gray-800 text-white font-medium py-4 rounded-md shadow-lg transition-transform active:scale-[0.99] h-auto"
+                                                >
+                                                      Pay now {subtotal}{" "}
+                                                      {paymentProcessisPending ||
+                                                      orderPlacementIsPending ||
+                                                      isPending ? (
+                                                            <Spinner />
+                                                      ) : (
+                                                            ""
+                                                      )}
+                                                </Button>
+
+                                                <div className="text-xs text-gray-500 leading-relaxed">
+                                                      Your info will be saved to a Kazafi account. By continuing, you
+                                                      agree to Kazafi’s{" "}
+                                                      <Link href="#" className="underline">
+                                                            Terms of Service
+                                                      </Link>{" "}
+                                                      and acknowledge the{" "}
+                                                      <Link href="#" className="underline">
+                                                            Privacy Policy
+                                                      </Link>
+                                                      .
+                                                </div>
+
+                                                <div className="pt-6 border-t border-gray-200">
+                                                      <Link href="#" className="text-xs text-blue-600 hover:underline">
+                                                            Privacy policy
+                                                      </Link>
+                                                </div>
                                           </div>
                                     </div>
                               </div>
-                        </div>
+                        </form>
 
                         {/* Right Column: Desktop Summary Section */}
                         <div className="hidden lg:block w-full lg:w-[45%] bg-[#fafafa] border-l border-gray-200 pt-12 px-8 order-1 lg:order-2">
@@ -495,7 +513,7 @@ const CheckoutPage: React.FC = () => {
                                     <OrderSummary cartItems={cartItems} subtotal={subtotal} />
                               </div>
                         </div>
-                  </form>
+                  </div>
             </div>
       );
 };

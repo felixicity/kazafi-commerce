@@ -13,19 +13,26 @@ import {
 } from "@/components/ui/item";
 import { Icon12Hours, IconCaretRight, IconChevronRight, IconFolder, IconHandOff } from "@tabler/icons-react";
 
-const tasks = [
-      {
-            number: 5,
-            title: "order",
-            task: "Orders to fulfill",
-      },
-      {
-            number: 4,
-            title: "payment",
-            task: "Payments to approve",
-      },
-];
-export function UrgentTasks() {
+export function UrgentTasks({
+      paymentsToFulfill,
+      ordersToFulfill,
+}: {
+      paymentsToFulfill: number;
+      ordersToFulfill: number;
+}) {
+      const tasks = [
+            {
+                  number: ordersToFulfill,
+                  title: "order",
+                  task: "Orders to fulfill",
+            },
+            {
+                  number: paymentsToFulfill,
+                  title: "payment",
+                  task: "Payments to approve",
+            },
+      ];
+
       return (
             <div className="flex w-full flex-col my-4 gap-6">
                   <ItemGroup>
