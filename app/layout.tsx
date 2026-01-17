@@ -25,7 +25,7 @@ export default function RootLayout({
             <html lang="en">
                   <body className={`${nunito_sans.className} antialiased`}>
                         <QueryProvider>{children}</QueryProvider>
-                        <Toaster />
+                        <Toaster position="top-center" />
                   </body>
             </html>
       );

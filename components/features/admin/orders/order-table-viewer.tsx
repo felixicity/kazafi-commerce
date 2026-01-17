@@ -17,8 +17,8 @@ import { OrderStatus } from "./order-status";
 export const schema = z.object({
       id: z.string(),
       customer: z.string(),
-      payment: z.string(),
-      shipping: z.string(),
+      paymentStatus: z.string(),
+      status: z.string(),
       createdAt: z.string(),
 });
 
@@ -38,7 +38,9 @@ export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                               <DrawerDescription>This Order was created on {item.createdAt}</DrawerDescription>
                         </DrawerHeader>
                         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-                              <h2>Customer: {item.customer}</h2>
+                              <h2>
+                                    Customer: {typeof item.customer === "object" ? item.customer.email : item.customer}
+                              </h2>
                               <p>Email: chukwufelix16@gmail.com</p>
                               {/* {!isMobile && (
                                     <>
@@ -46,15 +48,15 @@ export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                                     </>
                               )} */}
                               <OrderStatus item={item} />
-                              <p>Payment Status: {item.payment}</p>
+                              <p>Payment Status: {item.paymentStatus}</p>
                         </div>
                         <DrawerFooter>
                               <DrawerClose asChild>
                                     <Button
-                                          variant={item.shipping !== "delivered" ? "destructive" : "default"}
+                                          variant={item.status !== "delivered" ? "destructive" : "default"}
                                           className="cursor-pointer"
                                     >
-                                          {item.shipping !== "delivered" ? "Cancel order" : "Done"}
+                                          {item.status !== "delivered" ? "Cancel order" : "Done"}
                                     </Button>
                               </DrawerClose>
                         </DrawerFooter>

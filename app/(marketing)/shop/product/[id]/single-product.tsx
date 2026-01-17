@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +47,12 @@ export function SingleProductPage({
             },
       });
 
+      useEffect(() => {
+            if (isSuccess) {
+                  toast.success(`Item added to cart successfully!`);
+            }
+      }, [isSuccess]);
+
       const handleAddToCart = () => {
             const variation = product.variations.find((variant) => variant.color === selectedColor);
             // Mock add to cart logic
@@ -70,7 +77,7 @@ export function SingleProductPage({
 
       return (
             <div className="max-w-7xl mx-auto p-6 sm:p-10 lg:py-12">
-                  {isSuccess && toast.success(`Item added to cart successfully!`)}
+                  {/* {isSuccess && toast.success(`Item added to cart successfully!`)} */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
                         {/* Column 1: Product Image Gallery */}
                         <div className="lg:sticky lg:top-8">

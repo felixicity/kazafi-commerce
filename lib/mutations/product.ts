@@ -4,7 +4,7 @@ import { Product } from "../types"; // Import the defined type
 
 // Use a *public* environment variable for client-side API calls
 // Next.js convention requires NEXT_PUBLIC_ prefix for client-side use
-const BASE_URL = process.env.NEXT_PUBLIC_EXPRESS_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.EXPRESS_API_INTERNAL_URL || "http://localhost:5000";
 
 /**
  * Custom Error class for API failures
@@ -55,6 +55,26 @@ export const fetchSingleProduct = async (productId: string) => {
       // Explicitly cast the result to the desired type
       const data = await response.json();
       console.log("Fetched product:", data);
+
+      return data;
+};
+
+export const fetchAllProducts = async () => {
+      console.log("Fetching all products from:", `${BASE_URL}/api/products/admin`);
+
+      const response = await fetch(`${BASE_URL}/api/products/admin`, {
+            credentials: "include",
+      });
+
+      if (!response.ok) {
+            // Throw a custom error with the status code
+            const errorDetail = await response.text();
+            throw new FetchError(`Failed to fetch products (${response.status}): ${errorDetail}`, response.status);
+      }
+
+      // Explicitly cast the result to the desired type
+      const data = await response.json();
+      console.log("Fetched products:", data);
 
       return data;
 };

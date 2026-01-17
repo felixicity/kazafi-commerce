@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useDashboard } from "@/components/features/client/dashboardWrapper";
 import {
       History,
       Ticket,
@@ -11,11 +12,12 @@ import { Button } from "@/components/ui/button";
 
 import { Card } from "@/components/ui/card";
 
-import { MOCK_COUPONS, MOCK_ORDERS, MOCK_USER } from "@/lib/store/cart-store";
+import { MOCK_COUPONS } from "@/lib/store/cart-store";
 import { Badge } from "@/components/ui/badge";
 import { getUserOrders } from "@/lib/mutations/order";
 
 const App: React.FC = () => {
+      const { userData } = useDashboard();
       const { data: ordersData, isLoading: ordersLoading } = useQuery({
             queryKey: ["orders"],
             queryFn: getUserOrders,
@@ -49,7 +51,7 @@ const App: React.FC = () => {
 
       return (
             <div className="space-y-6 p-8">
-                  <h2 className="text-xl font-bold text-gray-900">Welcome back, {MOCK_USER.name}!</h2>
+                  <h2 className="text-xl font-bold text-gray-900">Welcome back, {userData?.name || userData?.email}</h2>
                   <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         {dashboardCard.map((card) => (
                               <Card key={card.title} className="flex flex-col items-start space-y-2 px-4">

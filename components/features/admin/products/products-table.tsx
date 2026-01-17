@@ -51,23 +51,35 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { columns } from "./table-columns";
+import { columns, variationSchema } from "./table-columns";
 import Link from "next/link";
 import { ButtonGroup } from "@/components/ui/button-group";
 
-export const schema = z.object({
-      id: z.number(),
-      image: z.string(),
+export const productSchema = z.object({
+      _id: z.string(),
       name: z.string(),
-      status: z.string(),
-      instock: z.number(),
-      type: z.string(),
+      description: z.string(),
       category: z.string(),
+      variations: z.array(
+            z.object({
+                  color: z.string(),
+                  hexCode: z.string(),
+                  sizes: z.array(z.string()),
+                  price: z.number(),
+                  stock: z.number(),
+                  imageURLs: z.array(z.string()),
+                  _id: z.object({ $oid: z.string() }),
+                  discount: z.string().optional(),
+            })
+      ),
+      isFeatured: z.boolean(),
+      createdAt: z.object({ $date: z.string() }),
+      updatedAt: z.object({ $date: z.string() }),
 });
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
+function DraggableRow({ row }: { row: Row<z.infer<typeof productSchema>> }) {
       const { transform, transition, setNodeRef, isDragging } = useSortable({
-            id: row.original.id,
+            id: row.id,
       });
 
       return (
@@ -88,8 +100,15 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
       );
 }
 
-export function ProductsTable({ data: initialData }: { data: z.infer<typeof schema>[] }) {
-      const [data, setData] = React.useState(() => initialData);
+export default function ProductsTable({ initialData }) {
+      const [data, setData] = React.useState(initialData || []);
+
+      React.useEffect(() => {
+            if (initialData) {
+                  setData(initialData);
+            }
+      }, [initialData]);
+
       const [rowSelection, setRowSelection] = React.useState({});
       const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
       const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -101,8 +120,6 @@ export function ProductsTable({ data: initialData }: { data: z.infer<typeof sche
       const sortableId = React.useId();
       const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
-      const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
-
       const table = useReactTable({
             data,
             columns,
@@ -113,7 +130,7 @@ export function ProductsTable({ data: initialData }: { data: z.infer<typeof sche
                   columnFilters,
                   pagination,
             },
-            getRowId: (row) => row.id.toString(),
+            getRowId: (row) => row._id.toString(),
             enableRowSelection: true,
             onRowSelectionChange: setRowSelection,
             onSortingChange: setSorting,
@@ -128,12 +145,20 @@ export function ProductsTable({ data: initialData }: { data: z.infer<typeof sche
             getFacetedUniqueValues: getFacetedUniqueValues(),
       });
 
+      const dataIds = React.useMemo<UniqueIdentifier[]>(
+            () => table.getRowModel().rows.map((row) => row.id),
+            [table.getRowModel().rows]
+      );
+
       function handleDragEnd(event: DragEndEvent) {
             const { active, over } = event;
             if (active && over && active.id !== over.id) {
                   setData((data) => {
-                        const oldIndex = dataIds.indexOf(active.id);
-                        const newIndex = dataIds.indexOf(over.id);
+                        const activeItem = data.find((item) => item._id.toString() === active.id);
+                        const overItem = data.find((item) => item._id.toString() === over.id);
+                        if (!activeItem || !overItem) return data;
+                        const oldIndex = data.indexOf(activeItem);
+                        const newIndex = data.indexOf(overItem);
                         return arrayMove(data, oldIndex, newIndex);
                   });
             }
@@ -142,20 +167,6 @@ export function ProductsTable({ data: initialData }: { data: z.infer<typeof sche
       return (
             <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
                   <div className="flex items-center justify-end px-4 lg:px-6">
-                        {/* <Label htmlFor="view-selector" className="sr-only">
-                              View
-                        </Label>
-                        <Select defaultValue="outline">
-                              <SelectTrigger className="flex w-fit @4xl/main:hidden" size="sm" id="view-selector">
-                                    <SelectValue placeholder="Select a view" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                    <SelectItem value="outline">Outline</SelectItem>
-                                    <SelectItem value="past-performance">Past Performance</SelectItem>
-                                    <SelectItem value="key-personnel">Key Personnel</SelectItem>
-                                    <SelectItem value="focus-documents">Focus Documents</SelectItem>
-                              </SelectContent>
-                        </Select> */}
                         <div className="flex items-center gap-2">
                               <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -330,15 +341,6 @@ export function ProductsTable({ data: initialData }: { data: z.infer<typeof sche
                                     </div>
                               </div>
                         </div>
-                  </TabsContent>
-                  <TabsContent value="past-performance" className="flex flex-col px-4 lg:px-6">
-                        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-                  </TabsContent>
-                  <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
-                        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-                  </TabsContent>
-                  <TabsContent value="focus-documents" className="flex flex-col px-4 lg:px-6">
-                        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
                   </TabsContent>
             </Tabs>
       );

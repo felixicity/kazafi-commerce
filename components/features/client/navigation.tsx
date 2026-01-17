@@ -42,43 +42,8 @@ export function Navigation({ openCart, setOpenCart }: { openCart: boolean; setOp
                                     className="items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([className*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 hidden size-8 lg:flex"
                                     href="/"
                               >
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" className="size-5">
-                                          <rect width="256" height="256" fill="none"></rect>
-                                          <line
-                                                x1="208"
-                                                y1="128"
-                                                x2="128"
-                                                y2="208"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="32"
-                                          ></line>
-                                          <line
-                                                x1="64"
-                                                y1="40"
-                                                x2="192"
-                                                y2="168"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="32"
-                                          ></line>
-                                          <line
-                                                x1="192"
-                                                y1="40"
-                                                x2="40"
-                                                y2="192"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="32"
-                                          ></line>
-                                    </svg>
-                                    <span className="sr-only">shadcn/ui</span>
+                                    <span className="text-3xl font-black italic tracking-tighter">Kazafi</span>
+                                    <span className="sr-only">kazafi</span>
                               </Link>
                               <nav className="items-center hidden lg:flex">
                                     {navItems.map((item) => (
@@ -101,10 +66,15 @@ export function Navigation({ openCart, setOpenCart }: { openCart: boolean; setOp
                                           <InputGroupInput placeholder="shirts" className="pl-0.5" />
                                     </InputGroup>
 
-                                    <Link href="./profile">
+                                    <Link
+                                          href="./dashboard"
+                                          className="flex items-center gap-0.5 hover:cursor-pointer hover:bg-gray-200 rounded-2xl"
+                                    >
                                           <span className="sr-only">User profile</span>
-                                          <User2Icon size={28} />
+                                          <User2Icon size={48} />
+                                          <span className="text-xs font-semibold">Orders & Account</span>
                                     </Link>
+
                                     <AjaxCartSheet openCart={openCart} setOpenCart={setOpenCart} />
                               </div>
                         </div>

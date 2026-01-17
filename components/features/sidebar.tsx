@@ -1,9 +1,10 @@
 "use client";
 
 import { FC } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Separator } from "../ui/separator";
 import NavLink from "./nav-link";
-import { IconUser, IconLogout } from "@tabler/icons-react";
+import { IconLogout } from "@tabler/icons-react";
 import { Button } from "../ui/button";
 import {
       IconMessage,
@@ -14,16 +15,30 @@ import {
       IconSettings,
 } from "@tabler/icons-react";
 import { DashboardSection } from "@/lib/types";
+import { logoutUser } from "@/lib/mutations/users";
+import { useRouter } from "next/navigation";
 
 export const Sidebar: React.FC<{ handleNavClick: FC; activeSection: string }> = ({ handleNavClick, activeSection }) => {
+      const router = useRouter();
+
+      const { mutate } = useMutation({
+            mutationKey: ["user"],
+            mutationFn: logoutUser,
+      });
+
       const NavItems = [
             { id: ".", label: "Dashboard Overview", icon: <IconLayoutDashboard /> },
             { id: "orders", label: "Order History", icon: <IconHistory /> },
             { id: "coupons", label: "Saved Coupons", icon: <IconTicket /> },
             { id: "messages", label: "Messages", icon: <IconMessage /> },
-            { id: "address", label: "Address & Payments", icon: <IconPaywall /> },
+            { id: "profile", label: "Profile", icon: <IconPaywall /> },
             { id: "settings", label: "Account Settings", icon: <IconSettings /> },
       ];
+
+      const handleLogout = () => {
+            mutate();
+            router.push("/");
+      };
 
       return (
             <nav className="p-6 space-y-4">
@@ -47,6 +62,7 @@ export const Sidebar: React.FC<{ handleNavClick: FC; activeSection: string }> = 
                   <Button
                         variant="ghost"
                         className="w-full justify-start text-red-600 hover:bg-red-50 hover:text-red-700"
+                        onClick={handleLogout}
                   >
                         <IconLogout size={20} className="mr-3" />
                         <span className="font-semibold text-sm">Sign Out</span>

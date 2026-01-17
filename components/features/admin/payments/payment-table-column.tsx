@@ -5,7 +5,7 @@ import { z } from "zod";
 export const schema = z.object({
       id: z.string(),
       order: z.string(),
-      createdAt: z.string(), //ZodISODateTime
+      createdAt: z.string(),
       type: z.string(),
       amount: z.string(),
       status: z.string(),
@@ -29,7 +29,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       {
             accessorKey: "createdAt",
             header: "Transaction date",
-            cell: ({ row }) => <div>{row.original.createdAt}</div>,
+            cell: ({ row }) => <div>{new Date(row.original.createdAt).toLocaleDateString()}</div>,
             enableHiding: false,
       },
       {
@@ -41,7 +41,14 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       {
             id: "amount",
             header: "Amount",
-            cell: ({ row }) => <div>{row.original.amount}</div>,
+            cell: ({ row }) => (
+                  <div>
+                        {new Intl.NumberFormat("en-NG", {
+                              style: "currency",
+                              currency: "NGN",
+                        }).format(row.original.amount)}
+                  </div>
+            ),
             enableHiding: false,
       },
       {

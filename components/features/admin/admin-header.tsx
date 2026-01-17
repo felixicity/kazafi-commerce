@@ -2,7 +2,9 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { IconBell, IconSearch } from "@tabler/icons-react";
 import { InputGroupAddon, InputGroupInput, InputGroup } from "../../ui/input-group";
+import { Button } from "@/components/ui/button";
 import { SearchIcon } from "lucide-react";
+import { Sheet, SheetHeader, SheetTrigger, SheetTitle, SheetDescription, SheetContent } from "@/components/ui/sheet";
 
 export function AdminHeader() {
       return (
@@ -18,12 +20,22 @@ export function AdminHeader() {
                                           <SearchIcon />
                                     </InputGroupAddon>
                               </InputGroup>
-                              <span className="sr-only">Notification</span>
-                              <IconBell size={30} stroke="1.25px" />
                               {2 > 0 && (
-                                    <span className="absolute -top-1 -right-1.5 h-5 w-5 rounded-full bg-red-600 text-[10px] font-bold text-white flex items-center justify-center">
-                                          {2}
-                                    </span>
+                                    <Sheet>
+                                          <SheetTrigger>
+                                                <span className="sr-only">Notification</span>
+                                                <IconBell size={30} stroke="1.25px" />
+                                                <span className="absolute -top-1 -right-1.5 h-5 w-5 rounded-full bg-red-600 text-[10px] font-bold text-white flex items-center justify-center">
+                                                      {2}
+                                                </span>
+                                          </SheetTrigger>
+                                          <SheetContent>
+                                                <SheetHeader>
+                                                      <SheetTitle>notifications</SheetTitle>
+                                                      <SheetDescription>read-only messages</SheetDescription>
+                                                </SheetHeader>
+                                          </SheetContent>
+                                    </Sheet>
                               )}
                         </div>
                   </div>

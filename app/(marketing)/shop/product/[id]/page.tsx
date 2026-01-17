@@ -8,6 +8,9 @@ import { fetchSingleProduct } from "@/lib/mutations/product";
 import { SingleProductPage } from "./single-product";
 
 const SingleProductRoute: React.FC<{ product: SingleProduct }> = () => {
+      const [selectedColor, setSelectedColor] = useState<string>("");
+      const [selectedSize, setSelectedSize] = useState<string>("M");
+      const [quantity, setQuantity] = useState<number>(1);
       const params = useParams();
       const productId = params.id as string; // Ensure this matches your [productId] folder name
 
@@ -25,9 +28,11 @@ const SingleProductRoute: React.FC<{ product: SingleProduct }> = () => {
 
       console.log("Fetched product data:", product);
 
-      const [selectedColor, setSelectedColor] = useState<string>(product?.variations[0]?.color || "");
-      const [selectedSize, setSelectedSize] = useState<string>(product?.variations[0]?.size || "M");
-      const [quantity, setQuantity] = useState<number>(1);
+      useEffect(() => {
+            if (product && product.variations && product.variations.length > 0) {
+                  setTimeout(() => setSelectedColor(product.variations[0].color), 0);
+            }
+      }, [product]);
 
       if (isError) {
             console.error("Error fetching product:", error);

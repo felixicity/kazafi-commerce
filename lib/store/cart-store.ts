@@ -1,4 +1,3 @@
-import { Product } from "../types";
 import { SingleProduct } from "../types";
 import { Coupon } from "../types";
 
@@ -110,71 +109,6 @@ export const products = [
             category: "T-Shirts",
             instock: 29,
             status: "archived",
-      },
-];
-
-export const MOCK_PRODUCTS: Product[] = [
-      {
-            id: 1,
-            name: "Essential Oversized Tee",
-            category: "T-Shirts",
-            price: 45.0,
-            originalPrice: 60.0,
-            description: "A classic fit tee made from organic cotton.",
-            imagePlaceholder: "https://placehold.co/400x500/A0A0A0/FFFFFF?text=Tee+A",
-            variants: {
-                  color: [
-                        { name: "Black", hex: "#000000" },
-                        { name: "White", hex: "#FFFFFF" },
-                  ],
-                  sizes: ["S", "M", "L", "XL"],
-            },
-            reviews: { rating: 4.8, count: 124 },
-      },
-      {
-            id: 2,
-            name: "Performance Joggers",
-            category: "Pants",
-            price: 89.99,
-            description: "Moisture-wicking fabric for intense workouts.",
-            imagePlaceholder: "https://placehold.co/400x500/808080/FFFFFF?text=Joggers+B",
-            variants: {
-                  color: [
-                        { name: "Navy", hex: "#000080" },
-                        { name: "Grey", hex: "#808080" },
-                  ],
-                  sizes: ["XS", "S", "M", "L"],
-            },
-            reviews: { rating: 4.5, count: 88 },
-      },
-      {
-            id: 3,
-            name: "Tech Fleece Hoodie",
-            category: "Hoodies",
-            price: 120.0,
-            description: "Lightweight and warm fleece material.",
-            imagePlaceholder: "https://placehold.co/400x500/B0C4DE/FFFFFF?text=Hoodie+C",
-            variants: {
-                  color: [{ name: "Heather Gray", hex: "#C0C0C0" }],
-                  sizes: ["M", "L", "XL", "XXL"],
-            },
-            reviews: { rating: 4.9, count: 210 },
-      },
-      {
-            id: 4,
-            name: "Slim Fit Denim",
-            category: "Pants",
-            price: 95.0,
-            description: "Classic denim jeans with a modern slim fit.",
-            imagePlaceholder: "https://placehold.co/400x500/4682B4/FFFFFF?text=Denim+D",
-            variants: {
-                  color: [
-                        { name: "Indigo", hex: "#4B0082" },
-                        { name: "Black", hex: "#000000" },
-                  ],
-                  sizes: ["S", "M", "L", "XL", "XXL"], // Mock size as numbers here for variety
-            },
-            reviews: { rating: 3.9, count: 55 },
       },
 ];
 

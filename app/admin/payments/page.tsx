@@ -1,6 +1,28 @@
-import { PaymentsTable } from "@/components/features/admin/payments/payments-table";
+"use client";
+
+import dynamic from "next/dynamic";
+import { useQuery } from "@tanstack/react-query";
+// import { OrdersTable } from "@/components/features/admin/orders/orders-table";
+import { getAllPayments } from "@/lib/mutations/payment";
+
+const PaymentsTable = dynamic(
+      () => import("@/components/features/admin/payments/payments-table").then((mod) => mod.PaymentsTable),
+      {
+            ssr: false,
+            loading: () => <p>Loading Table...</p>, // Optional: shows while the JS loads
+      }
+);
 
 export default function AdminPayments() {
+      const {
+            data: paymentsData,
+            error,
+            isLoading,
+      } = useQuery({
+            queryKey: ["payments"],
+            queryFn: getAllPayments,
+      });
+
       return (
             <div className="px-6 py-4">
                   <h1 className="font-semibold text-xl">Payments</h1>
@@ -10,26 +32,3 @@ export default function AdminPayments() {
             </div>
       );
 }
-
-const paymentsData = [
-      {
-            id: "ij4499Ig3ik30000",
-            order: "k3m4k53dmm932",
-            type: "charge",
-            amount: "$95000",
-            createdAt: "02-05-2025T13:25",
-            email: "chukwufelix16@gmail.com",
-            method: "bank transfer",
-            status: "paid",
-      },
-      {
-            id: "ij4499I3ik3dr0g0",
-            order: "k3m4k52rri34m932",
-            type: "charge",
-            amount: "$3200",
-            createdAt: "02-05-2025T13:25",
-            email: "oriakhidickson.com",
-            method: "bank transfer",
-            status: "unpaid",
-      },
-];

@@ -46,5 +46,7 @@ export const getAllPayments = async () => {
             const errorBody = await response.json();
             throw new Error(errorBody.message || "Failed to fetch payments.");
       }
-      return response.json();
+      const data = response.json();
+
+      return data;
 };

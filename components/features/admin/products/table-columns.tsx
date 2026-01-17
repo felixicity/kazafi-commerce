@@ -2,7 +2,6 @@ import { TableCellViewer } from "./table-cell-viewer";
 import { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
       DropdownMenu,
@@ -12,18 +11,9 @@ import {
       DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical } from "@tabler/icons-react";
+import { productSchema } from "./products-table";
 
-export const schema = z.object({
-      id: z.number(),
-      image: z.string(),
-      name: z.string(),
-      status: z.string(),
-      instock: z.number(),
-      type: z.string(),
-      category: z.string(),
-});
-
-export const columns: ColumnDef<z.infer<typeof schema>>[] = [
+export const columns: ColumnDef<z.infer<typeof productSchema>>[] = [
       {
             id: "select",
             header: ({ table }) => (
@@ -51,30 +41,29 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
             enableHiding: false,
       },
       {
-            accessorKey: "image",
+            accessorKey: "imageURLs",
             header: "",
             cell: ({ row }) => <TableCellViewer item={row.original} />,
             enableHiding: false,
       },
       {
-            accessorKey: "name",
+            accessorKey: "productName",
             header: "Product",
             cell: ({ row }) => <div className="font-semibold text-shadow-muted">{row.original.name}</div>,
       },
       {
-            accessorKey: "status",
-            header: "Status",
+            accessorKey: "stock",
+            header: "Stock",
             cell: ({ row }) => (
-                  <div className="w-32">
-                        <Badge variant={row.original.status || "draft"} className="px-1.5">
-                              {row.original.status}
-                        </Badge>
+                  <div>
+                        <span className="text-red-700">
+                              {row.original.variations.reduce((acc, varr) => acc + Number(varr.stock), 0)} items in
+                              stock
+                        </span>
+                        <br />
+                        {row.original.variations.length > 1 && `${row.original.variations.length} variants`}
                   </div>
             ),
-      },
-      {
-            accessorKey: "instock",
-            cell: ({ row }) => <div>{row.original.instock} items in stock</div>,
       },
       {
             accessorKey: "category",

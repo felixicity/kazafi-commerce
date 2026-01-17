@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 export const schema = z.object({
       id: z.string(),
       customer: z.string(),
-      payment: z.string(),
-      shipping: z.string(),
+      paymentStatus: z.string(),
+      status: z.string(),
       createdAt: z.string(),
       amount: z.number(),
       items: z.string(),
@@ -27,26 +27,38 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
             cell: ({ row }) => (
                   <div>
                         <span>{row.original.createdAt.split("T")[0]}</span>
-                        <span>{row.original.createdAt.split("T")[1]}</span>
                   </div>
             ),
       },
       {
             accessorKey: "customer",
-            header: "Customer name",
-            cell: ({ row }) => <div>{row.original.customer}</div>,
+            header: "Customer email",
+            cell: ({ row }) => (
+                  <div>
+                        {typeof row.original.customer === "object"
+                              ? row.original.customer.email
+                              : row.original.customer}
+                  </div>
+            ),
             enableHiding: false,
       },
       {
             accessorKey: "shipping",
             header: "Status",
-            cell: ({ row }) => <Badge variant={row.original.shipping}>{row.original.shipping}</Badge>,
+            cell: ({ row }) => <Badge variant={row.original.status}>{row.original.status}</Badge>,
             enableHiding: false,
       },
       {
             id: "amount",
             header: "Total amount",
-            cell: ({ row }) => <div>{row.original.amount}</div>,
+            cell: ({ row }) => (
+                  <div>
+                        {new Intl.NumberFormat("en-NG", {
+                              style: "currency",
+                              currency: "NGN",
+                        }).format(row.original.amount)}
+                  </div>
+            ),
             enableHiding: false,
       },
       {
@@ -58,7 +70,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       {
             accessorKey: "payment",
             header: "Payment status",
-            cell: ({ row }) => <Badge variant={row.original.payment}>{row.original.payment}</Badge>,
+            cell: ({ row }) => <Badge variant={row.original.paymentStatus}>{row.original.paymentStatus}</Badge>,
             enableHiding: false,
       },
       {

@@ -39,12 +39,15 @@ export const getAllOrders = async () => {
             const errorBody = await response.json();
             throw new Error(errorBody.message || "Failed to fetch all orders.");
       }
-      return response.json();
+      const data = await response.json();
+
+      return data;
 };
 
-export const updateOrderStatus = async (orderId: string, status: string) => {
-      const response = await fetch(`${API_URL}/api/admin/orders/${orderId}/status`, {
-            method: "PUT",
+export const updateOrderStatus = async ({ orderId, status }: { orderId: string; status: string }) => {
+      console.log(status);
+      const response = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
+            method: "PATCH",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify({ status }),
@@ -53,5 +56,7 @@ export const updateOrderStatus = async (orderId: string, status: string) => {
             const errorBody = await response.json();
             throw new Error(errorBody.message || "Failed to update order status.");
       }
-      return response.json();
+      const order = response.json();
+      console.log("order: ", order);
+      return order;
 };

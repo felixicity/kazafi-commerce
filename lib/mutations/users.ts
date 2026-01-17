@@ -71,8 +71,6 @@ export const addUserAddress = async (address: {
       postCode: string;
       country: string;
 }) => {
-      console.log("addressData :", address);
-
       const response = await fetch(`${API_URL}/api/users/addresses`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },

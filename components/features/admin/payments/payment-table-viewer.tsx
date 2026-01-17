@@ -17,7 +17,7 @@ import { PaymentStatus } from "./payment-status";
 export const schema = z.object({
       id: z.string(),
       order: z.string(),
-      createdAt: z.string(), //ZodISODateTime
+      createdAt: z.string(),
       type: z.string(),
       amount: z.string(),
       status: z.string(),
@@ -41,7 +41,7 @@ export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                               <DrawerDescription>This Payment was created on {item.createdAt}</DrawerDescription>
                         </DrawerHeader>
                         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-                              <h2>Customer: {item.customer}</h2>
+                              {/* <h2>Customer: {item.customer}</h2> */}
                               <p>Email: {item.email}</p>
                               {/* {!isMobile && (
                                     <>
@@ -49,7 +49,7 @@ export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                                     </>
                               )} */}
                               <PaymentStatus item={item} />
-                              <p>Payment Status: {item.payment}</p>
+                              <p>Payment Status: {item.status}</p>
                         </div>
                         <DrawerFooter>
                               <DrawerClose asChild>
