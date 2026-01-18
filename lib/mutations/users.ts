@@ -1,4 +1,4 @@
-const API_URL = process.env.EXPRESS_API_INTERNAL_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // Function to handle the POST request to your Express API
 export const createLoginMutation = async (newLoginData: { email: string; password: string }) => {

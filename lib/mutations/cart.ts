@@ -1,6 +1,6 @@
 import { CartData, CartItem } from "../types";
 
-const CART_API_URL = `http://localhost:5000/api/cart`;
+const CART_API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // --- Fetcher Function ---
 export const fetchCartItems = async (): Promise<CartData> => {

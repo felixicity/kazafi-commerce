@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const createOrder = async (address: string) => {
       const response = await fetch(`${API_URL}/api/orders`, {

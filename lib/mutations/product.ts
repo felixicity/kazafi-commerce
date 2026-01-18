@@ -4,7 +4,7 @@ import { Product } from "../types"; // Import the defined type
 
 // Use a *public* environment variable for client-side API calls
 // Next.js convention requires NEXT_PUBLIC_ prefix for client-side use
-const BASE_URL = process.env.EXPRESS_API_INTERNAL_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 /**
  * Custom Error class for API failures
