@@ -10,7 +10,7 @@ export function ShopProducts({
       viewMode,
       error,
 }: {
-      data: Product[] | undefined;
+      data: Product[];
       isLoading: boolean;
       isError: boolean;
       viewMode: "grid" | "list";

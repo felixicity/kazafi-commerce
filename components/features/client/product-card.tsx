@@ -95,7 +95,7 @@ export const ProductCard = ({ product, viewMode }: { product: Product; viewMode:
                                                       ? "ring-2 ring-offset-1 ring-black"
                                                       : "hover:ring-1 ring-gray-400"
                                           }`}
-                                          onClick={() => setSelectedColor(variation?.color)}
+                                          onClick={() => setSelectedColor(variation?.color ?? "")}
                                           title={variation.color}
                                     />
                               ))}

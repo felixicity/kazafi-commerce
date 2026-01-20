@@ -17,8 +17,8 @@ export const AddressConfirmationDialog = ({
       fullAddress,
 }: {
       addressConfirmOpen: boolean;
-      setAddressConfirmOpen: () => void;
-      setDefaultAddress: () => void;
+      setAddressConfirmOpen: (value: boolean) => void;
+      setDefaultAddress: (value: boolean) => void;
       fullAddress: string;
 }) => {
       return (

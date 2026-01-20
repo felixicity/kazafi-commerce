@@ -77,7 +77,7 @@ export default function Cart() {
                                           {new Intl.NumberFormat("en-NG", {
                                                 style: "currency",
                                                 currency: "NGN",
-                                          }).format(item.variation.price)}
+                                          }).format(item?.variation.price || 0)}
                                     </p>
                               </div>
                         </CardContent>

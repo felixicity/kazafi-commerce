@@ -118,11 +118,7 @@ interface CartItemFromDB {
       product: {
             name: string;
       };
-      variation: {
-            imageURLs: string[];
-            color: string;
-            price: number;
-      };
+      variation: Variant;
 }
 
 export interface OrderSummaryProps {
