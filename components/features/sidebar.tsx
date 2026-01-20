@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Separator } from "../ui/separator";
 import NavLink from "./nav-link";
@@ -18,7 +17,12 @@ import { DashboardSection } from "@/lib/types";
 import { logoutUser } from "@/lib/mutations/users";
 import { useRouter } from "next/navigation";
 
-export const Sidebar: React.FC<{ handleNavClick: FC; activeSection: string }> = ({ handleNavClick, activeSection }) => {
+interface SidebarProps {
+      handleNavClick: (section: DashboardSection) => void;
+      activeSection: DashboardSection;
+}
+
+export const Sidebar = ({ handleNavClick, activeSection }: SidebarProps) => {
       const router = useRouter();
 
       const { mutate } = useMutation({

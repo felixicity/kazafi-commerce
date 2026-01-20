@@ -75,7 +75,7 @@ export function Navigation({ openCart, setOpenCart }: { openCart: boolean; setOp
                                           <span className="text-xs font-semibold">Orders & Account</span>
                                     </Link>
 
-                                    <AjaxCartSheet openCart={openCart} setOpenCart={setOpenCart} />
+                                    <AjaxCartSheet />
                               </div>
                         </div>
                   </div>

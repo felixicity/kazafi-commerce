@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import { ProductCard } from "@/components/features/client/product-card";
 import { IconLoader, IconAlertTriangle } from "@tabler/icons-react";
+import { Product } from "@/lib/types";
 
 export function ShopProducts({
       data,
@@ -9,7 +10,7 @@ export function ShopProducts({
       viewMode,
       error,
 }: {
-      data: { products } | undefined;
+      data: Product[] | undefined;
       isLoading: boolean;
       isError: boolean;
       viewMode: "grid" | "list";
@@ -33,14 +34,14 @@ export function ShopProducts({
                         <IconAlertTriangle className="h-10 w-10 mb-2" />
                         <p className="font-bold">Error loading shop data.</p>
                         {/* Display status code from custom error */}
-                        <p className="text-sm">{(error as any).message || "An unknown error occurred."}</p>
+                        <p className="text-sm">An unknown error occurred.</p>
                   </div>
             );
       }
 
       return (
             <div className="lg:col-span-3">
-                  {data?.products.length === 0 ? (
+                  {data?.length === 0 ? (
                         <div className="text-center py-20 bg-white rounded-xl shadow-inner border border-gray-100">
                               <h2 className="text-2xl font-semibold text-gray-700">No products found</h2>
                               <p className="text-gray-500 mt-2">Try adjusting your filters or search query.</p>
@@ -53,7 +54,7 @@ export function ShopProducts({
                                           : "grid grid-cols-1 gap-6"
                               }
                         >
-                              {data?.products?.map((product) => (
+                              {data?.map((product) => (
                                     <div key={product._id} onClick={() => router.push(`/shop/product/${product._id}`)}>
                                           <ProductCard product={product} viewMode={viewMode} />
                                     </div>

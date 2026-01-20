@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardFooter } from "@/components/ui/card";
 import { fetchCartItems } from "@/lib/mutations/cart";
-import { IconPlus, IconMinus, IconLoader, IconCaretDown, IconCaretUp } from "@tabler/icons-react";
+import { IconPlus, IconMinus, IconCaretDown, IconCaretUp } from "@tabler/icons-react";
 import {
       Drawer,
       DrawerTrigger,
@@ -53,13 +53,15 @@ export default function Cart() {
             cartItemsListing = cartItems.map((item) => (
                   <Card key={item.variation._id} className="  mb-4 flex-row justify-between">
                         <CardContent className="flex gap-4">
-                              <Image
-                                    src={item.variation?.imageURLs[0]}
-                                    alt={item.product?.name}
-                                    width={500}
-                                    height={500}
-                                    className="w-34 object-cover rounded-md"
-                              />
+                              {item.variation?.imageURLs?.[0] && (
+                                    <Image
+                                          src={item.variation.imageURLs[0]}
+                                          alt={item.product?.name || "Product"}
+                                          width={500}
+                                          height={500}
+                                          className="w-34 object-cover rounded-md"
+                                    />
+                              )}
 
                               <div className="flex flex-col gap-2">
                                     <p className="font-semibold text-lg">{item.product?.name}</p>
@@ -90,26 +92,20 @@ export default function Cart() {
                                                       variant="ghost"
                                                       size="icon"
                                                       className="h-6 w-6"
-                                                      disabled={isLoading === item.id}
-                                                      onClick={() => handleQuantityChange(item.id, -1)}
+                                                      disabled={item.quantity === 1}
+                                                      onClick={() => handleQuantityChange(item._id, -1)}
                                                 >
                                                       <IconMinus className="h-3 w-3" />
                                                 </Button>
 
-                                                <span className="text-sm w-4 text-center">
-                                                      {isLoading === item.id ? (
-                                                            <IconLoader className="h-3 w-3 animate-spin mx-auto" />
-                                                      ) : (
-                                                            item.quantity
-                                                      )}
-                                                </span>
+                                                <span className="text-sm w-4 text-center">{item.quantity}</span>
 
                                                 <Button
                                                       variant="ghost"
                                                       size="icon"
                                                       className="h-6 w-6"
-                                                      disabled={isLoading === item.id}
-                                                      onClick={() => handleQuantityChange(item.id, 1)}
+                                                      //   disabled={item._id}
+                                                      onClick={() => handleQuantityChange(item._id, 1)}
                                                 >
                                                       <IconPlus className="h-3 w-3" />
                                                 </Button>

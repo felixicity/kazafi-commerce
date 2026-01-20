@@ -10,7 +10,7 @@ const OrdersTable = dynamic(
       {
             ssr: false,
             loading: () => <p>Loading Table...</p>, // Optional: shows while the JS loads
-      }
+      },
 );
 
 export default function AdminOrders() {

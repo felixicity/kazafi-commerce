@@ -13,17 +13,7 @@ import {
 } from "@/components/ui/drawer";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { PaymentStatus } from "./payment-status";
-
-export const schema = z.object({
-      id: z.string(),
-      order: z.string(),
-      createdAt: z.string(),
-      type: z.string(),
-      amount: z.string(),
-      status: z.string(),
-      email: z.email(),
-      method: z.string(),
-});
+import { schema } from "./payment-table-column";
 
 export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
       const isMobile = useIsMobile();

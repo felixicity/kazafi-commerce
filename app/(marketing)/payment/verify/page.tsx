@@ -12,7 +12,7 @@ export default function VerifyPayment() {
 
       const { data } = useQuery({
             queryKey: ["paymentStatus", reference],
-            queryFn: () => checkPaymentStatus(reference),
+            queryFn: () => checkPaymentStatus(reference as string),
 
             // Poll every 2 seconds until the status in your DB is "successful"
             refetchInterval: (query) => (query.state.data?.status === "successful" ? false : 2000),

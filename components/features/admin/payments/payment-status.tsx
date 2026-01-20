@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
       DropdownMenu,
       DropdownMenuItem,
@@ -15,9 +16,7 @@ import {
       DialogDescription,
       DialogFooter,
       DialogHeader,
-      DialogTrigger,
       DialogTitle,
-      DialogOverlay,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field";
@@ -25,32 +24,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { IconCaretDownFilled } from "@tabler/icons-react";
-import { useState } from "react";
+import { schema } from "./payment-table-column";
 
-export const schema = z.object({
-      id: z.string(),
-      order: z.string(),
-      createdAt: z.string(), //ZodISODateTime
-      type: z.string(),
-      amount: z.string(),
-      status: z.string(),
-      email: z.email(),
-      method: z.string(),
-});
+type paymentStatus = "paid" | "cancelled" | "pending";
 
-const payments = ["paid", "unpaid", "pending"];
+const payments: paymentStatus[] = ["paid", "cancelled", "pending"];
 
 export function PaymentStatus({ item }: { item: z.infer<typeof schema> }) {
       const [showDialog, setShowDialog] = useState(false);
-      const [selectedOption, setSelectedOption] = useState(item.status);
+      const [selectedOption, setSelectedOption] = useState<paymentStatus>(item.status);
       const [newOption, setNewOption] = useState("");
 
-      const handleShowDialog = (option: string) => {
+      const handleShowDialog = (option: paymentStatus) => {
             setNewOption(option);
             setShowDialog(true);
       };
 
-      const handleOptions = (option: string) => {
+      const handleOptions = (option: paymentStatus) => {
             console.log(`Option set to ${option}`);
             setSelectedOption(option);
       };
@@ -62,7 +52,7 @@ export function PaymentStatus({ item }: { item: z.infer<typeof schema> }) {
                         <div>
                               <DropdownMenu modal={false}>
                                     <DropdownMenuTrigger className="flex items-center gap-2">
-                                          <Badge variant={selectedOption} size="xl" className="rounded-md w-full">
+                                          <Badge variant={selectedOption} className="rounded-md w-full">
                                                 {selectedOption}
                                                 <IconCaretDownFilled />
                                           </Badge>
@@ -108,7 +98,11 @@ export function PaymentStatus({ item }: { item: z.infer<typeof schema> }) {
                                                       <Button variant="outline">Cancel</Button>
                                                 </DialogClose>
                                                 <DialogClose asChild>
-                                                      <Button type="submit" onClick={() => handleOptions(newOption)}>
+                                                      <Button
+                                                            type="submit"
+                                                            disabled={!newOption}
+                                                            onClick={() => handleOptions(newOption as paymentStatus)}
+                                                      >
                                                             Confirm and Proceed
                                                       </Button>
                                                 </DialogClose>

@@ -171,7 +171,7 @@ const ProductListingPage: React.FC = () => {
 
                               {/* Right Column (Product Grid) */}
                               <ShopProducts
-                                    data={data}
+                                    data={data ?? []}
                                     isLoading={isLoading}
                                     isError={isError}
                                     viewMode={viewMode}

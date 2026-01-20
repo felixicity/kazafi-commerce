@@ -10,45 +10,49 @@ import {
       getFilteredRowModel,
       getPaginationRowModel,
       getSortedRowModel,
-      Row,
       SortingState,
       useReactTable,
       VisibilityState,
 } from "@tanstack/react-table";
 
-import {
-      closestCenter,
-      DndContext,
-      KeyboardSensor,
-      MouseSensor,
-      TouchSensor,
-      useSensor,
-      useSensors,
-      type DragEndEvent,
-      type UniqueIdentifier,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { type UniqueIdentifier } from "@dnd-kit/core";
+// import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 import { Table, TableHeader, TableBody, TableCell, TableRow, TableHead } from "@/components/ui/table";
-import { columns } from "./order-table-column";
+import { columns, Order } from "./order-table-column";
 import { Select, SelectTrigger, SelectContent, SelectValue, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { IconChevronsRight, IconChevronsLeft, IconChevronRight, IconChevronLeft } from "@tabler/icons-react";
 
-export function OrdersTable({ data: initialData }) {
+interface RawOrder {
+      _id?: string;
+      id?: string;
+      customer: string | { email: string };
+      createdAt?: string;
+      date?: string;
+      totalAmount?: number;
+      total?: number;
+      totalQuantity?: number;
+      paymentStatus?: string;
+      status?: string;
+}
+
+type OrderStatusType = "pending" | "processing" | "shipped" | "delivered";
+
+export function OrdersTable({ data: initialData }: { data: RawOrder[] }) {
       const transformedData = React.useMemo(() => {
             if (!initialData) return [];
             return initialData.map((order) => ({
                   ...order,
                   customer: typeof order.customer === "object" ? order.customer.email : order.customer,
-                  id: order._id || order.id,
-                  createdAt: order.createdAt || order.date,
-                  amount: order.totalAmount || order.total,
-                  items: `${order.totalQuantity} items`,
-                  payment: order.paymentStatus || "pending",
-                  status: order.status || "pending",
+                  id: order._id || order.id || "",
+                  createdAt: order.createdAt || "",
+                  amount: order.totalAmount || 0,
+                  items: `${order.totalQuantity || 0} items`,
+                  paymentStatus: order.paymentStatus || "pending",
+                  status: (order.status as OrderStatusType) || "pending",
             }));
       }, [initialData]);
 
@@ -68,7 +72,7 @@ export function OrdersTable({ data: initialData }) {
             setData(transformedData);
       }, [transformedData]);
 
-      const table = useReactTable({
+      const table = useReactTable<Order>({
             data,
             columns,
             state: {
@@ -78,7 +82,7 @@ export function OrdersTable({ data: initialData }) {
                   columnFilters,
                   pagination,
             },
-            getRowId: (row) => row._id.toString(),
+            getRowId: (row) => row.id.toString(),
             enableRowSelection: true,
             onRowSelectionChange: setRowSelection,
             onSortingChange: setSorting,
@@ -95,7 +99,7 @@ export function OrdersTable({ data: initialData }) {
 
       const dataIds = React.useMemo<UniqueIdentifier[]>(
             () => table.getRowModel().rows.map((row) => row.id),
-            [table.getRowModel().rows]
+            [table], // Pass the table instance directly
       );
 
       return (
@@ -110,7 +114,7 @@ export function OrdersTable({ data: initialData }) {
                                                             ? null
                                                             : flexRender(
                                                                     header.column.columnDef.header,
-                                                                    header.getContext()
+                                                                    header.getContext(),
                                                               )}
                                                 </TableHead>
                                           ))}
@@ -129,7 +133,7 @@ export function OrdersTable({ data: initialData }) {
                                                             <TableCell key={cell.id}>
                                                                   {flexRender(
                                                                         cell.column.columnDef.cell,
-                                                                        cell.getContext()
+                                                                        cell.getContext(),
                                                                   )}
                                                             </TableCell>
                                                       ))}

@@ -1,7 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { useState, createContext, useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,10 @@ import { DashboardSection } from "@/lib/types";
 import { fetchUserDetails } from "@/lib/mutations/users";
 import { Spinner } from "@/components/ui/spinner";
 
-const DashboardContext = createContext<{ userData: any; activeSection: DashboardSection } | null>(null);
+const DashboardContext = createContext<{
+      userData: { name?: string; email: string };
+      activeSection: DashboardSection;
+} | null>(null);
 
 export function useDashboard() {
       const context = useContext(DashboardContext);

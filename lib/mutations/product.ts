@@ -23,7 +23,9 @@ export class FetchError extends Error {
  * @returns A promise that resolves to an array of Products.
  */
 export const fetchProducts = async (params: FilterState): Promise<Product[]> => {
-      const queryString = new URLSearchParams(params as Record<string, string>).toString();
+      const queryString = new URLSearchParams(
+            Object.entries(params).map(([key, value]) => [key, String(value)]),
+      ).toString();
 
       const response = await fetch(`${BASE_URL}/api/products?${queryString}`);
 

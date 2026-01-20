@@ -5,10 +5,11 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/features/client/checkout-form-feilds";
 import { getDiscountCode } from "@/lib/mutations/discount";
+import { OrderSummaryProps } from "@/lib/types";
 
 // --- Order Summary Component ---
 
-const OrderSummary = ({ cartItems, subtotal }: { cartItems: any[]; subtotal: string }) => {
+const OrderSummary = ({ cartItems, subtotal }: OrderSummaryProps) => {
       const queryClient = useQueryClient();
 
       const { mutate } = useMutation({
@@ -18,13 +19,17 @@ const OrderSummary = ({ cartItems, subtotal }: { cartItems: any[]; subtotal: str
             },
       });
 
-      const handleSubmit = (e) => {
+      const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            const discountCode = new FormData(e.currentTarget).get("discountCode");
 
-            mutate(discountCode);
+            const formData = new FormData(e.currentTarget);
+            const discountCode = formData.get("discountCode");
+
+            // Check if the value exists and is a string before mutating
+            if (typeof discountCode === "string") {
+                  mutate(discountCode);
+            }
       };
-
       return (
             <div className="flex flex-col gap-6">
                   {/* Product List */}

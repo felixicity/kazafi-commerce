@@ -15,6 +15,11 @@ export const AddressConfirmationDialog = ({
       setAddressConfirmOpen,
       setDefaultAddress,
       fullAddress,
+}: {
+      addressConfirmOpen: boolean;
+      setAddressConfirmOpen: () => void;
+      setDefaultAddress: () => void;
+      fullAddress: string;
 }) => {
       return (
             <AlertDialog open={addressConfirmOpen} onOpenChange={setAddressConfirmOpen}>

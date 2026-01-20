@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Product } from "@/lib/types";
+import { MaterialItem, ProductSize } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
       IconCheck,
@@ -16,8 +16,9 @@ import {
       IconTruckDelivery,
 } from "@tabler/icons-react";
 import { Separator } from "@/components/ui/separator";
-import { Rating } from "@/components/features/client/rating";
+// import { Rating } from "@/components/features/client/rating";
 import { addItemToCart } from "@/lib/mutations/cart";
+import { Product } from "@/lib/types";
 
 export function SingleProductPage({
       product,
@@ -55,8 +56,12 @@ export function SingleProductPage({
 
       const handleAddToCart = () => {
             const variation = product.variations.find((variant) => variant.color === selectedColor);
+            if (!variation) {
+                  toast.error("Please select a valid color variant");
+                  return;
+            }
             // Mock add to cart logic
-            mutate({ productId: product._id, variation, quantity });
+            mutate({ _id: product._id, variation, quantity });
       };
 
       if (isError) {
@@ -68,12 +73,15 @@ export function SingleProductPage({
             );
       }
 
+      if (!product || product.variations.length === 0) {
+            return "No product Found"; // Or return null
+      }
+
       const productImageURL =
-            product.variations.filter((variation) => variation.color === selectedColor)[0]?.imageURLs[0] ||
-            product.variations[0].imageURLs[0];
-      const productPrice =
-            product.variations.filter((variation) => variation.color === selectedColor)[0]?.price ||
-            product.variations[0].price;
+            product?.variations.find((v) => v.color === selectedColor)?.imageURLs ||
+            "/images/space-saving-furniture-2-tables-39950917107934-Photoroom.png";
+
+      const productPrice = product?.variations.find((variation) => variation.color === selectedColor)?.price || 0;
 
       return (
             <div className="max-w-7xl mx-auto p-6 sm:p-10 lg:py-12">
@@ -84,7 +92,7 @@ export function SingleProductPage({
                               <div className="aspect-4/5 bg-gray-100 rounded-2xl overflow-hidden shadow-xl border border-gray-100">
                                     {
                                           <Image
-                                                src={productImageURL}
+                                                src={productImageURL[0]}
                                                 alt={`${product.name} - ${selectedColor}`}
                                                 width={1200}
                                                 height={1200}
@@ -95,16 +103,19 @@ export function SingleProductPage({
                               </div>
                               {/* Mock small gallery thumbnails */}
                               <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
-                                    {product.variations.map((variation) => (
+                                    {product.variations.map(({ _id, imageURLs = [] }) => (
                                           <Image
-                                                key={variation._id}
-                                                src={variation.imageURLs[0]}
+                                                key={_id}
+                                                src={
+                                                      imageURLs[0] ||
+                                                      "/images/space-saving-furniture-2-tables-39950917107934-Photoroom.png"
+                                                }
                                                 alt={product.name}
                                                 width={1000}
                                                 height={1000}
                                                 quality={75}
                                                 className={`w-20 h-24 object-cover rounded-xl border-2 cursor-pointer transition-all ${
-                                                      variation.imageURLs[0] === productImageURL
+                                                      imageURLs[0] === productImageURL[0]
                                                             ? "border-black"
                                                             : "border-gray-200 hover:border-gray-400"
                                                 }`}
@@ -150,23 +161,21 @@ export function SingleProductPage({
                                           </span>
                                     </h2>
                                     <div className="flex flex-wrap gap-4">
-                                          {product.variations.map((variation) => (
+                                          {product.variations.map(({ color = "Unknown", hexCode }) => (
                                                 <div
-                                                      key={variation.color}
-                                                      onClick={() => setSelectedColor(variation.color)}
+                                                      key={color}
+                                                      onClick={() => setSelectedColor(color)}
                                                       style={{
-                                                            backgroundColor: variation.hexCode,
+                                                            backgroundColor: hexCode,
                                                             borderColor:
-                                                                  variation.hexCode === "#FFFFFF"
-                                                                        ? "#e5e7eb"
-                                                                        : "transparent",
+                                                                  hexCode === "#FFFFFF" ? "#e5e7eb" : "transparent",
                                                       }}
                                                       className={`w-12 h-12 rounded-full border-2 cursor-pointer transition-all duration-200 ${
-                                                            selectedColor === variation.color
+                                                            selectedColor === color
                                                                   ? "ring-4 ring-offset-2 ring-black shadow-md"
                                                                   : "hover:ring-2 ring-gray-400"
                                                       }`}
-                                                      title={variation.color}
+                                                      title={color}
                                                 />
                                           ))}
                                     </div>
@@ -181,22 +190,26 @@ export function SingleProductPage({
                                                       <span className="font-medium text-black">{selectedSize}</span>
                                                 </h2>
                                                 <div className="flex flex-wrap gap-3">
-                                                      {product?.variations.sizes.map((size) => (
-                                                            <Button
-                                                                  key={size}
-                                                                  variant={
-                                                                        selectedSize === size ? "default" : "outline"
-                                                                  }
-                                                                  className={`h-11 w-16 text-sm font-bold ${
-                                                                        selectedSize === size
-                                                                              ? "bg-black text-white"
-                                                                              : "bg-white hover:bg-gray-100"
-                                                                  }`}
-                                                                  onClick={() => setSelectedSize(size)}
-                                                            >
-                                                                  {size}
-                                                            </Button>
-                                                      ))}
+                                                      {product?.variations
+                                                            .find((v) => v.color === selectedColor)
+                                                            ?.sizes?.map((size) => (
+                                                                  <Button
+                                                                        key={size}
+                                                                        variant={
+                                                                              selectedSize === size
+                                                                                    ? "default"
+                                                                                    : "outline"
+                                                                        }
+                                                                        className={`h-11 w-16 text-sm font-bold ${
+                                                                              selectedSize === size
+                                                                                    ? "bg-black text-white"
+                                                                                    : "bg-white hover:bg-gray-100"
+                                                                        }`}
+                                                                        onClick={() => setSelectedSize(size)}
+                                                                  >
+                                                                        {size}
+                                                                  </Button>
+                                                            ))}
                                                 </div>
                                                 <p className="text-sm text-gray-500 hover:underline cursor-pointer">
                                                       Size Guide
@@ -214,7 +227,7 @@ export function SingleProductPage({
                                           <Button
                                                 variant="ghost"
                                                 className="h-full w-1/3 rounded-none border-r border-gray-300 text-xl font-light"
-                                                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
                                           >
                                                 -
                                           </Button>
@@ -227,7 +240,7 @@ export function SingleProductPage({
                                           <Button
                                                 variant="ghost"
                                                 className="h-full w-1/3 rounded-none border-l border-gray-300 text-xl font-light"
-                                                onClick={() => setQuantity((q) => q + 1)}
+                                                onClick={() => setQuantity(quantity + 1)}
                                           >
                                                 +
                                           </Button>
@@ -264,35 +277,39 @@ export function SingleProductPage({
                               </div>
 
                               {/* Materials Section (Requested Detail) */}
-                              <div className="space-y-4 pt-2">
-                                    <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">Materials & Care</h2>
-                                    <div className="grid grid-cols-2 gap-4">
-                                          {product?.materials.map((item, index) => (
-                                                <div
-                                                      key={index}
-                                                      className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg shadow-sm"
-                                                >
-                                                      <div className="text-black">
-                                                            {item.title == "Composition" ? (
-                                                                  <IconCheck />
-                                                            ) : item.title == "Weight" ? (
-                                                                  <IconChargingPile />
-                                                            ) : item.title == "Sourcing" ? (
-                                                                  <IconTag />
-                                                            ) : item.title == "Care" ? (
-                                                                  <IconRotateClockwise />
-                                                            ) : null}
+                              {product?.materials && (
+                                    <div className="space-y-4 pt-2">
+                                          <h2 className="text-2xl font-bold text-gray-800 border-b pb-2">
+                                                Materials & Care
+                                          </h2>
+                                          <div className="grid grid-cols-2 gap-4">
+                                                {product?.materials.map((item, index) => (
+                                                      <div
+                                                            key={index}
+                                                            className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg shadow-sm"
+                                                      >
+                                                            <div className="text-black">
+                                                                  {item.title == "Composition" ? (
+                                                                        <IconCheck />
+                                                                  ) : item.title == "Weight" ? (
+                                                                        <IconChargingPile />
+                                                                  ) : item.title == "Sourcing" ? (
+                                                                        <IconTag />
+                                                                  ) : item.title == "Care" ? (
+                                                                        <IconRotateClockwise />
+                                                                  ) : null}
+                                                            </div>
+                                                            <div>
+                                                                  <p className="text-sm font-semibold text-gray-800">
+                                                                        {item.title}
+                                                                  </p>
+                                                                  <p className="text-xs text-gray-600">{item.detail}</p>
+                                                            </div>
                                                       </div>
-                                                      <div>
-                                                            <p className="text-sm font-semibold text-gray-800">
-                                                                  {item.title}
-                                                            </p>
-                                                            <p className="text-xs text-gray-600">{item.detail}</p>
-                                                      </div>
-                                                </div>
-                                          ))}
+                                                ))}
+                                          </div>
                                     </div>
-                              </div>
+                              )}
                         </div>
                   </div>
             </div>

@@ -1,4 +1,3 @@
-import { AppSidebar } from "@/components/features/app-sidebar";
 import {
       Breadcrumb,
       BreadcrumbItem,
@@ -19,7 +18,6 @@ export default function Page() {
                         } as React.CSSProperties
                   }
             >
-                  <AppSidebar />
                   <SidebarInset>
                         <header className="bg-background sticky top-0 flex shrink-0 items-center gap-2 border-b p-4">
                               <SidebarTrigger className="-ml-1" />

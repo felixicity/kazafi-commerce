@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { SingleProduct } from "@/lib/types";
+import { Product } from "@/lib/types";
 import { fetchSingleProduct } from "@/lib/mutations/product";
 import { SingleProductPage } from "./single-product";
 
-const SingleProductRoute: React.FC<{ product: SingleProduct }> = () => {
+const SingleProductRoute: React.FC<{ product: Product }> = () => {
       const [selectedColor, setSelectedColor] = useState<string>("");
       const [selectedSize, setSelectedSize] = useState<string>("M");
       const [quantity, setQuantity] = useState<number>(1);

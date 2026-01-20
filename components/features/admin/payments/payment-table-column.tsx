@@ -7,8 +7,8 @@ export const schema = z.object({
       order: z.string(),
       createdAt: z.string(),
       type: z.string(),
-      amount: z.string(),
-      status: z.string(),
+      amount: z.number(),
+      status: z.enum(["paid", "cancelled", "pending"]),
       email: z.email(),
       method: z.string(),
 });

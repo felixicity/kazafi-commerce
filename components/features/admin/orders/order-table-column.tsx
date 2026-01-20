@@ -3,17 +3,21 @@ import { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 
+const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered"] as const;
+
 export const schema = z.object({
       id: z.string(),
-      customer: z.string(),
+      customer: z.any(),
       paymentStatus: z.string(),
-      status: z.string(),
+      status: z.enum(STATUS_OPTIONS),
       createdAt: z.string(),
       amount: z.number(),
       items: z.string(),
 });
 
-export const columns: ColumnDef<z.infer<typeof schema>>[] = [
+export type Order = z.infer<typeof schema>;
+
+export const columns: ColumnDef<Order>[] = [
       {
             accessorKey: "id",
             header: "Order Id",
@@ -36,7 +40,7 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
             cell: ({ row }) => (
                   <div>
                         {typeof row.original.customer === "object"
-                              ? row.original.customer.email
+                              ? row.original.customer?.email
                               : row.original.customer}
                   </div>
             ),
@@ -45,7 +49,10 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       {
             accessorKey: "shipping",
             header: "Status",
-            cell: ({ row }) => <Badge variant={row.original.status}>{row.original.status}</Badge>,
+            cell: ({ row }) => {
+                  const statusVariant = row.original.status as "delivered" | "shipped" | "processing" | "cancelled";
+                  return <Badge variant={statusVariant}>{row.original.status}</Badge>;
+            },
             enableHiding: false,
       },
       {
@@ -70,7 +77,10 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
       {
             accessorKey: "payment",
             header: "Payment status",
-            cell: ({ row }) => <Badge variant={row.original.paymentStatus}>{row.original.paymentStatus}</Badge>,
+            cell: ({ row }) => {
+                  const paymentVariant = row.original.paymentStatus as "paid" | "pending" | "draft";
+                  return <Badge variant={paymentVariant}>{row.original.paymentStatus}</Badge>;
+            },
             enableHiding: false,
       },
       {

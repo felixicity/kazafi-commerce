@@ -4,41 +4,18 @@
 
 /* For Products Listing Page*/
 export type ProductColor = { name: string; hex: string };
-export type ProductSize = "XS" | "S" | "M" | "L" | "XL" | "XXL";
+export type ProductSize = "XS" | "SM" | "M" | "L" | "XL" | "XXL";
 export type ProductReview = { rating: number; count: number };
 export type MaterialItem = { title: string; detail: string };
 
 export interface Product {
-      id: number;
-      name: string;
-      category: string;
-      price: number;
-      originalPrice?: number;
-      description: string;
-      imagePlaceholder: string;
-      variants: {
-            color: ProductColor[];
-            sizes: ProductSize[];
-      };
-      reviews: ProductReview;
-}
-
-export interface SingleProduct {
-      id: number;
+      _id: string;
       name: string;
       category: string;
       description: string;
-      details: string;
-      variations: {
-            color: ProductColor;
-            sizes?: ProductSize[];
-            stock: number;
-            price: number;
-            discount?: number;
-            imageURLs: [string];
-      }[];
-      reviews: ProductReview;
-      materials: MaterialItem[];
+      variations: Variant[];
+      reviews?: ProductReview;
+      materials?: MaterialItem[];
 }
 
 export interface FilterState {
@@ -74,14 +51,15 @@ export interface Coupon {
 // =================================================================
 
 // types.ts
-export interface CartVariation {
-      price: number;
+export interface Variant {
+      _id: number;
       color?: string;
-      quantity?: number; // Stock level, maybe
       hexCode?: string;
-      imageURLs?: string[];
+      sizes?: ProductSize[];
+      discount?: number;
+      price?: number;
       stock?: number;
-      _id: string; // The ID of the variation
+      imageURLs?: string[] | string;
 }
 
 export interface CartProduct {
@@ -91,9 +69,9 @@ export interface CartProduct {
 
 export interface CartItem {
       _id: string; // Add the item's unique ID for updates/deletion
-      product: CartProduct;
+      product: Product;
+      variation: Variant;
       quantity: number;
-      variation: CartVariation;
 }
 
 export interface CartData {
@@ -104,27 +82,50 @@ export interface CartData {
       };
 }
 
-// src/types/product.ts (or just types.ts)
-
-export interface Product {
-      _id: string;
-      name: string;
-      description: string;
-      variations: {
-            _id: string;
-            color: string;
-            size: string;
-            stock: number;
-            price: number;
-            discount?: number;
-            imageURLs: string[];
-      }[];
-      stock: number;
-}
-
 // Define the parameters for filtering/sorting
 export interface ProductParams {
       category?: string;
       sort?: "price_asc" | "price_desc" | "newest";
       search?: string;
+}
+
+export interface OrderProduct {
+      _id: string;
+      imageURLs: string[];
+      // Add other fields if you use them, like name or price
+}
+
+export interface OrderItem {
+      product: OrderProduct;
+      color: string;
+      // Common fields usually found here:
+      size?: string;
+      quantity?: number;
+}
+
+export interface CustomerOrder {
+      _id: string;
+      status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+      createdAt: string; // ISO Date string
+      items: OrderItem[];
+      totalQuantity: number;
+      totalAmount: number;
+      color?: string; // Used in your alt tag logic: order.color
+}
+interface CartItemFromDB {
+      _id: string;
+      quantity: number;
+      product: {
+            name: string;
+      };
+      variation: {
+            imageURLs: string[];
+            color: string;
+            price: number;
+      };
+}
+
+export interface OrderSummaryProps {
+      cartItems: CartItemFromDB[];
+      subtotal: string;
 }

@@ -51,7 +51,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { columns, variationSchema } from "./table-columns";
+import { columns } from "./table-columns";
 import Link from "next/link";
 import { ButtonGroup } from "@/components/ui/button-group";
 
@@ -70,7 +70,7 @@ export const productSchema = z.object({
                   imageURLs: z.array(z.string()),
                   _id: z.object({ $oid: z.string() }),
                   discount: z.string().optional(),
-            })
+            }),
       ),
       isFeatured: z.boolean(),
       createdAt: z.object({ $date: z.string() }),
@@ -99,9 +99,11 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof productSchema>> }) {
             </TableRow>
       );
 }
+type Product = z.infer<typeof productSchema>;
 
-export default function ProductsTable({ initialData }) {
-      const [data, setData] = React.useState(initialData || []);
+// 2. Apply it to the function props
+export default function ProductsTable({ initialData }: { initialData: Product[] }) {
+      const [data, setData] = React.useState<Product[]>(initialData || []);
 
       React.useEffect(() => {
             if (initialData) {
@@ -130,7 +132,7 @@ export default function ProductsTable({ initialData }) {
                   columnFilters,
                   pagination,
             },
-            getRowId: (row) => row._id.toString(),
+            getRowId: (row) => row._id,
             enableRowSelection: true,
             onRowSelectionChange: setRowSelection,
             onSortingChange: setSorting,
@@ -145,21 +147,15 @@ export default function ProductsTable({ initialData }) {
             getFacetedUniqueValues: getFacetedUniqueValues(),
       });
 
-      const dataIds = React.useMemo<UniqueIdentifier[]>(
-            () => table.getRowModel().rows.map((row) => row.id),
-            [table.getRowModel().rows]
-      );
+      const dataIds = React.useMemo<UniqueIdentifier[]>(() => table.getRowModel().rows.map((row) => row.id), [table]);
 
       function handleDragEnd(event: DragEndEvent) {
             const { active, over } = event;
             if (active && over && active.id !== over.id) {
-                  setData((data) => {
-                        const activeItem = data.find((item) => item._id.toString() === active.id);
-                        const overItem = data.find((item) => item._id.toString() === over.id);
-                        if (!activeItem || !overItem) return data;
-                        const oldIndex = data.indexOf(activeItem);
-                        const newIndex = data.indexOf(overItem);
-                        return arrayMove(data, oldIndex, newIndex);
+                  setData((items) => {
+                        const oldIndex = items.findIndex((item) => item._id === active.id);
+                        const newIndex = items.findIndex((item) => item._id === over.id);
+                        return arrayMove(items, oldIndex, newIndex);
                   });
             }
       }
@@ -183,7 +179,7 @@ export default function ProductsTable({ initialData }) {
                                                 .filter(
                                                       (column) =>
                                                             typeof column.accessorFn !== "undefined" &&
-                                                            column.getCanHide()
+                                                            column.getCanHide(),
                                                 )
                                                 .map((column) => {
                                                       return (
@@ -235,7 +231,7 @@ export default function ProductsTable({ initialData }) {
                                                                                     : flexRender(
                                                                                             header.column.columnDef
                                                                                                   .header,
-                                                                                            header.getContext()
+                                                                                            header.getContext(),
                                                                                       )}
                                                                         </TableHead>
                                                                   );

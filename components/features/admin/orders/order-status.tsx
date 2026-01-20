@@ -16,9 +16,7 @@ import {
       DialogDescription,
       DialogFooter,
       DialogHeader,
-      DialogTrigger,
       DialogTitle,
-      DialogOverlay,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field";
@@ -28,23 +26,16 @@ import { z } from "zod";
 import { IconCaretDownFilled } from "@tabler/icons-react";
 import { useState } from "react";
 import { updateOrderStatus } from "@/lib/mutations/order";
+import { schema } from "./order-table-column";
 
-export const schema = z.object({
-      id: z.string(),
-      customer: z.string(),
-      payment: z.string(),
-      status: z.string(),
-      createdAt: z.string(),
-      amount: z.number(),
-      items: z.string(),
-});
+type orderStatus = "pending" | "processing" | "shipped" | "delivered";
 
-const shipping = ["pending", "processing", "shipped", "delivered"];
+const shipping: orderStatus[] = ["pending", "processing", "shipped", "delivered"];
 
 export function OrderStatus({ item }: { item: z.infer<typeof schema> }) {
       const [showDialog, setShowDialog] = useState(false);
-      const [selectedOption, setSelectedOption] = useState(item.status);
-      const [newOption, setNewOption] = useState<string>("");
+      const [selectedOption, setSelectedOption] = useState<orderStatus>(item.status);
+      const [newOption, setNewOption] = useState<orderStatus | "">("");
       const queryClient = useQueryClient();
 
       const {
@@ -58,12 +49,12 @@ export function OrderStatus({ item }: { item: z.infer<typeof schema> }) {
             },
       });
 
-      const handleShowDialog = (option: string) => {
+      const handleShowDialog = (option: orderStatus) => {
             setNewOption(option);
             setShowDialog(true);
       };
 
-      const handleOptions = (option: string) => {
+      const handleOptions = (option: orderStatus) => {
             console.log(`Option set to ${option}`);
             setSelectedOption(option);
             console.log({ orderId: item.id, status: option });
@@ -79,7 +70,7 @@ export function OrderStatus({ item }: { item: z.infer<typeof schema> }) {
                         <div>
                               <DropdownMenu modal={false}>
                                     <DropdownMenuTrigger className="flex items-center gap-2">
-                                          <Badge variant={selectedOption} size="xl" className="rounded-md w-full">
+                                          <Badge variant={selectedOption} className="rounded-md w-full">
                                                 {selectedOption}
                                                 <IconCaretDownFilled />
                                           </Badge>
@@ -123,7 +114,11 @@ export function OrderStatus({ item }: { item: z.infer<typeof schema> }) {
                                                       <Button variant="outline">Cancel</Button>
                                                 </DialogClose>
                                                 <DialogClose asChild>
-                                                      <Button type="submit" onClick={() => handleOptions(newOption)}>
+                                                      <Button
+                                                            type="submit"
+                                                            disabled={!newOption}
+                                                            onClick={() => handleOptions(newOption as orderStatus)}
+                                                      >
                                                             Confirm and Proceed
                                                       </Button>
                                                 </DialogClose>

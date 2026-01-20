@@ -22,14 +22,56 @@ import { createPaymentIntent } from "@/lib/mutations/payment";
 import { createOrder } from "@/lib/mutations/order";
 import { Spinner } from "@/components/ui/spinner";
 
-const initialShippingOptions: PaymentShippingOption[] = [];
+interface Address {
+      _id?: string;
+      street: string;
+      city: string;
+      country: string;
+      firstname?: string;
+      lastname?: string;
+      phone?: string;
+      postcode?: string;
+      isDefault?: boolean;
+}
+
+interface User {
+      _id: string;
+      email?: string;
+      addresses?: Address[];
+}
+
+interface ShippingOption {
+      id: string;
+      label: string;
+      amount: { currency: string; value: string };
+      estimatedDeliveryTime: string;
+}
+
+interface Order {
+      _id: string;
+}
+
+interface Payment {
+      paymentUrl: string;
+}
+
+interface AddressFormData {
+      name: string;
+      phone: string;
+      street: string;
+      city: string;
+      state: string;
+      postCode: string;
+      country: string;
+}
+
+const initialShippingOptions: ShippingOption[] = [];
 
 // --- MainCheckout Page Component ---
 
 const CheckoutPage: React.FC = () => {
       const [city, setCity] = useState<string>("");
-      const [availableOptions, setAvailableOptions] = useState<PaymentShippingOption[]>(initialShippingOptions);
-      //   const [selectedOptionId, setSelectedOptionId] = useState<string>("");
+      const [availableOptions, setAvailableOptions] = useState<ShippingOption[]>(initialShippingOptions);
       const [isOrderSummaryOpen, setIsOrderSummaryOpen] = useState<boolean>(false);
       const [addressConfirmOpen, setAddressConfirmOpen] = useState<boolean>(false);
       const [defaultAddress, setDefaultAddress] = useState<boolean>(false);
@@ -57,12 +99,12 @@ const CheckoutPage: React.FC = () => {
 
                         // const data: PaymentShippingOption[] = await res.json();
 
-                        const data: PaymentShippingOption[] = [
+                        const data = [
                               {
                                     amount: { currency: "NGN", value: "750" },
                                     id: "rkorro4985jg5mg5",
                                     label: "delivery",
-                                    estimatedDeliveryTime: "24 hours",
+                                    estimatedDeliveryTime: "2 - 3 work days",
                               },
                               {
                                     amount: { currency: "NGN", value: "0" },
@@ -135,7 +177,7 @@ const CheckoutPage: React.FC = () => {
       });
 
       //get users already saved default address
-      const address = userData?.addresses?.find((addr: any) => addr.isDefault);
+      const address = (userData as User | undefined)?.addresses?.find((addr: Address) => addr.isDefault);
 
       const houseNumber = address?.street;
       const addressCity = address?.city;
@@ -166,38 +208,40 @@ const CheckoutPage: React.FC = () => {
             currency: "NGN",
       }).format(cartItems.reduce((acc, item) => acc + (item.variation?.price || 0) * item.quantity, 0));
 
-      async function handleSubmit(e: HTMLFormElement) {
+      async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault();
+            const formElement = e.currentTarget;
             // If there's no address, collect form data and save it
-            let newAddress = null;
+            let newAddress: string | null = null;
             if (!address) {
-                  const addressData: any = {};
-                  const formData = new FormData(e.currentTarget);
+                  const formData = new FormData(formElement);
+                  const addressData: AddressFormData = {
+                        name: String(formData.get("name") || ""),
+                        phone: String(formData.get("phone") || ""),
+                        street: String(formData.get("street") || ""),
+                        city: String(formData.get("city") || ""),
+                        state: String(formData.get("state") || ""),
+                        postCode: String(formData.get("postCode") || ""),
+                        country: String(formData.get("country") || ""),
+                  };
 
-                  for (const [key, value] of formData.entries()) {
-                        addressData[key] = value;
-                  }
-
-                  const city = addressData.city;
-                  const country = addressData.country;
-                  const street = addressData.street;
-
-                  newAddress = `${street}, ${city}, ${country}`;
-
+                  newAddress = `${addressData.street}, ${addressData.city}, ${addressData.country}`;
                   saveAddressMutation(addressData);
             }
 
-            const res = await orderMutation(newAddress || fullAddress);
+            const res = (await orderMutation(newAddress || fullAddress)) as { order: Order };
 
-            const payment = await PaymentMutation({ orderId: res.order._id, provider: "paystack" });
+            const payment = (await PaymentMutation({ orderId: res.order._id, provider: "paystack" })) as Payment;
 
             if (payment) {
                   window.location.href = payment.paymentUrl;
             }
       }
 
-      const handleLocationChange = (e) => {
-            setCity(e.target.value);
+      const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLInputElement>) => {
+            if ("target" in e && e.target instanceof HTMLInputElement) {
+                  setCity(e.target.value);
+            }
       };
 
       return (
@@ -301,19 +345,12 @@ const CheckoutPage: React.FC = () => {
                                                                   name="country"
                                                             />
 
-                                                            <div className="grid grid-cols-2 gap-3">
-                                                                  <FormField
-                                                                        id="firstName"
-                                                                        name="firstname"
-                                                                        placeholder="First name (optional)"
-                                                                  />
-                                                                  <FormField
-                                                                        id="lastName"
-                                                                        placeholder="Last name"
-                                                                        name="lastname"
-                                                                        required
-                                                                  />
-                                                            </div>
+                                                            <FormField
+                                                                  id="name"
+                                                                  name="name"
+                                                                  placeholder="Full name"
+                                                                  required
+                                                            />
 
                                                             <FormField
                                                                   id="street"
@@ -334,8 +371,15 @@ const CheckoutPage: React.FC = () => {
                                                                         required
                                                                   />
                                                                   <FormField
-                                                                        id="zip"
-                                                                        name="Postcode"
+                                                                        id="state"
+                                                                        name="state"
+                                                                        placeholder="State"
+                                                                        type="text"
+                                                                        className="sm:col-span-1"
+                                                                  />
+                                                                  <FormField
+                                                                        id="postCode"
+                                                                        name="postCode"
                                                                         placeholder="Postcode"
                                                                         type="text"
                                                                         className="sm:col-span-1"

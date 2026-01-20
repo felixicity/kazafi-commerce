@@ -13,14 +13,7 @@ import {
 } from "@/components/ui/drawer";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { OrderStatus } from "./order-status";
-
-export const schema = z.object({
-      id: z.string(),
-      customer: z.string(),
-      paymentStatus: z.string(),
-      status: z.string(),
-      createdAt: z.string(),
-});
+import { schema } from "./order-table-column";
 
 export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
       const isMobile = useIsMobile();
@@ -39,7 +32,8 @@ export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                         </DrawerHeader>
                         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
                               <h2>
-                                    Customer: {typeof item.customer === "object" ? item.customer.email : item.customer}
+                                    Customer:{" "}
+                                    {typeof item.customer === "object" ? item?.customer?.email : item.customer}
                               </h2>
                               <p>Email: chukwufelix16@gmail.com</p>
                               {/* {!isMobile && (

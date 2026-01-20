@@ -28,13 +28,17 @@ import {
       DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { CustomerOrder } from "@/lib/types";
 
 const OrderHistoryView: React.FC = () => {
       const isMobile = useIsMobile();
 
-      const { data: ordersData, isLoading: ordersLoading } = useQuery({
+      // 1. Import your interface (defined in the previous step)
+
+      // 2. Add the type to useQuery
+      const { data: ordersData, isLoading: ordersLoading } = useQuery<CustomerOrder[]>({
             queryKey: ["orders"],
-            queryFn: getUserOrders,
+            queryFn: getUserOrders, // Ensure this function is also typed to return Promise<CustomerOrder[]>
       });
 
       return (
@@ -93,10 +97,10 @@ const OrderHistoryView: React.FC = () => {
                                                                               <DrawerTitle>#PO-{order._id}</DrawerTitle>
                                                                               <DrawerDescription>
                                                                                     {new Date(
-                                                                                          order.createdAt
+                                                                                          order.createdAt,
                                                                                     ).toLocaleDateString()}{" "}
                                                                                     {new Date(
-                                                                                          order.createdAt
+                                                                                          order.createdAt,
                                                                                     ).toLocaleTimeString()}
                                                                               </DrawerDescription>
                                                                         </DrawerHeader>
@@ -133,7 +137,8 @@ const OrderHistoryView: React.FC = () => {
                                                                                                             }
                                                                                                             width={1000}
                                                                                                             alt={
-                                                                                                                  order.color
+                                                                                                                  order.color ||
+                                                                                                                  "produt image"
                                                                                                             }
                                                                                                             className="w-full"
                                                                                                       />
@@ -163,10 +168,10 @@ const OrderHistoryView: React.FC = () => {
                                                                               <SheetTitle>#PO-{order._id}</SheetTitle>
                                                                               <SheetDescription>
                                                                                     {new Date(
-                                                                                          order.createdAt
+                                                                                          order.createdAt,
                                                                                     ).toLocaleDateString()}{" "}
                                                                                     {new Date(
-                                                                                          order.createdAt
+                                                                                          order.createdAt,
                                                                                     ).toLocaleTimeString()}
                                                                               </SheetDescription>
                                                                         </SheetHeader>
@@ -203,7 +208,8 @@ const OrderHistoryView: React.FC = () => {
                                                                                                             }
                                                                                                             width={1000}
                                                                                                             alt={
-                                                                                                                  order.color
+                                                                                                                  order.color ||
+                                                                                                                  "produ t image"
                                                                                                             }
                                                                                                             className="w-full"
                                                                                                       />
