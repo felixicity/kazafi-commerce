@@ -1,4 +1,3 @@
-import { SingleProduct } from "../types";
 import { Coupon } from "../types";
 
 export const products = [
@@ -112,7 +111,7 @@ export const products = [
       },
 ];
 
-export const MOCK_PRODUCT_SINGLE: SingleProduct = {
+export const MOCK_PRODUCT_SINGLE = {
       id: 1,
       name: "Essential Oversized Tee",
       category: "T-Shirts",
@@ -142,7 +141,7 @@ export const MOCK_PRODUCT_SINGLE: SingleProduct = {
       ],
 };
 
-export const MOCK_ORDERS: Order[] = [
+export const MOCK_ORDERS = [
       { id: "ORD-2023-4001", date: "Oct 15, 2024", status: "Delivered", total: 125.99, items: 3 },
       { id: "ORD-2023-4002", date: "Sep 28, 2024", status: "Shipped", total: 45.0, items: 1 },
       { id: "ORD-2023-4003", date: "Aug 01, 2024", status: "Processing", total: 299.5, items: 5 },

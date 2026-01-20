@@ -6,13 +6,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { PriceSlider } from "@/components/features/client/price-slider";
-import { FilterState } from "@/hooks/useFilterManagement"; // Ensure this is correctly imported
+import { ArrayFilterKey, FilterState } from "@/hooks/useFilterManagement"; // Ensure this is correctly imported
 
 interface FiltersSidebarProps {
       filters: FilterState; // Current filter state
       MAX_PRICE: number;
       MIN_PRICE: number;
-      handleToggleFilter: (key: keyof FilterState, value: string, isChecked: boolean) => void;
+      handleToggleFilter: (key: ArrayFilterKey, value: string, isChecked: boolean) => void;
       handlePriceChange: (value: [number, number]) => void;
       clearFilters: () => void;
 }
@@ -43,7 +43,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
       const { categories, colors, sizes } = options;
 
       // Helper to check if a filter value is currently active
-      const isActive = (key: keyof FilterState, value: string) => filters[key].includes(value);
+      const isActive = (key: ArrayFilterKey, value: string) => filters[key].includes(value);
 
       return (
             <div className="py-2 space-y-5 lg:sticky lg:top-4 bg-white lg:bg-transparent h-dvh overflow-y-auto">

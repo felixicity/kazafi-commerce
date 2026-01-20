@@ -1,5 +1,4 @@
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
       Item,
@@ -11,7 +10,7 @@ import {
       ItemSeparator,
       ItemTitle,
 } from "@/components/ui/item";
-import { Icon12Hours, IconCaretRight, IconChevronRight, IconFolder, IconHandOff } from "@tabler/icons-react";
+import { Icon12Hours, IconChevronRight, IconFolder, IconHandOff } from "@tabler/icons-react";
 
 export function UrgentTasks({
       paymentsToFulfill,

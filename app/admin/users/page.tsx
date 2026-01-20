@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { CustomersTable } from "@/components/features/admin/customers/customers-table";
+import { CustomersTable, IdealCustomer } from "@/components/features/admin/customers/customers-table";
 
-const customersData = [
+const customersData: IdealCustomer[] = [
       {
             id: "ri4i4m945940jgwigm",
             name: "Chukwu Felix",

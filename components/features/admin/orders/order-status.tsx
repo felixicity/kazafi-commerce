@@ -34,7 +34,7 @@ const shipping: orderStatus[] = ["pending", "processing", "shipped", "delivered"
 
 export function OrderStatus({ item }: { item: z.infer<typeof schema> }) {
       const [showDialog, setShowDialog] = useState(false);
-      const [selectedOption, setSelectedOption] = useState<orderStatus>(item.status);
+      const [selectedOption, setSelectedOption] = useState<orderStatus>(item.status as orderStatus);
       const [newOption, setNewOption] = useState<orderStatus | "">("");
       const queryClient = useQueryClient();
 

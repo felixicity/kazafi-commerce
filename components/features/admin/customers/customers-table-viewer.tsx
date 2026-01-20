@@ -12,18 +12,9 @@ import {
       DrawerTrigger,
 } from "@/components/ui/drawer";
 import { IconDotsVertical } from "@tabler/icons-react";
+import { IdealCustomer } from "./customers-table";
 
-export const schema = z.object({
-      id: z.string(),
-      name: z.string(),
-      email: z.email(),
-      createdAt: z.string(),
-      role: z.string(),
-      status: z.string(),
-      login: z.number(),
-});
-
-export function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
+export function TableCellViewer({ item }: { item: IdealCustomer }) {
       const isMobile = useIsMobile();
 
       return (

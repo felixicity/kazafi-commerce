@@ -2,18 +2,9 @@ import { TableCellViewer } from "./customers-table-viewer";
 import { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
+import { IdealCustomer } from "./customers-table";
 
-export const schema = z.object({
-      id: z.string(),
-      name: z.string(),
-      email: z.email(),
-      createdAt: z.string(),
-      role: z.string(),
-      status: z.string(),
-      login: z.number(),
-});
-
-export const columns: ColumnDef<z.infer<typeof schema>>[] = [
+export const columns: ColumnDef<IdealCustomer>[] = [
       {
             accessorKey: "id",
             header: "Customer Id",

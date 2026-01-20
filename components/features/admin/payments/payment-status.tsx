@@ -26,9 +26,9 @@ import { z } from "zod";
 import { IconCaretDownFilled } from "@tabler/icons-react";
 import { schema } from "./payment-table-column";
 
-type paymentStatus = "paid" | "cancelled" | "pending";
+type paymentStatus = "successful" | "cancelled" | "pending" | "failed";
 
-const payments: paymentStatus[] = ["paid", "cancelled", "pending"];
+const payments: paymentStatus[] = ["successful", "cancelled", "pending", "failed"];
 
 export function PaymentStatus({ item }: { item: z.infer<typeof schema> }) {
       const [showDialog, setShowDialog] = useState(false);

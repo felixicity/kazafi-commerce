@@ -5,9 +5,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/u
 
 const DURATIONS = ["Today", "7 Days", "14 Days", "30 Days"];
 
-export function ButtonGroupSelect({ timeRange, setTimeRange }) {
+export function ButtonGroupSelect({
+      timeRange,
+      setTimeRange,
+}: {
+      timeRange: string;
+      setTimeRange: (value: string) => void;
+}) {
       return (
-            <Select value={timeRange} onValueChange={setTimeRange}>
+            <Select value={timeRange} onValueChange={() => setTimeRange(timeRange)}>
                   <SelectTrigger className="bg-white">{timeRange}</SelectTrigger>
                   <SelectContent className="min-w-24">
                         {DURATIONS.map((duration) => (

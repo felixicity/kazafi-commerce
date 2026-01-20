@@ -28,7 +28,6 @@ import { IconChevronsRight, IconChevronsLeft, IconChevronRight, IconChevronLeft 
 
 interface RawOrder {
       _id?: string;
-      id?: string;
       customer: string | { email: string };
       createdAt?: string;
       date?: string;
@@ -47,12 +46,12 @@ export function OrdersTable({ data: initialData }: { data: RawOrder[] }) {
             return initialData.map((order) => ({
                   ...order,
                   customer: typeof order.customer === "object" ? order.customer.email : order.customer,
-                  id: order._id || order.id || "",
+                  id: order._id || "",
                   createdAt: order.createdAt || "",
                   amount: order.totalAmount || 0,
                   items: `${order.totalQuantity || 0} items`,
                   paymentStatus: order.paymentStatus || "pending",
-                  status: (order.status as OrderStatusType) || "pending",
+                  status: order.status as OrderStatusType,
             }));
       }, [initialData]);
 
@@ -65,8 +64,6 @@ export function OrdersTable({ data: initialData }: { data: RawOrder[] }) {
             pageIndex: 0,
             pageSize: 10,
       });
-      //   const sortableId = React.useId();
-      //   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
       React.useEffect(() => {
             setData(transformedData);

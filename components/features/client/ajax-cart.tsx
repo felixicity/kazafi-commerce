@@ -19,9 +19,15 @@ import { fetchCartItems } from "../../../lib/mutations/cart"; // Use the abstrac
 import CartItemComponent from "../cartItem"; // Use the new item component
 import { CartItem } from "../../../lib/types"; // Use the types
 
+interface CartResponse {
+      cart: {
+            items: CartItem[];
+      };
+}
+
 export default function AjaxCartSheet() {
       // 1. Fetch Cart Data
-      const { data, error, isLoading } = useQuery({
+      const { data, error, isLoading } = useQuery<CartResponse>({
             queryKey: ["cart"],
             queryFn: fetchCartItems,
       });
@@ -54,7 +60,8 @@ export default function AjaxCartSheet() {
       ) : (
             <div className="space-y-6">
                   {items.map((item) => (
-                        <CartItemComponent key={item._id} item={item} />
+                        /* Use the variation ID as the key for stability */
+                        <CartItemComponent key={item.variation._id} item={item} />
                   ))}
             </div>
       );

@@ -4,8 +4,10 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { checkPaymentStatus } from "@/lib/mutations/payment";
 import { Spinner } from "@/components/ui/spinner";
+import { Suspense } from "react"; // 1. Import Suspense
 
-export default function VerifyPayment() {
+// 2. Move your logic into a separate internal component
+function VerifyPaymentContent() {
       const searchParams = useSearchParams();
       const router = useRouter();
       const reference = searchParams.get("reference");
@@ -13,13 +15,9 @@ export default function VerifyPayment() {
       const { data } = useQuery({
             queryKey: ["paymentStatus", reference],
             queryFn: () => checkPaymentStatus(reference as string),
-
-            // Poll every 2 seconds until the status in your DB is "successful"
             refetchInterval: (query) => (query.state.data?.status === "successful" ? false : 2000),
             enabled: !!reference,
       });
-      // If the webhook updated the DB to 'completed', move to Thank You page
-      console.log("Payment verification data:", data);
 
       if (data?.status === "successful") {
             router.push("/checkout/thank-you");
@@ -31,5 +29,20 @@ export default function VerifyPayment() {
                   <p>We are processing your payment.</p>
                   <Spinner className="mt-4" />
             </div>
+      );
+}
+
+// 3. Export the page wrapped in Suspense
+export default function VerifyPayment() {
+      return (
+            <Suspense
+                  fallback={
+                        <div className="flex h-screen items-center justify-center">
+                              <Spinner />
+                        </div>
+                  }
+            >
+                  <VerifyPaymentContent />
+            </Suspense>
       );
 }

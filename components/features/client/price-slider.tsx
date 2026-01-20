@@ -10,7 +10,7 @@ export function PriceSlider({
 }: {
       filters: { priceRange: [number, number] };
       value: [number, number];
-      onValueChange: (val: [number]) => void;
+      onValueChange: (val: [number, number]) => void;
       min: number;
       max: number;
 }) {

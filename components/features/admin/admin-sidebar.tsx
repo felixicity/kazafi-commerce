@@ -1,15 +1,11 @@
 "use client";
 import { useState } from "react";
 import {
-      IconCamera,
       IconChartBar,
       IconDashboard,
-      IconFileAi,
-      IconFileDescription,
       IconFolder,
       IconInnerShadowTop,
       IconReport,
-      IconSearch,
       IconSettings,
       IconTag,
       IconUsers,
@@ -94,7 +90,7 @@ const data = {
 };
 
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-      const [active, setActive] = useState("/admin");
+      const [active, setActive] = useState<string>("/admin");
 
       return (
             <Sidebar collapsible="offcanvas" {...props}>

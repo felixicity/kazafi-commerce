@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import { Nunito_Sans } from "next/font/google";
+// import { Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/components/features/queryProvider";
-
-const nunito_sans = Nunito_Sans({
-      subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
       title: {
@@ -23,7 +19,7 @@ export default function RootLayout({
 }>) {
       return (
             <html lang="en">
-                  <body className={`${nunito_sans.className} antialiased`}>
+                  <body>
                         <QueryProvider>{children}</QueryProvider>
                         <Toaster position="top-center" />
                   </body>

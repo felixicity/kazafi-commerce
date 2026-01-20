@@ -3,12 +3,13 @@ import { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 
-const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered"] as const;
+const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered"];
+const PAYMENTS_STATUS = ["paid", "failed", "pending"];
 
 export const schema = z.object({
       id: z.string(),
       customer: z.any(),
-      paymentStatus: z.string(),
+      paymentStatus: z.enum(PAYMENTS_STATUS),
       status: z.enum(STATUS_OPTIONS),
       createdAt: z.string(),
       amount: z.number(),
@@ -78,8 +79,8 @@ export const columns: ColumnDef<Order>[] = [
             accessorKey: "payment",
             header: "Payment status",
             cell: ({ row }) => {
-                  const paymentVariant = row.original.paymentStatus as "paid" | "pending" | "draft";
-                  return <Badge variant={paymentVariant}>{row.original.paymentStatus}</Badge>;
+                  const paymentStatusVariant = row.original.paymentStatus as "paid" | "failed" | "pending";
+                  return <Badge variant={paymentStatusVariant}>{row.original.paymentStatus}</Badge>;
             },
             enableHiding: false,
       },

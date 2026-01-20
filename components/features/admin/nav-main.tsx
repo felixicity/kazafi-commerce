@@ -19,6 +19,7 @@ export function NavMain({
             icon?: Icon;
       }[];
       active: string;
+      setActive: (value: string) => void;
 }) {
       return (
             <SidebarGroup>
@@ -29,9 +30,9 @@ export function NavMain({
                                           key={item.title}
                                           onClick={() => setActive(item.url)}
                                           className={
-                                                active == item.url
+                                                active === item.url
                                                       ? " bg-[#5a31f4] hover:bg-[#4c29cc] text-white rounded-md"
-                                                      : null
+                                                      : ""
                                           }
                                     >
                                           <Link href={item.url}>

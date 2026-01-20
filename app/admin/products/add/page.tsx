@@ -19,13 +19,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { ChevronsUpDown } from "lucide-react";
 import { IconCheck, IconFile, IconPlus, IconUpload } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-// import { useCreateProdu,ctMutation } from "../../../slices/productApiSlice";
+
+interface ProductVariation {
+      color: string;
+      hexCode: string;
+      price: string | number;
+      stock: string | number;
+      imageFiles: File[]; // This prevents the 'never[]' error
+      imagePreviews: string[];
+}
+
+interface ProductState {
+      name: string;
+      category: string;
+      description: string;
+      variations: ProductVariation[];
+}
 
 function AddProducts() {
-      const [product, setProduct] = useState({
+      const [product, setProduct] = useState<ProductState>({
             name: "",
-            description: "",
             category: "",
+            description: "",
             variations: [
                   {
                         color: "",
@@ -40,28 +55,58 @@ function AddProducts() {
 
       const [openCategory, setOpenCategory] = useState(false);
 
-      //   const [createProduct, { isLoading }] = useCreateProductMutation();
+      // const [createProduct, { isLoading }] = useCreateProductMutation();
 
-      const handleInputChange = (e) => {
+      // 1. Standard Input Event (Text, Select, etc.)
+      const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
             const { name, value } = e.target;
             setProduct((prev) => ({ ...prev, [name]: value }));
       };
 
-      const handleVariationChange = (index, e) => {
+      // 2. Variation Change (Includes File handling)
+      const handleVariationChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
             const { name, value, files } = e.target;
-
             const updatedVariations = [...product.variations];
 
-            if (name === "images") {
+            const fieldName = name as keyof ProductVariation;
+
+            if (name === "images" && files) {
                   const imageFiles = Array.from(files);
                   const previews = imageFiles.map((file) => URL.createObjectURL(file));
                   updatedVariations[index].imageFiles = imageFiles;
                   updatedVariations[index].imagePreviews = previews;
             } else {
-                  updatedVariations[index][name] = value;
+                  // Use 'as any' here only if your variation object is strictly typed
+                  // but the 'name' string is dynamic.
+                  if (fieldName !== "imageFiles" && fieldName !== "imagePreviews") {
+                        updatedVariations[index][fieldName] = value;
+                  }
             }
 
             setProduct((prev) => ({ ...prev, variations: updatedVariations }));
+      };
+
+      // 3. Form Submission Event
+      const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            const formData = new FormData();
+
+            formData.append("name", product.name);
+            formData.append("category", product.category);
+            formData.append("description", product.description);
+
+            product.variations.forEach((variation, index) => {
+                  formData.append(`variation-[${index + 1}]-[color]`, variation.color);
+                  formData.append(`variation-[${index + 1}]-[hexCode]`, variation.hexCode);
+                  formData.append(`variation-[${index + 1}]-[price]`, variation.price.toString());
+                  formData.append(`variation-[${index + 1}]-[stock]`, variation.stock.toString());
+
+                  variation.imageFiles.forEach((file) => {
+                        formData.append(`variation-[${index + 1}]-[images]`, file);
+                  });
+            });
+
+            //   mutate(formData);
       };
 
       const addVariation = () => {
@@ -81,39 +126,10 @@ function AddProducts() {
             }));
       };
 
-      const removeVariation = (index) => {
+      const removeVariation = (index: number) => {
             if (product.variations.length === 1) return;
             const updated = product.variations.filter((_, i) => i !== index);
             setProduct((prev) => ({ ...prev, variations: updated }));
-      };
-
-      const handleSubmit = async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData();
-
-            // Append generic data
-            formData.append("name", product.name);
-            formData.append("category", product.category);
-            formData.append("description", product.description);
-
-            //Append variations data
-            product.variations.forEach((variation, index) => {
-                  formData.append(`variation-[${index + 1}]-[color]`, variation.color);
-                  formData.append(`variation-[${index + 1}]-[hexCode]`, variation.hexCode);
-                  formData.append(`variation-[${index + 1}]-[price]`, variation.price);
-                  formData.append(`variation-[${index + 1}]-[stock]`, variation.stock);
-                  variation.imageFiles.forEach((file) => {
-                        formData.append(`variation-[${index + 1}]-[images]`, file);
-                  });
-            });
-
-            // try {
-            //       const res = await createProduct(formData).unwrap();
-            //       console.log(res);
-            // } catch (err) {
-            //       console.log(err?.data?.message || err.error, err?.data?.specificError);
-            // }
       };
 
       const availableCategories = [
@@ -171,7 +187,7 @@ function AddProducts() {
                                                                         ? availableCategories.find(
                                                                                 (category) =>
                                                                                       category.value ===
-                                                                                      product.category
+                                                                                      product.category,
                                                                           )?.label
                                                                         : "...select category"}
                                                                   <ChevronsUpDown className="opacity-50" />
@@ -202,7 +218,7 @@ function AddProducts() {
                                                                                                       category.value ===
                                                                                                             product.category
                                                                                                             ? "opacity-100"
-                                                                                                            : "opacity-0"
+                                                                                                            : "opacity-0",
                                                                                                 )}
                                                                                           />
                                                                                     </CommandItem>

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
       ChartConfig,
       ChartContainer,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/chart";
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
 import { SectionCards } from "./section-cards";
+import { Payment } from "./payments/payment-table-column";
 
 export type RevenueDataPoint = {
       date: string;
@@ -19,28 +19,24 @@ export type RevenueDataPoint = {
       event?: string; // For adding annotations
 };
 
-const revenueData: RevenueDataPoint[] = [
-      { date: "Nov 01", currentRevenue: 4500 },
-      { date: "Nov 02", currentRevenue: 4800 },
-      { date: "Nov 03", currentRevenue: 5200 },
-      { date: "Nov 04", currentRevenue: 5100 },
-      { date: "Nov 05", currentRevenue: 6500, event: "Flash Sale Start" },
-      { date: "Nov 06", currentRevenue: 8900 },
-      { date: "Nov 07", currentRevenue: 7100 },
-      { date: "Nov 08", currentRevenue: 6800 },
-      { date: "Nov 09", currentRevenue: 7500 },
-      { date: "Nov 10", currentRevenue: 7300 },
-      { date: "Nov 11", currentRevenue: 6000 },
-      { date: "Nov 12", currentRevenue: 5800 },
-      { date: "Nov 13", currentRevenue: 6200, event: "Mid-Month Promo" },
-      { date: "Nov 14", currentRevenue: 6700 },
-      // ... (add more data points for 30 days)
-      { date: "Nov 30", currentRevenue: 9500 },
-];
-
-// const totalRevenue = revenueData.reduce((sum, item) => sum + item.currentRevenue, 0);
-// const comparisonRevenue = revenueData.reduce((sum, item) => sum + item.comparisonRevenue, 0);
-// const percentageChange = ((totalRevenue - comparisonRevenue) / comparisonRevenue) * 100;
+// const revenueData: RevenueDataPoint[] = [
+//       { date: "Nov 01", currentRevenue: 4500 },
+//       { date: "Nov 02", currentRevenue: 4800 },
+//       { date: "Nov 03", currentRevenue: 5200 },
+//       { date: "Nov 04", currentRevenue: 5100 },
+//       { date: "Nov 05", currentRevenue: 6500, event: "Flash Sale Start" },
+//       { date: "Nov 06", currentRevenue: 8900 },
+//       { date: "Nov 07", currentRevenue: 7100 },
+//       { date: "Nov 08", currentRevenue: 6800 },
+//       { date: "Nov 09", currentRevenue: 7500 },
+//       { date: "Nov 10", currentRevenue: 7300 },
+//       { date: "Nov 11", currentRevenue: 6000 },
+//       { date: "Nov 12", currentRevenue: 5800 },
+//       { date: "Nov 13", currentRevenue: 6200, event: "Mid-Month Promo" },
+//       { date: "Nov 14", currentRevenue: 6700 },
+//       // ... (add more data points for 30 days)
+//       { date: "Nov 30", currentRevenue: 9500 },
+// ];
 
 // Define the configuration for the chart lines and colors
 const chartConfig = {
@@ -56,10 +52,10 @@ export function RevenueChart({
       timeRange,
 }: {
       totalOrders: number;
-      paymentsData: any;
+      paymentsData: Payment[];
       timeRange: string;
 }) {
-      const filteredData = paymentsData.filter((payment) => {
+      const filteredData = paymentsData.filter((payment: Payment) => {
             const date = new Date(payment.updatedAt);
             const referenceDate = new Date();
             referenceDate.setHours(0, 0, 0, 0); // Start of today
@@ -84,7 +80,7 @@ export function RevenueChart({
       }));
       const currentTotal = filteredData.reduce((sum, item) => sum + item.amount, 0);
       const formattedTotal = new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(
-            currentTotal
+            currentTotal,
       );
 
       console.log(chartData);
@@ -131,12 +127,16 @@ export function RevenueChart({
                                     <ChartTooltip
                                           content={
                                                 <ChartTooltipContent
-                                                      formatter={(value: number) =>
-                                                            new Intl.NumberFormat("en-NG", {
+                                                      formatter={(value: string | number | (string | number)[]) => {
+                                                            // Convert value to number if it isn't one (Recharts values are usually numeric)
+                                                            const numericValue =
+                                                                  typeof value === "number" ? value : Number(value);
+
+                                                            return new Intl.NumberFormat("en-NG", {
                                                                   style: "currency",
                                                                   currency: "NGN",
-                                                            }).format(value)
-                                                      }
+                                                            }).format(numericValue);
+                                                      }}
                                                 />
                                           }
                                     />

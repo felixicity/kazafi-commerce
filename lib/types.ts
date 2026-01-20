@@ -112,7 +112,7 @@ export interface CustomerOrder {
       totalAmount: number;
       color?: string; // Used in your alt tag logic: order.color
 }
-interface CartItemFromDB {
+export interface CartItemFromDB {
       _id: string;
       quantity: number;
       product: {

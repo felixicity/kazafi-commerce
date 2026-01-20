@@ -1,9 +1,16 @@
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Payment } from "./payments/payment-table-column";
 
-export function SectionCards({ totalOrders, paymentsData }: { totalOrders: number; paymentsData: string }) {
-      const overviewData = [
+interface OverViewData {
+      title: string;
+      amount: number | string;
+      stat?: number;
+}
+
+export function SectionCards({ totalOrders, paymentsData }: { totalOrders: number; paymentsData: Payment[] }) {
+      const overviewData: OverViewData[] = [
             {
                   title: "Sessions",
                   amount: 235,
@@ -18,7 +25,7 @@ export function SectionCards({ totalOrders, paymentsData }: { totalOrders: numbe
                   title: "Total Sales",
                   amount: paymentsData
                         ? new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(
-                                paymentsData?.reduce((acc: any, payment: any) => acc + payment.amount, 0)
+                                paymentsData?.reduce((acc: number, payment: Payment) => acc + payment.amount, 0),
                           )
                         : 0,
                   stat: 3.5,
@@ -41,9 +48,9 @@ export function SectionCards({ totalOrders, paymentsData }: { totalOrders: numbe
                                     <CardAction>
                                           <Badge
                                                 variant="outline"
-                                                className={item.stat > 0 ? "text-green-600" : " text-red-500"}
+                                                className={(item.stat ?? 0) > 0 ? "text-green-600" : "text-red-500"}
                                           >
-                                                {item?.stat > 0 ? <IconTrendingUp /> : <IconTrendingDown />}
+                                                {(item.stat ?? 0) > 0 ? <IconTrendingUp /> : <IconTrendingDown />}
                                                 {item?.stat}%
                                           </Badge>
                                     </CardAction>

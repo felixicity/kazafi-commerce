@@ -10,31 +10,29 @@ import {
       getFilteredRowModel,
       getPaginationRowModel,
       getSortedRowModel,
-      Row,
       SortingState,
       useReactTable,
       VisibilityState,
 } from "@tanstack/react-table";
 
-import {
-      closestCenter,
-      DndContext,
-      KeyboardSensor,
-      MouseSensor,
-      TouchSensor,
-      useSensor,
-      useSensors,
-      type DragEndEvent,
-      type UniqueIdentifier,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { type UniqueIdentifier } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 import { Table, TableHeader, TableBody, TableCell, TableRow, TableHead } from "@/components/ui/table";
 import { columns } from "./customers-table-column";
 
-export function CustomersTable({ data: initialData }) {
-      const [data, setData] = React.useState(() => initialData);
+export interface IdealCustomer {
+      id: string;
+      name: string;
+      email: string;
+      createdAt: string;
+      role: string;
+      status: "active" | "inactive";
+      login: string;
+}
+
+export function CustomersTable({ data: initialData }: { data: IdealCustomer[] }) {
+      const [data, setData] = React.useState(initialData);
       const [rowSelection, setRowSelection] = React.useState({});
       const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
       const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -43,12 +41,10 @@ export function CustomersTable({ data: initialData }) {
             pageIndex: 0,
             pageSize: 10,
       });
-      const sortableId = React.useId();
-      const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
       const dataIds = React.useMemo<UniqueIdentifier[]>(() => data?.map(({ id }) => id) || [], [data]);
 
-      const table = useReactTable({
+      const table = useReactTable<IdealCustomer>({
             data,
             columns,
             state: {

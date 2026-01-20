@@ -7,8 +7,6 @@ import { FormField } from "@/components/features/client/checkout-form-feilds";
 import { getDiscountCode } from "@/lib/mutations/discount";
 import { OrderSummaryProps } from "@/lib/types";
 
-// --- Order Summary Component ---
-
 const OrderSummary = ({ cartItems, subtotal }: OrderSummaryProps) => {
       const queryClient = useQueryClient();
 
@@ -21,50 +19,62 @@ const OrderSummary = ({ cartItems, subtotal }: OrderSummaryProps) => {
 
       const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-
             const formData = new FormData(e.currentTarget);
             const discountCode = formData.get("discountCode");
 
-            // Check if the value exists and is a string before mutating
-            if (typeof discountCode === "string") {
+            if (typeof discountCode === "string" && discountCode.trim() !== "") {
                   mutate(discountCode);
             }
       };
+
       return (
             <div className="flex flex-col gap-6">
-                  {/* Product List */}
                   <div className="flex flex-col gap-4 items-center">
-                        {cartItems.map((item) => (
-                              <div key={item._id} className="flex justify-between items-center gap-4 w-full">
-                                    <div className="relative w-16 h-16 border border-gray-200 rounded-lg bg-white p-1 flex items-center justify-center">
-                                          <div className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-medium w-5 h-5 rounded-full flex items-center justify-center z-10">
-                                                {item.quantity}
+                        {cartItems.map((item) => {
+                              // 1. Safety check for Image URL
+                              const imageUrl = item.variation?.imageURLs?.[0] ?? "/placeholder.png";
+
+                              // 2. Safety check for Price (defaults to 0 if undefined)
+                              const price = item.variation?.price ?? 0;
+
+                              return (
+                                    <div key={item._id} className="flex justify-between items-center gap-4 w-full">
+                                          <div className="relative w-16 h-16 border border-gray-200 rounded-lg bg-white p-1 flex items-center justify-center">
+                                                <div className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-medium w-5 h-5 rounded-full flex items-center justify-center z-10">
+                                                      {item.quantity}
+                                                </div>
+
+                                                <div className="w-full h-full bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+                                                      <Image
+                                                            src={imageUrl}
+                                                            alt={item.product?.name ?? "Product Image"}
+                                                            width={64}
+                                                            height={64}
+                                                            className="object-cover"
+                                                      />
+                                                </div>
                                           </div>
 
-                                          <div className="w-full h-full bg-gray-100 rounded flex items-center justify-center text-gray-400">
-                                                <Image
-                                                      src={item?.variation?.imageURLs[0]}
-                                                      alt={item?.product.name}
-                                                      width={64}
-                                                      height={64}
-                                                />
+                                          <div className="flex-1">
+                                                <h3 className="text-sm font-medium text-gray-900">
+                                                      {item.product?.name ?? "Unnamed Product"}
+                                                </h3>
+                                                <p className="text-xs text-gray-500">{item.variation?.color}</p>
                                           </div>
-                                    </div>
 
-                                    <div className="flex-1">
-                                          <h3 className="text-sm font-medium text-gray-900">{item.product?.name}</h3>
-                                          <p className="text-xs text-gray-500">{item.variation?.color}</p>
+                                          <p className="text-sm font-medium text-gray-900">
+                                                {new Intl.NumberFormat("en-NG", {
+                                                      style: "currency",
+                                                      currency: "NGN",
+                                                }).format(price)}
+                                          </p>
                                     </div>
-                                    <p className="text-sm font-medium text-gray-900">
-                                          {new Intl.NumberFormat("en-NG", {
-                                                style: "currency",
-                                                currency: "NGN",
-                                          }).format(item.variation?.price)}
-                                    </p>
-                              </div>
-                        ))}
+                              );
+                        })}
                   </div>
-                  {/* Discount Code */}
+
+                  {/* Discount Form and Totals remain largely the same, 
+          but ensure 'subtotal' passed from props is a string/formatted */}
                   <form onSubmit={handleSubmit}>
                         <div className="flex gap-3">
                               <div className="flex-1">
@@ -84,7 +94,6 @@ const OrderSummary = ({ cartItems, subtotal }: OrderSummaryProps) => {
                         </div>
                   </form>
 
-                  {/* Totals */}
                   <div className="flex flex-col gap-2 pt-4 border-t border-gray-200">
                         <div className="flex justify-between text-sm">
                               <span className="text-gray-600">Subtotal</span>
@@ -92,7 +101,7 @@ const OrderSummary = ({ cartItems, subtotal }: OrderSummaryProps) => {
                         </div>
                         <div className="flex justify-between text-sm">
                               <span className="text-gray-600">Shipping</span>
-                              <span className="text-gray-500 text-xs mt-1">Enter shipping address</span>
+                              <span className="text-gray-500 text-xs mt-1">Calculated at next step</span>
                         </div>
                   </div>
 

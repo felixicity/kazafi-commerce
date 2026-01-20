@@ -3,17 +3,22 @@ import { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
 
 export const schema = z.object({
-      id: z.string(),
-      order: z.string(),
-      createdAt: z.string(),
-      type: z.string(),
-      amount: z.number(),
-      status: z.enum(["paid", "cancelled", "pending"]),
-      email: z.email(),
-      method: z.string(),
+      // Use catch() to provide a default if the field is missing/undefined
+      id: z.string().catch("N/A"),
+      order: z.string().catch("Unknown"),
+      createdAt: z.string().catch(() => new Date().toISOString()),
+      type: z.string().catch("Payment"),
+      amount: z.number().catch(0),
+      // Ensure status falls back to "pending" if the API sends something weird
+      status: z.enum(["successful", "cancelled", "pending", "failed"]).catch("pending"),
+      email: z.string().email().catch("no-email@example.com"),
+      method: z.string().catch("Unknown"),
+      updatedAt: z.string().catch(() => new Date().toISOString()),
 });
 
-export const columns: ColumnDef<z.infer<typeof schema>>[] = [
+export type Payment = z.infer<typeof schema>;
+
+export const columns: ColumnDef<Payment>[] = [
       {
             accessorKey: "id",
             header: "Transaction Id",

@@ -1,17 +1,18 @@
-// src/hooks/useFilterManagement.ts
 import { useState } from "react";
 
-// Define the shape of your query parameters
 export interface FilterState {
       category: string[];
-      color: string[]; // Use hex code string for simplicity
+      color: string[];
       size: string[];
       priceRange: [number, number];
       search: string;
 }
 
+// 1. Create a Type for keys that specifically point to string arrays
+export type ArrayFilterKey = "category" | "color" | "size";
+
 const MIN_PRICE = 0;
-const MAX_PRICE = 1000000; // Should be dynamic, but fixed for the example
+const MAX_PRICE = 1000000;
 
 export const useFilterManagement = (
       initialState: FilterState = {
@@ -20,19 +21,20 @@ export const useFilterManagement = (
             size: [],
             priceRange: [MIN_PRICE, MAX_PRICE],
             search: "",
-      }
+      },
 ) => {
       const [filters, setFilters] = useState<FilterState>(initialState);
 
-      // Handler for Price Slider (simpler)
       const handlePriceChange = (value: [number, number]) => {
             setFilters((prev) => ({ ...prev, priceRange: value }));
       };
 
-      // Handler for Checkboxes (Category/Size/Color)
-      const handleToggleFilter = (key: keyof FilterState, value: string, isChecked: boolean) => {
+      // 2. Restrict the 'key' argument to ArrayFilterKey
+      const handleToggleFilter = (key: ArrayFilterKey, value: string, isChecked: boolean) => {
             setFilters((prev) => {
-                  const currentValues = prev[key] as string[];
+                  // Now TypeScript knows for certain that prev[key] is a string[]
+                  const currentValues = prev[key];
+
                   return {
                         ...prev,
                         [key]: isChecked ? [...currentValues, value] : currentValues.filter((v) => v !== value),
@@ -40,22 +42,21 @@ export const useFilterManagement = (
             });
       };
 
-      const clearFilters = () => {
-            setFilters(initialState);
+      const handleSearchChange = (value: string) => {
+            setFilters((prev) => ({ ...prev, search: value }));
       };
 
-      // This object contains the current filters that should be passed to useShopProducts
-      const queryParams = filters;
-      const setParams = setFilters;
+      const clearFilters = () => setFilters(initialState);
 
       return {
             filters,
-            queryParams,
+            queryParams: filters,
             handleToggleFilter,
             handlePriceChange,
+            handleSearchChange,
             clearFilters,
             MAX_PRICE,
             MIN_PRICE,
-            setParams,
+            setParams: setFilters,
       };
 };

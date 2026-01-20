@@ -9,6 +9,8 @@ import { getAllOrders } from "@/lib/mutations/order";
 import { getAllPayments } from "@/lib/mutations/payment"; // Placeholder import
 import { UrgentTasks } from "@/components/features/admin/urgent-tasks";
 import { Spinner } from "@/components/ui/spinner";
+import { Order } from "@/components/features/admin/orders/order-table-column";
+import { Payment } from "@/components/features/admin/payments/payment-table-column";
 
 export default function Page() {
       const [timeRange, setTimeRange] = useState("30 Days");
@@ -24,10 +26,10 @@ export default function Page() {
 
       const totalOrders = ordersData ? ordersData.length : 0;
       const paymentsToFulfill: number = paymentsData
-            ? paymentsData.filter((payment: any) => payment.status !== "successful").length
+            ? paymentsData.filter((payment: Payment) => payment.status !== "successful").length
             : 0;
       const ordersToFulfill: number = ordersData
-            ? ordersData.filter((order: any) => order.status !== "delivered").length
+            ? ordersData.filter((order: Order) => order.status !== "delivered").length
             : 0;
 
       return (

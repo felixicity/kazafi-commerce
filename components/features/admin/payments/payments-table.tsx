@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-      ColumnFiltersState,
       flexRender,
       getCoreRowModel,
       getFacetedRowModel,
@@ -10,50 +9,58 @@ import {
       getFilteredRowModel,
       getPaginationRowModel,
       getSortedRowModel,
-      Row,
       SortingState,
       useReactTable,
       VisibilityState,
+      ColumnFiltersState,
 } from "@tanstack/react-table";
 
-import {
-      closestCenter,
-      DndContext,
-      KeyboardSensor,
-      MouseSensor,
-      TouchSensor,
-      useSensor,
-      useSensors,
-      type DragEndEvent,
-      type UniqueIdentifier,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { type UniqueIdentifier } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableHeader, TableBody, TableCell, TableRow, TableHead } from "@/components/ui/table";
-import { columns } from "./payment-table-column";
+import { columns, Payment } from "./payment-table-column";
 import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight } from "@tabler/icons-react";
+import { schema } from "./payment-table-column";
 
-export function PaymentsTable({ data: initialData }) {
-      const transformedData = React.useMemo(() => {
+interface RawPayment {
+      _id?: string;
+      createdAt?: string;
+      amount?: number;
+      status?: "successful" | "cancelled" | "pending" | "failed";
+      channel?: string;
+      type?: string;
+      order?: string;
+      customer_email: string;
+}
+
+export function PaymentsTable({ data: initialData }: { data: RawPayment[] }) {
+      const transformedData = React.useMemo<Payment[]>(() => {
             if (!initialData) return [];
-            return initialData.map((payment) => ({
-                  ...payment,
-                  id: payment._id,
-                  email: payment.customer_email,
-                  createdAt: payment.createdAt,
-                  amount: payment.amount,
-                  method: payment.channel,
-                  status: payment.status,
-                  type: payment.type,
-                  order: typeof payment.order === "object" ? payment.order?._id : payment.order || "N/A",
-            }));
+
+            return initialData.map((payment) => {
+                  // Create an object that matches the expected Payment shape
+                  const raw = {
+                        id: payment._id ?? "N/A",
+                        email: payment.customer_email ?? "N/A",
+                        createdAt: payment.createdAt ?? new Date().toISOString(),
+                        amount: payment.amount ?? 0,
+                        method: payment.channel ?? "N/A",
+                        status: payment.status ?? "pending",
+                        type: payment.type ?? "N/A",
+                        order: payment.order ?? "N/A",
+                  };
+
+                  // Use your Zod schema to parse it.
+                  // This guarantees the result is a strict 'Payment' type.
+                  return schema.parse(raw);
+            });
       }, [initialData]);
 
-      const [data, setData] = React.useState(transformedData);
-
+      // Specify the type for useState to match the table's expectation
+      const [data, setData] = React.useState<Payment[]>(transformedData);
       const [rowSelection, setRowSelection] = React.useState({});
       const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
       const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -62,14 +69,13 @@ export function PaymentsTable({ data: initialData }) {
             pageIndex: 0,
             pageSize: 10,
       });
-      const sortableId = React.useId();
-      const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
+      // Update state when props change
       React.useEffect(() => {
             setData(transformedData);
       }, [transformedData]);
 
-      const table = useReactTable({
+      const table = useReactTable<Payment>({
             data,
             columns,
             state: {
@@ -79,7 +85,7 @@ export function PaymentsTable({ data: initialData }) {
                   columnFilters,
                   pagination,
             },
-            getRowId: (row) => row._id.toString(),
+            getRowId: (row) => row.id.toString(),
             enableRowSelection: true,
             onRowSelectionChange: setRowSelection,
             onSortingChange: setSorting,
@@ -94,10 +100,7 @@ export function PaymentsTable({ data: initialData }) {
             getFacetedUniqueValues: getFacetedUniqueValues(),
       });
 
-      const dataIds = React.useMemo<UniqueIdentifier[]>(
-            () => table.getRowModel().rows.map((row) => row._id),
-            [table.getRowModel().rows]
-      );
+      const dataIds = React.useMemo<UniqueIdentifier[]>(() => table.getRowModel().rows.map((row) => row.id), [table]);
 
       return (
             <div>
@@ -111,7 +114,7 @@ export function PaymentsTable({ data: initialData }) {
                                                             ? null
                                                             : flexRender(
                                                                     header.column.columnDef.header,
-                                                                    header.getContext()
+                                                                    header.getContext(),
                                                               )}
                                                 </TableHead>
                                           ))}
@@ -130,7 +133,7 @@ export function PaymentsTable({ data: initialData }) {
                                                             <TableCell key={cell.id}>
                                                                   {flexRender(
                                                                         cell.column.columnDef.cell,
-                                                                        cell.getContext()
+                                                                        cell.getContext(),
                                                                   )}
                                                             </TableCell>
                                                       ))}
