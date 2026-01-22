@@ -8,7 +8,6 @@ export const createLoginMutation = async (newLoginData: { email: string; passwor
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newLoginData),
-            credentials: "include",
       });
 
       if (!response.ok) {
