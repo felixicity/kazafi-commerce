@@ -10,7 +10,7 @@ import { FiltersSidebar } from "@/components/features/filter-sidebar";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { IconSearch, IconLayoutGrid, IconList } from "@tabler/icons-react";
 import { useShopProducts } from "@/hooks/useShopProducts";
-import { ViewMode } from "@/lib/types";
+import { Product, ViewMode } from "@/lib/types";
 import { ShopProducts } from "./shop-products";
 
 // --- Main Component ---
@@ -45,6 +45,8 @@ const ProductListingPage: React.FC = () => {
                   search: debouncedSearch.trim(),
             }));
       }, [debouncedSearch, setParams]);
+
+      const products: Product[] = data?.products;
 
       return (
             <div className="min-h-screen">
@@ -171,11 +173,11 @@ const ProductListingPage: React.FC = () => {
 
                               {/* Right Column (Product Grid) */}
                               <ShopProducts
-                                    data={data ?? []}
+                                    data={products ?? []}
                                     isLoading={isLoading}
                                     isError={isError}
                                     viewMode={viewMode}
-                                    error={error}
+                                    error={`${error}`}
                               />
                         </div>
                   </div>

@@ -24,14 +24,14 @@ import { Spinner } from "@/components/ui/spinner";
 
 interface Address {
       _id?: string;
-      street: string;
+      street?: string;
       city: string;
-      country: string;
+      country?: string;
       firstname?: string;
       lastname?: string;
-      phone?: string;
+      phone: string;
       postcode?: string;
-      isDefault?: boolean;
+      isDefault: boolean;
 }
 
 interface User {
@@ -56,12 +56,13 @@ interface Payment {
 }
 
 interface AddressFormData {
-      name: string;
+      firstname: string;
+      lastname: string;
       phone: string;
       street: string;
       city: string;
       state: string;
-      postCode: string;
+      postcode: string;
       country: string;
 }
 
@@ -73,8 +74,8 @@ const CheckoutPage: React.FC = () => {
       const [city, setCity] = useState<string>("");
       const [availableOptions, setAvailableOptions] = useState<ShippingOption[]>(initialShippingOptions);
       const [isOrderSummaryOpen, setIsOrderSummaryOpen] = useState<boolean>(false);
-      const [addressConfirmOpen, setAddressConfirmOpen] = useState<boolean>(false);
-      const [defaultAddress, setDefaultAddress] = useState<boolean>(false);
+      const [addressConfirmOpen, setAddressConfirmOpen] = useState<boolean>(false); // to confirm an address coming from user saved addresses
+      const [orderAddress, setOrderAddress] = useState<string>(""); //the address for an order
 
       const isLocationValid = city.trim().length > 2;
 
@@ -85,20 +86,6 @@ const CheckoutPage: React.FC = () => {
 
             const fetchShippingOptions = async () => {
                   try {
-                        // const res = await fetch("/api/shipping-options", {
-                        //       method: "POST",
-                        //       headers: {
-                        //             "Content-Type": "application.json",
-                        //       },
-                        //       body: JSON.stringify({ location: city }),
-                        // });
-
-                        // if (!res.ok) {
-                        //       throw new Error("Failed to fetch shipping options");
-                        // }
-
-                        // const data: PaymentShippingOption[] = await res.json();
-
                         const data = [
                               {
                                     amount: { currency: "NGN", value: "750" },
@@ -178,11 +165,7 @@ const CheckoutPage: React.FC = () => {
 
       //get users already saved default address
       const address = (userData as User | undefined)?.addresses?.find((addr: Address) => addr.isDefault);
-
-      const houseNumber = address?.street;
-      const addressCity = address?.city;
-      const addressCountry = address?.country;
-      const fullAddress = `${houseNumber}, ${addressCity}, ${addressCountry}`;
+      const savedFullAddress = `${address?.street}, ${address?.city}, ${address?.country}`;
 
       useEffect(() => {
             if (address) {
@@ -208,33 +191,48 @@ const CheckoutPage: React.FC = () => {
             currency: "NGN",
       }).format(cartItems.reduce((acc, item) => acc + (item.variation?.price || 0) * item.quantity, 0));
 
+      // Inside CheckoutPage
+      const handleConfirmSavedAddress = () => {
+            if (address) {
+                  setOrderAddress(savedFullAddress); // This "locks in" the address
+                  setCity(address.city); // Updates shipping options
+                  setAddressConfirmOpen(false);
+            }
+      };
+
       async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
             e.preventDefault();
             const formElement = e.currentTarget;
             // If there's no address, collect form data and save it
-            let newAddress: string | null = null;
-            if (!address) {
+            let finalAddress: string = orderAddress;
+
+            if (!finalAddress) {
                   const formData = new FormData(formElement);
                   const addressData: AddressFormData = {
-                        name: String(formData.get("name") || ""),
+                        firstname: String(formData.get("firstname") || ""),
+                        lastname: String(formData.get("lastname") || ""),
                         phone: String(formData.get("phone") || ""),
                         street: String(formData.get("street") || ""),
                         city: String(formData.get("city") || ""),
                         state: String(formData.get("state") || ""),
-                        postCode: String(formData.get("postCode") || ""),
+                        postcode: String(formData.get("postCode") || ""),
                         country: String(formData.get("country") || ""),
                   };
 
-                  newAddress = `${addressData.street}, ${addressData.city}, ${addressData.country}`;
+                  finalAddress = `${addressData.street}, ${addressData.city}, ${addressData.country}`;
+                  setOrderAddress(finalAddress);
                   saveAddressMutation(addressData);
             }
+            try {
+                  // 2. Use 'finalAddress' instead of 'orderAddress' state
+                  const res = await orderMutation(finalAddress);
+                  const payment = await PaymentMutation({ orderId: res.order._id, provider: "paystack" });
 
-            const res = (await orderMutation(newAddress || fullAddress)) as { order: Order };
-
-            const payment = (await PaymentMutation({ orderId: res.order._id, provider: "paystack" })) as Payment;
-
-            if (payment) {
-                  window.location.href = payment.paymentUrl;
+                  if (payment?.paymentUrl) {
+                        window.location.href = payment.paymentUrl;
+                  }
+            } catch (err) {
+                  console.error("Checkout failed", err);
             }
       }
 
@@ -246,16 +244,11 @@ const CheckoutPage: React.FC = () => {
 
       return (
             <div>
-                  {/* Mobile Header (Logo + Cart Icon) */}
-                  <div className="lg:hidden p-4 border-b border-gray-200 flex items-center justify-between bg-white">
-                        <h1 className="text-2xl font-black italic tracking-tighter">Kazafi</h1>
-                        <IconShoppingBag className="text-black" />
-                  </div>
-
                   {/* Mobile Order Summary Accordion */}
                   <MobileOrderSummaryToggle
                         isOpen={isOrderSummaryOpen}
                         onToggle={() => setIsOrderSummaryOpen(!isOrderSummaryOpen)}
+                        subtotal={subtotal}
                   >
                         <OrderSummary cartItems={cartItems} subtotal={subtotal} />
                   </MobileOrderSummaryToggle>
@@ -270,19 +263,14 @@ const CheckoutPage: React.FC = () => {
                                     <AddressConfirmationDialog
                                           addressConfirmOpen={addressConfirmOpen}
                                           setAddressConfirmOpen={setAddressConfirmOpen}
-                                          setDefaultAddress={setDefaultAddress}
-                                          fullAddress={fullAddress}
+                                          savedFullAddress={savedFullAddress}
+                                          handleConfirmSavedAddress={handleConfirmSavedAddress}
                                     />
                               )}
 
                               {/* Left Column: Form Section */}
                               <div>
                                     <div className="w-full max-w-lg space-y-8">
-                                          {/* Desktop Header */}
-                                          <div className="hidden lg:block mb-8">
-                                                <h1 className="text-3xl font-black tracking-tighter">Kazafi</h1>
-                                          </div>
-
                                           {/* Contact Section */}
                                           {!userData && (
                                                 <FieldGroup className="gap-1">
@@ -321,9 +309,9 @@ const CheckoutPage: React.FC = () => {
                                                 </FieldGroup>
                                           )}
 
-                                          {defaultAddress && (
+                                          {address && (
                                                 <div>
-                                                      <h4 className="">{fullAddress} </h4>
+                                                      <h4 className="">{savedFullAddress} </h4>
                                                       <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md text-sm text-green-800">
                                                             This address will be used for this order.
                                                       </div>
@@ -332,7 +320,7 @@ const CheckoutPage: React.FC = () => {
 
                                           {/* Delivery Section */}
 
-                                          {!defaultAddress && (
+                                          {!address && (
                                                 <FieldGroup className="gap-1">
                                                       <FieldTitle className="text-lg font-medium mb-4 mt-4">
                                                             Address Information
@@ -344,13 +332,20 @@ const CheckoutPage: React.FC = () => {
                                                                   options={["Nigeria", "Ghana", "Benin Republic"]}
                                                                   name="country"
                                                             />
-
-                                                            <FormField
-                                                                  id="name"
-                                                                  name="name"
-                                                                  placeholder="Full name"
-                                                                  required
-                                                            />
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                                  <FormField
+                                                                        id="firstname"
+                                                                        name="firstname"
+                                                                        placeholder="firstname"
+                                                                        required
+                                                                  />
+                                                                  <FormField
+                                                                        id="lastname"
+                                                                        name="lastname"
+                                                                        placeholder="lastname"
+                                                                        required
+                                                                  />
+                                                            </div>
 
                                                             <FormField
                                                                   id="street"
@@ -449,13 +444,13 @@ const CheckoutPage: React.FC = () => {
                                                                                                             currency: option
                                                                                                                   .amount
                                                                                                                   .currency,
-                                                                                                      }
+                                                                                                      },
                                                                                                 ).format(
                                                                                                       Number(
                                                                                                             option
                                                                                                                   .amount
-                                                                                                                  .value
-                                                                                                      )
+                                                                                                                  .value,
+                                                                                                      ),
                                                                                                 )}
                                                                                           </h3>
                                                                                     </FieldContent>

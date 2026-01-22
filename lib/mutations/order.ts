@@ -1,7 +1,8 @@
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const createOrder = async (address: string) => {
-      const response = await fetch(`${API_URL}/api/orders`, {
+      console.log(address);
+      const response = await fetch(`${API_URL}/orders`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ address }),
@@ -17,7 +18,7 @@ export const createOrder = async (address: string) => {
 };
 
 export const getUserOrders = async () => {
-      const response = await fetch(`${API_URL}/api/orders`, {
+      const response = await fetch(`${API_URL}/orders`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -30,7 +31,7 @@ export const getUserOrders = async () => {
 };
 
 export const getAllOrders = async () => {
-      const response = await fetch(`${API_URL}/api/orders/admin/orders`, {
+      const response = await fetch(`${API_URL}/orders/admin/orders`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -46,7 +47,7 @@ export const getAllOrders = async () => {
 
 export const updateOrderStatus = async ({ orderId, status }: { orderId: string; status: string }) => {
       console.log(status);
-      const response = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
+      const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

@@ -5,10 +5,11 @@ interface MobileAccordionProps {
       children: React.ReactNode;
       isOpen: boolean;
       onToggle: () => void;
+      subtotal: string;
 }
 
 // Custom mobile accordion component (Kept for specific mobile layout functionality)
-export const MobileOrderSummaryToggle: React.FC<MobileAccordionProps> = ({ children, isOpen, onToggle }) => (
+export const MobileOrderSummaryToggle: React.FC<MobileAccordionProps> = ({ children, isOpen, onToggle, subtotal }) => (
       <div className="border-t border-b border-gray-200 lg:hidden bg-gray-50">
             <Button
                   variant="ghost"
@@ -22,7 +23,7 @@ export const MobileOrderSummaryToggle: React.FC<MobileAccordionProps> = ({ child
                               className={`transform transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
                         />
                   </span>
-                  <span className="font-medium text-black">$45.00</span>
+                  <span className="font-medium text-black">{subtotal}</span>
             </Button>
             <div
                   className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${

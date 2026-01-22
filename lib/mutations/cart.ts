@@ -1,6 +1,6 @@
 import { CartData, Variant } from "../types";
 
-const CART_API_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const CART_API_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/cart`;
 
 // --- Fetcher Function ---
 export const fetchCartItems = async (): Promise<CartData> => {
@@ -52,6 +52,7 @@ export const updateCartItemQuantity = async ({
 };
 
 export const addItemToCart = async (item: { _id: string; variation: Variant; quantity: number }): Promise<void> => {
+      console.log(item);
       const response = await fetch(`${CART_API_URL}/add`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },

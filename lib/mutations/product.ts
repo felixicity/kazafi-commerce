@@ -1,4 +1,4 @@
-// src/api/productApi.ts
+// src/productApi.ts
 import { FilterState } from "@/hooks/useFilterManagement";
 import { Product } from "../types"; // Import the defined type
 
@@ -27,7 +27,7 @@ export const fetchProducts = async (params: FilterState): Promise<Product[]> => 
             Object.entries(params).map(([key, value]) => [key, String(value)]),
       ).toString();
 
-      const response = await fetch(`${BASE_URL}/api/products?${queryString}`);
+      const response = await fetch(`${BASE_URL}/products?${queryString}`);
 
       if (!response.ok) {
             // Throw a custom error with the status code
@@ -46,7 +46,7 @@ export const fetchProducts = async (params: FilterState): Promise<Product[]> => 
  * @returns A promise that resolves to a single Product.
  */
 export const fetchSingleProduct = async (productId: string) => {
-      const response = await fetch(`${BASE_URL}/api/products/${productId}`);
+      const response = await fetch(`${BASE_URL}/products/${productId}`);
 
       if (!response.ok) {
             // Throw a custom error with the status code
@@ -62,9 +62,9 @@ export const fetchSingleProduct = async (productId: string) => {
 };
 
 export const fetchAllProducts = async () => {
-      console.log("Fetching all products from:", `${BASE_URL}/api/products/admin`);
+      console.log("Fetching all products from:", `${BASE_URL}/products/admin`);
 
-      const response = await fetch(`${BASE_URL}/api/products/admin`, {
+      const response = await fetch(`${BASE_URL}/products/admin`, {
             credentials: "include",
       });
 

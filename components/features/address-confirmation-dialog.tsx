@@ -13,24 +13,24 @@ import {
 export const AddressConfirmationDialog = ({
       addressConfirmOpen,
       setAddressConfirmOpen,
-      setDefaultAddress,
-      fullAddress,
+      savedFullAddress,
+      handleConfirmSavedAddress,
 }: {
       addressConfirmOpen: boolean;
       setAddressConfirmOpen: (value: boolean) => void;
-      setDefaultAddress: (value: boolean) => void;
-      fullAddress: string;
+      savedFullAddress: string;
+      handleConfirmSavedAddress: () => void;
 }) => {
       return (
             <AlertDialog open={addressConfirmOpen} onOpenChange={setAddressConfirmOpen}>
                   <AlertDialogContent>
                         <AlertDialogHeader>
                               <AlertDialogTitle>Use your saved address?</AlertDialogTitle>
-                              <AlertDialogDescription>{fullAddress}</AlertDialogDescription>
+                              <AlertDialogDescription>{savedFullAddress}</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                               <AlertDialogCancel>Change</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => setDefaultAddress(true)}>Continue</AlertDialogAction>
+                              <AlertDialogAction onClick={handleConfirmSavedAddress}>Continue</AlertDialogAction>
                         </AlertDialogFooter>
                   </AlertDialogContent>
             </AlertDialog>

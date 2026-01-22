@@ -55,7 +55,10 @@ export function SingleProductPage({
       }, [isSuccess]);
 
       const handleAddToCart = () => {
-            const variation = product.variations.find((variant) => variant.color === selectedColor);
+            console.log(product);
+            console.log(selectedColor);
+            const variation = product?.variations.find((variant) => variant.color === selectedColor);
+            console.log(variation);
             if (!variation) {
                   toast.error("Please select a valid color variant");
                   return;

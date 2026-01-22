@@ -4,7 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 export const createLoginMutation = async (newLoginData: { email: string; password: string }) => {
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const response = await fetch(`${API_URL}/api/users/login`, {
+      const response = await fetch(`${API_URL}/users/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newLoginData),
@@ -22,7 +22,7 @@ export const createLoginMutation = async (newLoginData: { email: string; passwor
 };
 
 export const createSignUpMutation = async (newSignUpData: { email: string; password: string }) => {
-      const response = await fetch(`${API_URL}/api/users/register`, {
+      const response = await fetch(`${API_URL}/users/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newSignUpData),
@@ -39,7 +39,7 @@ export const createSignUpMutation = async (newSignUpData: { email: string; passw
 };
 
 export const fetchUserDetails = async () => {
-      const response = await fetch(`${API_URL}/api/users/profile`, {
+      const response = await fetch(`${API_URL}/users/profile`, {
             method: "GET",
             credentials: "include",
       });
@@ -51,7 +51,7 @@ export const fetchUserDetails = async () => {
 };
 
 export const logoutUser = async () => {
-      const response = await fetch(`${API_URL}/api/users/logout`, {
+      const response = await fetch(`${API_URL}/users/logout`, {
             method: "POST",
             credentials: "include",
       });
@@ -63,15 +63,16 @@ export const logoutUser = async () => {
 };
 
 export const addUserAddress = async (address: {
-      name: string;
+      firstname: string;
+      lastname: string;
       phone: string;
       street: string;
       city: string;
       state: string;
-      postCode: string;
+      postcode: string;
       country: string;
 }) => {
-      const response = await fetch(`${API_URL}/api/users/addresses`, {
+      const response = await fetch(`${API_URL}/users/addresses`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(address),

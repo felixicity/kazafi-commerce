@@ -12,7 +12,8 @@ const SingleProductRoute: React.FC<{ product: Product }> = () => {
       const [selectedSize, setSelectedSize] = useState<string>("M");
       const [quantity, setQuantity] = useState<number>(1);
       const params = useParams();
-      const productId = params.id as string; // Ensure this matches your [productId] folder name
+      const productId = params.id as string;
+      //   const [productId,setProductId] = useState<string>(params.id as string); // Ensure this matches your [productId] folder name
 
       // Make a query to the dtb to get the product details based on productId
       const {
@@ -25,8 +26,6 @@ const SingleProductRoute: React.FC<{ product: Product }> = () => {
             queryFn: () => fetchSingleProduct(productId),
             enabled: !!productId, // Only run if ID exists
       });
-
-      console.log("Fetched product data:", product);
 
       useEffect(() => {
             if (product && product.variations && product.variations.length > 0) {
@@ -58,16 +57,6 @@ const SingleProductRoute: React.FC<{ product: Product }> = () => {
                   </div>
             );
       }
-
-      //   const priceClasses = product.variations[0].discount
-      //         ? "text-2xl text-gray-500 line-through font-normal"
-      //         : "text-3xl font-bold text-gray-900";
-      //   const displayPrice = product.variations[0].discount
-      //         ? `$${product.variations[0].price.toFixed(2)}`
-      //         : `$${product.variations[0].price.toFixed(2)}`;
-      //   const salePrice = product.variations[0].discount ? (
-      //         <span className="text-3xl font-bold text-red-600 ml-4">${product.variations[0].price.toFixed(2)}</span>
-      //   ) : null;
 
       return (
             <div className="min-h-screen sm:p-12">

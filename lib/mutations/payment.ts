@@ -1,7 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const createPaymentIntent = async ({ orderId, provider }: { orderId: string; provider: string }) => {
-      const response = await fetch(`${API_URL}/api/payments/initiate`, {
+      const response = await fetch(`${API_URL}/payments/initiate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ orderId, provider }),
@@ -19,7 +19,7 @@ export const createPaymentIntent = async ({ orderId, provider }: { orderId: stri
 // Function to check status
 export async function checkPaymentStatus(reference: string) {
       try {
-            const response = await fetch(`${API_URL}/api/payments/status/${reference}`, {
+            const response = await fetch(`${API_URL}/payments/status/${reference}`, {
                   method: "GET",
                   headers: { "Content-Type": "application/json" },
                   credentials: "include",
@@ -37,7 +37,7 @@ export async function checkPaymentStatus(reference: string) {
 }
 
 export const getAllPayments = async () => {
-      const response = await fetch(`${API_URL}/api/payments/admin/payments`, {
+      const response = await fetch(`${API_URL}/payments/admin/payments`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

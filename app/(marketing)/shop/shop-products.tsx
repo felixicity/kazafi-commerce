@@ -14,9 +14,10 @@ export function ShopProducts({
       isLoading: boolean;
       isError: boolean;
       viewMode: "grid" | "list";
-      error: unknown;
+      error: string;
 }) {
       const router = useRouter();
+      //   console.log(data);
       // 1. Loading State
       if (isLoading) {
             return (
@@ -32,7 +33,7 @@ export function ShopProducts({
             return (
                   <div className="flex flex-col items-center justify-center h-96 text-red-600">
                         <IconAlertTriangle className="h-10 w-10 mb-2" />
-                        <p className="font-bold">Error loading shop data.</p>
+                        <p className="font-bold">{error}</p>
                         {/* Display status code from custom error */}
                         <p className="text-sm">An unknown error occurred.</p>
                   </div>
@@ -54,7 +55,7 @@ export function ShopProducts({
                                           : "grid grid-cols-1 gap-6"
                               }
                         >
-                              {data?.map((product) => (
+                              {data.map((product) => (
                                     <div key={product._id} onClick={() => router.push(`/shop/product/${product._id}`)}>
                                           <ProductCard product={product} viewMode={viewMode} />
                                     </div>
