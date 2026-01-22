@@ -22,7 +22,7 @@ export class FetchError extends Error {
  * Fetch function for retrieving all products.
  * @returns A promise that resolves to an array of Products.
  */
-export const fetchProducts = async (params: FilterState): Promise<Product[]> => {
+export const fetchProducts = async (params: FilterState) => {
       const queryString = new URLSearchParams(
             Object.entries(params).map(([key, value]) => [key, String(value)]),
       ).toString();
@@ -36,7 +36,7 @@ export const fetchProducts = async (params: FilterState): Promise<Product[]> => 
       }
 
       // Explicitly cast the result to the desired type
-      const products: Product[] = await response.json();
+      const products = await response.json();
 
       return products;
 };
