@@ -16,7 +16,7 @@ import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { BadgeCheckIcon, TriangleAlertIcon, EyeIcon, EyeClosed } from "lucide-react";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+export function LoginForm() {
       const queryClient = useQueryClient();
       const [password, setPassword] = useState("");
       const [email, setEmail] = useState("");
@@ -39,17 +39,17 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             },
       });
 
+     
+
       const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
             const newLoginData = Object.fromEntries(formData.entries());
+           
             mutate(newLoginData as { email: string; password: string });
       };
-      //   isSuccess && console.log("Login successful");
-      //   isError && console.log("Error logging in");
-
       return (
-            <div className={cn("flex flex-col gap-6", className)} {...props}>
+            <div className="flex flex-col gap-6">
                   <Card>
                         <CardHeader>
                               <CardTitle className="text-lg text-center">Login to your account</CardTitle>
