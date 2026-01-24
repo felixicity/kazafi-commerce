@@ -112,11 +112,14 @@ const CheckoutPage: React.FC = () => {
 
       const cartItems = userCart?.cart?.items || [];
 
-      const total =
-            cartItems.reduce((acc: number, item: CartItem) => acc + (item.variation?.price || 0) * item.quantity, 0) +
-            shippingFee;
+      const total = cartItems.reduce(
+            (acc: number, item: CartItem) => acc + (item.variation?.price || 0) * item.quantity,
+            0,
+      );
 
-      const subtotal = new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(total);
+      const subtotal = new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(
+            total + shippingFee,
+      );
 
       return (
             <div>
