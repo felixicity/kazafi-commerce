@@ -1,11 +1,10 @@
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const createOrder = async (address: string) => {
-      console.log(address);
+export const createOrder = async ({ address, shippingMethod }: { address: string; shippingMethod: string }) => {
       const response = await fetch(`${API_URL}/orders`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ address }),
+            body: JSON.stringify({ address, shippingMethod }),
             credentials: "include",
       });
 

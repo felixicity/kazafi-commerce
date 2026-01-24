@@ -1,11 +1,13 @@
 "use client";
 
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
 import { Item, ItemContent, ItemDescription, ItemTitle, ItemActions } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
+import { HomeCarousel } from "@/components/features/client/homepage-carousel";
 
 const products = [
       {
@@ -39,48 +41,52 @@ export default function Page() {
             <div>
                   <main className="relative">
                         <section>
-                              <Card className="mx-5 my-1  gap-1 bg-black text-white lg:mx-20 lg:gap-2">
-                                    <CardHeader className="text-sm lg:text-xl font-bold">
-                                          Black Friday Deals!!
-                                    </CardHeader>
-                                    <CardContent className="text-sm md:text-lg">
-                                          Shop items up to <strong className="text-3xl px-1">95%</strong> off every
-                                          friday from Nov,14 - Dec, 22
-                                    </CardContent>
-                              </Card>
+                              <HomeCarousel />
                               <div className="mx-5 my-5 grid lg:mx-20">
                                     <Item variant="outline">
                                           <ItemContent>
-                                                <ItemTitle>Free Shipping for items over #30k</ItemTitle>
+                                                <ItemTitle className="text-lg">
+                                                      Free Shipping for items over 30k
+                                                </ItemTitle>
                                                 <ItemDescription>Terms and condition apply</ItemDescription>
                                           </ItemContent>
                                           <ItemActions>
                                                 <Button variant="outline" size="sm">
-                                                      Action
+                                                      Check deal
                                                 </Button>
                                           </ItemActions>
                                     </Item>
                               </div>
                         </section>
-                        <section className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:mx-20 mx-5 my-10 ">
-                              {products.map((product) => (
-                                    <Card key={product.id}>
-                                          <CardContent>
-                                                {/* AspectRatio ensures clean grid alignment */}
-                                                <AspectRatio ratio={3 / 3}>
-                                                      <Image
-                                                            src={product.image}
-                                                            alt={product.name}
-                                                            width={350}
-                                                            height={200}
-                                                      />
-                                                      <Badge className="absolute top-2 right-2">New</Badge>
-                                                </AspectRatio>
-                                                <h3 className="text-lg mt-3">{product.name}</h3>
-                                                <p className="font-bold">{product.price}</p>
-                                          </CardContent>
-                                    </Card>
-                              ))}
+                        <section className="lg:mx-20 my-12">
+                              <h2 className="text-xl font-semibold">New Arrivals</h2>
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-6  my-10 ">
+                                    {products.map((product) => (
+                                          <Link href="/shop" key={product.id} className="cursor-pointer">
+                                                <Card>
+                                                      <CardContent>
+                                                            {/* AspectRatio ensures clean grid alignment */}
+                                                            <AspectRatio ratio={3 / 3}>
+                                                                  <Image
+                                                                        src={product.image}
+                                                                        alt={product.name}
+                                                                        width={350}
+                                                                        height={200}
+                                                                  />
+                                                                  <Badge className="absolute top-2 right-2">New</Badge>
+                                                            </AspectRatio>
+                                                            <h3 className="text-lg mt-3">{product.name}</h3>
+                                                            <p className="font-bold">
+                                                                  {new Intl.NumberFormat("en-NG", {
+                                                                        style: "currency",
+                                                                        currency: "NGN",
+                                                                  }).format(product.price)}
+                                                            </p>
+                                                      </CardContent>
+                                                </Card>
+                                          </Link>
+                                    ))}
+                              </div>
                         </section>
                   </main>
                   <section className="lg:mx-20 my-12">

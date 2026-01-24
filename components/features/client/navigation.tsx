@@ -1,22 +1,38 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { IconShoppingBag } from "@tabler/icons-react";
-import { User2Icon } from "lucide-react";
+import { HamburgerIcon, MenuIcon, SheetIcon, User2Icon } from "lucide-react";
 import { InputGroup, InputGroupText, InputGroupAddon, InputGroupInput } from "../../ui/input-group";
 import AjaxCartSheet from "./ajax-cart";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { IconTable } from "@tabler/icons-react";
 
 const navItems = [
-      { name: "Men", href: "./docs" },
-      { name: "Women", href: "./blocks" },
-      { name: "Accessories", href: "./components" },
-      { name: "Kids", href: "./charts" },
-      { name: "Beauty", href: "./colors" },
-      { name: "Shoes", href: "./colors" },
-      { name: "Furniture", href: "./colors" },
+      { name: "Tables", href: "./" },
+      { name: "Chairs", href: "./shop" },
+      { name: "Sofas", href: "./shop" },
+      { name: "Artworks", href: "./shop" },
+      { name: "Wardrobes", href: "./shop" },
+      { name: "Consoles", href: "./shop" },
 ];
 
-export function Navigation({ openCart, setOpenCart }: { openCart: boolean; setOpenCart: (open: boolean) => void }) {
+export function Navigation() {
+      const [index, setIndex] = useState(0);
+
+      const isMobile = useIsMobile();
+
+      useEffect(() => {
+            const timer = setInterval(() => {
+                  setIndex((prevIndex) => (prevIndex + 1) % navItems.length);
+            }, 3000); // Changes every 3 seconds
+
+            return () => clearInterval(timer); // Cleanup on unmount
+      }, []);
+
       return (
-            <header className="bg-background pt-2 sticky top-0 z-50 w-full">
+            <header className="bg-background pt-2 sm:px-4 sticky top-0 z-50 w-full">
                   <div className="mx-auto 3xl:fixed:px-0 lg:px-18">
                         <div className="3xl:fixed:container flex h-18 items-center **:data-[slot=separator]:h-4! justify-between">
                               <button
@@ -29,13 +45,24 @@ export function Navigation({ openCart, setOpenCart }: { openCart: boolean; setOp
                                     data-state="closed"
                               >
                                     <div className="relative flex h-8 w-4 items-center justify-center">
-                                          <div className="relative size-4">
-                                                <span className="bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-100 top-1"></span>
-                                                <span className="bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-100 top-2.5"></span>
-                                          </div>
                                           <span className="sr-only">Toggle Menu</span>
+                                          <Sheet>
+                                                <SheetTrigger>
+                                                      <MenuIcon size={30} />
+                                                </SheetTrigger>
+                                                <SheetContent className="py-12 px-4">
+                                                      <SheetClose>
+                                                            {navItems.map((item) => (
+                                                                  <Link key={item.name} href={item.href}>
+                                                                        {item.name}
+                                                                        <IconTable />
+                                                                  </Link>
+                                                            ))}
+                                                      </SheetClose>
+                                                </SheetContent>
+                                          </Sheet>
                                     </div>
-                                    <span className="text-3xl font-black italic tracking-tighter">Kazafi</span>
+                                    <span className="text-2xl font-black italic tracking-tighter">Kazafi</span>
                               </button>
                               <Link
                                     data-slot="button"
@@ -57,13 +84,15 @@ export function Navigation({ openCart, setOpenCart }: { openCart: boolean; setOp
                                           </Link>
                                     ))}
                               </nav>
-
                               <div className="flex gap-5 items-center">
-                                    <InputGroup className="max-w-90">
+                                    <InputGroup className="max-w-50 lg:max-w-90">
                                           <InputGroupAddon>
-                                                <InputGroupText>search for </InputGroupText>
+                                                <InputGroupText className="text-[14px]">search for </InputGroupText>
                                           </InputGroupAddon>
-                                          <InputGroupInput placeholder="shirts" className="pl-0.5" />
+                                          <InputGroupInput
+                                                placeholder={navItems[index].name}
+                                                className="pl-0.5 text-sm"
+                                          />
                                     </InputGroup>
 
                                     <Link
@@ -71,10 +100,15 @@ export function Navigation({ openCart, setOpenCart }: { openCart: boolean; setOp
                                           className="flex items-center gap-0.5 hover:cursor-pointer hover:bg-gray-200 rounded-2xl"
                                     >
                                           <span className="sr-only">User profile</span>
-                                          <User2Icon size={48} />
-                                          <span className="text-xs font-semibold">Orders & Account</span>
+                                          <User2Icon size={isMobile ? 38 : 48} />
+                                          <span
+                                                className={
+                                                      isMobile ? "text-[8px] font-semibold" : "text-xs font-semibold"
+                                                }
+                                          >
+                                                Orders & Account
+                                          </span>
                                     </Link>
-
                                     <AjaxCartSheet />
                               </div>
                         </div>

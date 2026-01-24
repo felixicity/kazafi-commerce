@@ -18,8 +18,6 @@ import {
 } from "@/components/ui/drawer";
 
 export default function Cart() {
-      // Simulate Cart State (In a real app, use Zustand, Redux, or React Context)
-
       const { data, error, isLoading } = useQuery({
             queryKey: ["cart"],
             queryFn: fetchCartItems,

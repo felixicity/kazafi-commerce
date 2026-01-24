@@ -124,4 +124,18 @@ export interface CartItemFromDB {
 export interface OrderSummaryProps {
       cartItems: CartItemFromDB[];
       subtotal: string;
+      total: number;
+      shippingFee: number;
+}
+
+export interface Address {
+      _id?: string;
+      street?: string;
+      city: string;
+      country?: string;
+      firstname?: string;
+      lastname?: string;
+      phone: string;
+      postcode?: string;
+      isDefault: boolean;
 }

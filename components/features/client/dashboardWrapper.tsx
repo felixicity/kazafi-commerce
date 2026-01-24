@@ -39,8 +39,6 @@ export function DashboardWrapper({
             queryFn: fetchUserDetails,
       });
 
-      console.log(userData);
-
       if (isFetching) {
             <div>
                   <Spinner />

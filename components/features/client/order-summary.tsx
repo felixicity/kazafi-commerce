@@ -7,7 +7,7 @@ import { FormField } from "@/components/features/client/checkout-form-feilds";
 import { getDiscountCode } from "@/lib/mutations/discount";
 import { OrderSummaryProps } from "@/lib/types";
 
-const OrderSummary = ({ cartItems, subtotal }: OrderSummaryProps) => {
+const OrderSummary = ({ cartItems, total, shippingFee, subtotal }: OrderSummaryProps) => {
       const queryClient = useQueryClient();
 
       const { mutate } = useMutation({
@@ -97,11 +97,20 @@ const OrderSummary = ({ cartItems, subtotal }: OrderSummaryProps) => {
                   <div className="flex flex-col gap-2 pt-4 border-t border-gray-200">
                         <div className="flex justify-between text-sm">
                               <span className="text-gray-600">Subtotal</span>
-                              <span className="font-medium text-gray-900">{subtotal}</span>
+                              <span className="font-medium text-gray-900">
+                                    {new Intl.NumberFormat("en-NG", {
+                                          style: "currency",
+                                          currency: "NGN",
+                                    }).format(total)}
+                              </span>
                         </div>
                         <div className="flex justify-between text-sm">
                               <span className="text-gray-600">Shipping</span>
-                              <span className="text-gray-500 text-xs mt-1">Calculated at next step</span>
+                              <span className="text-gray-500 text-xs mt-1">
+                                    {new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(
+                                          shippingFee,
+                                    )}
+                              </span>
                         </div>
                   </div>
 

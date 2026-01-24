@@ -12,7 +12,7 @@ export interface FilterOptions {
 // NOTE: This fetcher should be implemented on your backend to return just the unique options
 const fetchFilterOptions = async (): Promise<FilterOptions> => {
       return Promise.resolve({
-            categories: ["men", "women", "kids", "electronics", "clothing", "furniture", "chairs", "tables"],
+            categories: ["tables", "chairs", "sofas", "artworks", "wardrobes", "consoles"],
             colors: [
                   { name: "blue", hex: "#eee" },
                   { name: "grey", hex: "#ccc" },
