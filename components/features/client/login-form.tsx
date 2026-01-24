@@ -155,7 +155,7 @@ export function LoginForm() {
                                                       />
                                                       <span>Login with Google</span>
                                                 </Button>
-                                                <div className="flex items-center justify-center gap-2">
+                                                <div className="flex items-center justify-center gap-2 text-sm lg:text-lg">
                                                       <span>Don&apos;t have an account? </span>
                                                       <Link href="/signup" className="underline text-sm">
                                                             Create an account

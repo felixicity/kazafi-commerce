@@ -58,7 +58,7 @@ export default function Page() {
                                     </Item>
                               </div>
                         </section>
-                        <section className="lg:mx-20 my-12">
+                        <section className="mx-5 lg:mx-20 my-12">
                               <h2 className="text-xl font-semibold">New Arrivals</h2>
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-6  my-10 ">
                                     {products.map((product) => (
@@ -89,7 +89,7 @@ export default function Page() {
                               </div>
                         </section>
                   </main>
-                  <section className="lg:mx-20 my-12">
+                  <section className="mx-5 lg:mx-20 my-12">
                         <h2 className="text-xl font-semibold">Recommendations for you</h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 my-8 ">
                               {products.map((product) => (

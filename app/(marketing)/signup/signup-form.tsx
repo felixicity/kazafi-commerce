@@ -157,10 +157,10 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
                                                       />
                                                       <span>Login with Google</span>
                                                 </Button>
-                                                <div className="flex items-center justify-center gap-2">
-                                                      <span>Don&apos;t have an account? </span>
+                                                <div className="flex items-center justify-center gap-2 text-sm lg:text-lg">
+                                                      <span>Already have an account? </span>
                                                       <Link href="/signup" className="underline text-sm">
-                                                            Create an account
+                                                            Login
                                                       </Link>
                                                 </div>
                                           </Field>

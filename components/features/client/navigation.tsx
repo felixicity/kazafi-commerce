@@ -48,17 +48,19 @@ export function Navigation() {
                                           <span className="sr-only">Toggle Menu</span>
                                           <Sheet>
                                                 <SheetTrigger>
-                                                      <MenuIcon size={30} />
+                                                      <div>
+                                                            <MenuIcon size={40} />
+                                                      </div>
                                                 </SheetTrigger>
-                                                <SheetContent className="py-12 px-4">
-                                                      <SheetClose>
-                                                            {navItems.map((item) => (
-                                                                  <Link key={item.name} href={item.href}>
-                                                                        {item.name}
-                                                                        <IconTable />
-                                                                  </Link>
-                                                            ))}
-                                                      </SheetClose>
+                                                <SheetContent className="py-12 px-4 ">
+                                                      {navItems.map((item) => (
+                                                            <SheetClose
+                                                                  key={item.name}
+                                                                  className="flex flex-col gap-4 justify-start hover:bg-gray-300 p-2"
+                                                            >
+                                                                  <Link href={item.href}>{item.name}</Link>
+                                                            </SheetClose>
+                                                      ))}
                                                 </SheetContent>
                                           </Sheet>
                                     </div>
@@ -84,8 +86,8 @@ export function Navigation() {
                                           </Link>
                                     ))}
                               </nav>
-                              <div className="flex gap-5 items-center">
-                                    <InputGroup className="max-w-50 lg:max-w-90">
+                              <div className="flex gap:2 mr-2 lg:gap-5 items-center">
+                                    <InputGroup className="hidden lg:max-w-90">
                                           <InputGroupAddon>
                                                 <InputGroupText className="text-[14px]">search for </InputGroupText>
                                           </InputGroupAddon>
@@ -97,17 +99,11 @@ export function Navigation() {
 
                                     <Link
                                           href="./dashboard"
-                                          className="flex items-center gap-0.5 hover:cursor-pointer hover:bg-gray-200 rounded-2xl"
+                                          className="flex items-center gap-0.5 hover:cursor-pointer hover:bg-gray-200 lg:rounded-2xl "
                                     >
                                           <span className="sr-only">User profile</span>
-                                          <User2Icon size={isMobile ? 38 : 48} />
-                                          <span
-                                                className={
-                                                      isMobile ? "text-[8px] font-semibold" : "text-xs font-semibold"
-                                                }
-                                          >
-                                                Orders & Account
-                                          </span>
+                                          <User2Icon size={isMobile ? 28 : 48} />
+                                          <span className="text-xs font-semibold max-w-15">Orders & Account</span>
                                     </Link>
                                     <AjaxCartSheet />
                               </div>
