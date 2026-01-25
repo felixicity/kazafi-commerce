@@ -101,6 +101,7 @@ export interface OrderItem {
       // Common fields usually found here:
       size?: string;
       quantity?: number;
+      isReviewed?: boolean;
 }
 
 export interface CustomerOrder {
@@ -110,7 +111,6 @@ export interface CustomerOrder {
       items: OrderItem[];
       totalQuantity: number;
       totalAmount: number;
-      color?: string; // Used in your alt tag logic: order.color
 }
 export interface CartItemFromDB {
       _id: string;

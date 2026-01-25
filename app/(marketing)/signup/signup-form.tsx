@@ -48,7 +48,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
       //   isError && console.log("Error logging in");
 
       return (
-            <div className={cn("flex flex-col gap-6", className)} {...props}>
+            <div className={cn("flex flex-col gap-4", className)} {...props}>
                   <Card>
                         <CardHeader>
                               <CardTitle className="text-lg text-center">Create an account</CardTitle>
@@ -157,7 +157,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
                                                       />
                                                       <span>Login with Google</span>
                                                 </Button>
-                                                <div className="flex items-center justify-center gap-2 text-sm lg:text-lg">
+                                                <div className="flex items-center justify-center gap-2 text-sm">
                                                       <span>Already have an account? </span>
                                                       <Link href="/signup" className="underline text-sm">
                                                             Login

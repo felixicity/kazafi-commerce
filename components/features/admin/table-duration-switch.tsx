@@ -13,7 +13,7 @@ export function ButtonGroupSelect({
       setTimeRange: (value: string) => void;
 }) {
       return (
-            <Select value={timeRange} onValueChange={() => setTimeRange(timeRange)}>
+            <Select value={timeRange} onValueChange={setTimeRange}>
                   <SelectTrigger className="bg-white">{timeRange}</SelectTrigger>
                   <SelectContent className="min-w-24">
                         {DURATIONS.map((duration) => (

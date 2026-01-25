@@ -7,7 +7,7 @@ import { InputGroup, InputGroupText, InputGroupAddon, InputGroupInput } from "..
 import AjaxCartSheet from "./ajax-cart";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { IconTable } from "@tabler/icons-react";
+import { IconSearch, IconTable } from "@tabler/icons-react";
 
 const navItems = [
       { name: "Tables", href: "./" },
@@ -34,7 +34,7 @@ export function Navigation() {
       return (
             <header className="bg-background pt-2 sm:px-4 sticky top-0 z-50 w-full">
                   <div className="mx-auto 3xl:fixed:px-0 lg:px-18">
-                        <div className="3xl:fixed:container flex h-18 items-center **:data-[slot=separator]:h-4! justify-between">
+                        <div className="3xl:fixed:container flex h-18 items-center **:data-[slot=separator]:h-4! gap-4 lg:justify-between">
                               <button
                                     data-slot="popover-trigger"
                                     className="whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground px-4 py-2 has-[>svg]:px-3 extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 p-0 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent flex lg:hidden"
@@ -64,8 +64,10 @@ export function Navigation() {
                                                 </SheetContent>
                                           </Sheet>
                                     </div>
-                                    <span className="text-2xl font-black italic tracking-tighter">Kazafi</span>
                               </button>
+                              <Link href="/" className="lg:hidden">
+                                    <span className="text-2xl font-black italic tracking-tighter">Kazafi</span>
+                              </Link>
                               <Link
                                     data-slot="button"
                                     className="items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([className*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 hidden size-8 lg:flex"
@@ -86,8 +88,8 @@ export function Navigation() {
                                           </Link>
                                     ))}
                               </nav>
-                              <div className="flex gap:2 mr-2 lg:gap-5 items-center">
-                                    <InputGroup className="hidden lg:max-w-90">
+                              <div className="flex gap-4 mr-2 items-center ">
+                                    <InputGroup className=" lg:max-w-90">
                                           <InputGroupAddon>
                                                 <InputGroupText className="text-[14px]">search for </InputGroupText>
                                           </InputGroupAddon>
@@ -102,8 +104,10 @@ export function Navigation() {
                                           className="flex items-center gap-0.5 hover:cursor-pointer hover:bg-gray-200 lg:rounded-2xl "
                                     >
                                           <span className="sr-only">User profile</span>
-                                          <User2Icon size={isMobile ? 28 : 48} />
-                                          <span className="text-xs font-semibold max-w-15">Orders & Account</span>
+                                          <User2Icon size={isMobile ? 27 : 38} />
+                                          {!isMobile && (
+                                                <span className="text-xs font-semibold max-w-15">Orders & Account</span>
+                                          )}
                                     </Link>
                                     <AjaxCartSheet />
                               </div>

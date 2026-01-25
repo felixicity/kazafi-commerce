@@ -1,6 +1,6 @@
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardAction, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Payment } from "./payments/payment-table-column";
 
 interface OverViewData {
@@ -41,10 +41,8 @@ export function SectionCards({ totalOrders, paymentsData }: { totalOrders: numbe
                   {overviewData.map((item, index) => (
                         <Card key={index} className="@container/card lg:border-none lg:shadow-none hover:bg-gray-100">
                               <CardHeader>
-                                    <CardDescription className="text-gray-700">{item?.title}</CardDescription>
-                                    <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                                          {item?.amount}
-                                    </CardTitle>
+                                    <CardTitle className="text-gray-600 text-sm">{item?.title}</CardTitle>
+
                                     <CardAction>
                                           <Badge
                                                 variant="outline"
@@ -55,6 +53,9 @@ export function SectionCards({ totalOrders, paymentsData }: { totalOrders: numbe
                                           </Badge>
                                     </CardAction>
                               </CardHeader>
+                              <CardContent className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                                    {item?.amount}
+                              </CardContent>
                         </Card>
                   ))}
             </div>

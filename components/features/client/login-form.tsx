@@ -46,7 +46,7 @@ export function LoginForm() {
             mutate(newLoginData as { email: string; password: string });
       };
       return (
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4">
                   <Card>
                         <CardHeader>
                               <CardTitle className="text-lg text-center">Login to your account</CardTitle>
@@ -155,7 +155,7 @@ export function LoginForm() {
                                                       />
                                                       <span>Login with Google</span>
                                                 </Button>
-                                                <div className="flex items-center justify-center gap-2 text-sm lg:text-lg">
+                                                <div className="flex items-center justify-center gap-2 text-sm ">
                                                       <span>Don&apos;t have an account? </span>
                                                       <Link href="/signup" className="underline text-sm">
                                                             Create an account

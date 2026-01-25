@@ -81,6 +81,10 @@ const OrderHistoryView: React.FC = () => {
                                                                   currency: "NGN",
                                                             }).format(order?.totalAmount)}
                                                       </p>
+                                                      <p>
+                                                            {order.status === "delivered" &&
+                                                                  `${order.items.map((item) => !item.isReviewed).length} items awaiting review `}{" "}
+                                                      </p>
                                                       {isMobile ? (
                                                             <Drawer>
                                                                   <DrawerTrigger>
@@ -136,10 +140,7 @@ const OrderHistoryView: React.FC = () => {
                                                                                                                   1000
                                                                                                             }
                                                                                                             width={1000}
-                                                                                                            alt={
-                                                                                                                  order.color ||
-                                                                                                                  "produt image"
-                                                                                                            }
+                                                                                                            alt="produt image"
                                                                                                             className="w-full"
                                                                                                       />
                                                                                                 </div>
@@ -207,10 +208,7 @@ const OrderHistoryView: React.FC = () => {
                                                                                                                   1000
                                                                                                             }
                                                                                                             width={1000}
-                                                                                                            alt={
-                                                                                                                  order.color ||
-                                                                                                                  "produ t image"
-                                                                                                            }
+                                                                                                            alt="produ t image"
                                                                                                             className="w-full"
                                                                                                       />
                                                                                                 </div>

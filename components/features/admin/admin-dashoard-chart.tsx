@@ -9,7 +9,7 @@ import {
       ChartLegend,
       ChartLegendContent,
 } from "@/components/ui/chart";
-import { Line, LineChart, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
+import { Line, LineChart, XAxis, YAxis, CartesianGrid, LabelList, Dot } from "recharts";
 import { SectionCards } from "./section-cards";
 import { Payment } from "./payments/payment-table-column";
 
@@ -83,8 +83,6 @@ export function RevenueChart({
             currentTotal,
       );
 
-      console.log(chartData);
-
       //   const isPositive = percentageChange >= 0;
       //   const changeColor = isPositive ? "text-green-500" : "text-red-500";
       //   const changeSign = isPositive ? "+" : "";
@@ -146,10 +144,10 @@ export function RevenueChart({
                                     {/* Current Revenue Line */}
                                     <Line
                                           dataKey="currentRevenue"
-                                          type="monotone"
+                                          type="natural"
                                           stroke={chartConfig.currentRevenue.color}
                                           strokeWidth={2}
-                                          activeDot={{ r: 6 }}
+                                          activeDot={{ r: 4 }}
                                     >
                                           {/* Adding Annotations for Key Events */}
                                           <LabelList
