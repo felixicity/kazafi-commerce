@@ -1,15 +1,12 @@
-
-
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // Function to handle the POST request to your Express API
 export const createLoginMutation = async (newLoginData: { email: string; password: string }) => {
-
       const response = await fetch(`${API_URL}/users/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newLoginData),
-            credentials:"include"
+            credentials: "include",
       });
 
       if (!response.ok) {
@@ -17,11 +14,11 @@ export const createLoginMutation = async (newLoginData: { email: string; passwor
             const errorBody = await response.json();
             throw new Error(errorBody.message || "Login Failed after reaching the server.");
       }
- 
+
       const user = response.json();
-      console.log("user",user);
+      console.log("user", user);
       // Return the data returned by your Express API (e.g., the newly created product)
-      return user
+      return user;
 };
 
 export const createSignUpMutation = async (newSignUpData: { email: string; password: string }) => {
@@ -29,7 +26,7 @@ export const createSignUpMutation = async (newSignUpData: { email: string; passw
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newSignUpData),
-            credentials:"include"
+            credentials: "include",
       });
 
       if (!response.ok) {

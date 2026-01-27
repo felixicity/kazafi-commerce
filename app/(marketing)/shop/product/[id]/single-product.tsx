@@ -133,11 +133,11 @@ export function SingleProductPage({
                                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                           {product.category}
                                     </span>
-                                    <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
+                                    <h1 className="text-xl lg:text-3xl font-bold text-gray-900 leading-tight">
                                           {product.name}
                                     </h1>
 
-                                    <div className="flex items-baseline pt-2">
+                                    <div className="flex items-baseline pt-2 font-semibold text-3xl">
                                           {/* <span className={priceClasses}>{displayPrice}</span> */}
                                           {new Intl.NumberFormat("en-NG", {
                                                 style: "currency",

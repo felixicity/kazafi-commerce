@@ -1,10 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList, CommandInput } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+      Combobox,
+      ComboboxTrigger,
+      ComboboxContent,
+      ComboboxList,
+      ComboboxEmpty,
+      ComboboxInput,
+      ComboboxItem,
+      ComboboxValue,
+} from "@/components/ui/combobox";
 import {
       Field,
       FieldDescription,
@@ -16,9 +26,10 @@ import {
       FieldTitle,
 } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronsUpDown } from "lucide-react";
-import { IconCheck, IconFile, IconPlus, IconUpload } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
+import { IconFile, IconPlus, IconUpload } from "@tabler/icons-react";
+import { createProduct } from "@/lib/mutations/product";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
 
 interface ProductVariation {
       color: string;
@@ -37,7 +48,7 @@ interface ProductState {
 }
 
 function AddProducts() {
-      const [product, setProduct] = useState<ProductState>({
+      const initialProduct = {
             name: "",
             category: "",
             description: "",
@@ -51,11 +62,33 @@ function AddProducts() {
                         imagePreviews: [],
                   },
             ],
+      };
+      const [product, setProduct] = useState<ProductState>(initialProduct);
+
+      const {
+            mutate: createProductMutation,
+            isPending,
+            isSuccess,
+            isError,
+      } = useMutation({
+            mutationKey: ["products"],
+            mutationFn: createProduct,
+            onSuccess: () => {
+                  setProduct(initialProduct);
+            },
       });
 
-      const [openCategory, setOpenCategory] = useState(false);
-
-      // const [createProduct, { isLoading }] = useCreateProductMutation();
+      useEffect(() => {
+            if (isPending) {
+                  toast.loading("...creating product");
+            }
+            if (isSuccess) {
+                  toast.success("product created successfully... yay!!! 🎉");
+            }
+            if (isError) {
+                  toast.error("An error occurred while creating a product");
+            }
+      }, [isSuccess, isPending, isError]);
 
       // 1. Standard Input Event (Text, Select, etc.)
       const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -106,7 +139,7 @@ function AddProducts() {
                   });
             });
 
-            //   mutate(formData);
+            createProductMutation(formData);
       };
 
       const addVariation = () => {
@@ -132,28 +165,11 @@ function AddProducts() {
             setProduct((prev) => ({ ...prev, variations: updated }));
       };
 
-      const availableCategories = [
-            {
-                  value: "furniture",
-                  label: "Furniture",
-            },
-            {
-                  value: "clothing",
-                  label: "Clothing",
-            },
-            {
-                  value: "electronics",
-                  label: "Electronics",
-            },
-            {
-                  value: "accessories",
-                  label: "Accessories",
-            },
-      ];
+      const availableCategories = ["sofas", "chairs", "tables", "wardrobes", "consoles"];
 
       return (
-            <div className="w-full mx-auto my-8">
-                  <form onSubmit={handleSubmit} className="max-w-md ml-32">
+            <div className="flex px-8 lg:px-12 justify-center lg:justify-start my-8">
+                  <form onSubmit={handleSubmit} className=" w-full max-w-md">
                         <FieldGroup>
                               <FieldSet>
                                     <FieldLegend className="text-xl!">Create new Product</FieldLegend>
@@ -175,59 +191,43 @@ function AddProducts() {
                                           </Field>
                                           <Field>
                                                 <FieldLabel htmlFor="category">Category</FieldLabel>
-                                                <Popover>
-                                                      <PopoverTrigger asChild>
-                                                            <Button
-                                                                  variant="outline"
-                                                                  role="combobox"
-                                                                  aria-expanded={openCategory}
-                                                                  className="w-sm justify-between"
-                                                            >
-                                                                  {product.category
-                                                                        ? availableCategories.find(
-                                                                                (category) =>
-                                                                                      category.value ===
-                                                                                      product.category,
-                                                                          )?.label
-                                                                        : "...select category"}
-                                                                  <ChevronsUpDown className="opacity-50" />
-                                                            </Button>
-                                                      </PopoverTrigger>
-                                                      <PopoverContent className="w-sm p-0">
-                                                            <Command>
-                                                                  <CommandInput
-                                                                        placeholder="...select category"
-                                                                        className="h-9"
-                                                                  />
-                                                                  <CommandList>
-                                                                        <CommandEmpty asChild>
-                                                                              <div className="flex flex-col gap-4">
-                                                                                    <p>No category found ...</p>
-                                                                                    <Button className="max-w-48 mx-auto">
-                                                                                          Add this category
-                                                                                    </Button>
-                                                                              </div>
-                                                                        </CommandEmpty>
-                                                                        <CommandGroup>
-                                                                              {availableCategories.map((category) => (
-                                                                                    <CommandItem key={category.label}>
-                                                                                          {category.label}
-                                                                                          <IconCheck
-                                                                                                className={cn(
-                                                                                                      "ml-auto",
-                                                                                                      category.value ===
-                                                                                                            product.category
-                                                                                                            ? "opacity-100"
-                                                                                                            : "opacity-0",
-                                                                                                )}
-                                                                                          />
-                                                                                    </CommandItem>
-                                                                              ))}
-                                                                        </CommandGroup>
-                                                                  </CommandList>
-                                                            </Command>
-                                                      </PopoverContent>
-                                                </Popover>
+                                                <Combobox
+                                                      items={availableCategories}
+                                                      value={product.category} // 1. Bind the value to state
+                                                      onValueChange={(val) => {
+                                                            const newValue = val ?? "";
+
+                                                            // Only update if the value actually changed
+                                                            if (newValue !== product.category) {
+                                                                  setProduct((prev) => ({
+                                                                        ...prev,
+                                                                        category: newValue,
+                                                                  }));
+                                                            }
+                                                      }}
+                                                >
+                                                      <ComboboxTrigger
+                                                            render={
+                                                                  <Button
+                                                                        variant="outline"
+                                                                        className="w-64 justify-between font-normal"
+                                                                  >
+                                                                        <ComboboxValue />
+                                                                  </Button>
+                                                            }
+                                                      />
+                                                      <ComboboxContent>
+                                                            <ComboboxInput showTrigger={false} placeholder="Search" />
+                                                            <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                                            <ComboboxList>
+                                                                  {(item) => (
+                                                                        <ComboboxItem key={item} value={item}>
+                                                                              {item}
+                                                                        </ComboboxItem>
+                                                                  )}
+                                                            </ComboboxList>
+                                                      </ComboboxContent>
+                                                </Combobox>
                                           </Field>
                                           <Field>
                                                 <FieldLabel htmlFor="description">Description</FieldLabel>
@@ -327,10 +327,12 @@ function AddProducts() {
                                                                   />
                                                                   <div className="max-w-sm">
                                                                         {variation.imagePreviews.map((img, i) => (
-                                                                              <img
+                                                                              <Image
                                                                                     key={i}
                                                                                     src={img}
                                                                                     alt={`Preview ${i}`}
+                                                                                    width={100}
+                                                                                    height={100}
                                                                               />
                                                                         ))}
                                                                   </div>
@@ -354,12 +356,20 @@ function AddProducts() {
                                           </Button>
 
                                           <div className="my-6 flex justify-between items-center">
-                                                <Button type="submit">
+                                                <Button variant="outline" type="submit">
                                                       <IconFile /> Save as draft
                                                 </Button>
-                                                <Button type="submit" className="bg-green-700">
-                                                      <IconUpload />
-                                                      Publish
+                                                <Button type="submit" disabled={isPending} className="bg-green-700">
+                                                      {isPending ? (
+                                                            <>
+                                                                  <Spinner /> Publishing...
+                                                            </>
+                                                      ) : (
+                                                            <>
+                                                                  <IconUpload />
+                                                                  Publish
+                                                            </>
+                                                      )}
                                                 </Button>
                                           </div>
                                     </FieldGroup>

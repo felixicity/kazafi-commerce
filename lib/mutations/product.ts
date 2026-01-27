@@ -80,3 +80,21 @@ export const fetchAllProducts = async () => {
 
       return data;
 };
+
+export const createProduct = async (formData: FormData) => {
+      const response = await fetch(`${BASE_URL}/products/create`, {
+            method: "POST",
+            body: formData,
+            credentials: "include",
+      });
+
+      if (!response.ok) {
+            const errorDetail = await response.text();
+            throw new FetchError(`Failed to fetch products (${response.status}): ${errorDetail}`, response.status);
+      }
+
+      const data = await response.json();
+      console.log("Created products:", data);
+
+      return data;
+};
