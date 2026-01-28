@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { HamburgerIcon, MenuIcon, SheetIcon, User2Icon } from "lucide-react";
+import { MenuIcon, User2Icon } from "lucide-react";
 import { InputGroup, InputGroupText, InputGroupAddon, InputGroupInput } from "../../ui/input-group";
 import AjaxCartSheet from "./ajax-cart";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { IconSearch, IconTable } from "@tabler/icons-react";
+import { fetchUserDetails } from "@/lib/mutations/users";
 
 const navItems = [
       { name: "Tables", href: "./" },
@@ -22,6 +23,11 @@ export function Navigation() {
       const [index, setIndex] = useState(0);
 
       const isMobile = useIsMobile();
+
+      const { data: userData, isSuccess } = useQuery({
+            queryKey: ["user"],
+            queryFn: fetchUserDetails,
+      });
 
       useEffect(() => {
             const timer = setInterval(() => {
@@ -100,14 +106,21 @@ export function Navigation() {
                                     </InputGroup>
 
                                     <Link
-                                          href="./dashboard"
+                                          href={isSuccess ? "./dashboard" : "./login"}
                                           className="flex items-center gap-0.5 hover:cursor-pointer hover:bg-gray-200 lg:rounded-2xl "
                                     >
                                           <span className="sr-only">User profile</span>
                                           <User2Icon size={isMobile ? 27 : 38} />
-                                          {!isMobile && (
-                                                <span className="text-xs font-semibold max-w-15">Orders & Account</span>
-                                          )}
+                                          {!isMobile &&
+                                                (userData ? (
+                                                      <span className="text-xs font-semibold max-w-15">
+                                                            Orders & Account
+                                                      </span>
+                                                ) : (
+                                                      <span className="text-xs font-semibold max-w-15">
+                                                            login / signup
+                                                      </span>
+                                                ))}
                                     </Link>
                                     <AjaxCartSheet />
                               </div>

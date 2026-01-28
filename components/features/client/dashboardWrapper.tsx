@@ -45,10 +45,6 @@ export function DashboardWrapper({
             </div>;
       }
 
-      if (isError) {
-            router.push(`/login`);
-      }
-
       const handleNavClick = (section: DashboardSection) => {
             setActiveSection(section);
             router.push(`/dashboard/${section}`);

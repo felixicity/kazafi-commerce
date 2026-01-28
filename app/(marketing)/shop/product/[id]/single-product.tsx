@@ -19,6 +19,7 @@ import { Separator } from "@/components/ui/separator";
 // import { Rating } from "@/components/features/client/rating";
 import { addItemToCart } from "@/lib/mutations/cart";
 import { Product } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 export function SingleProductPage({
       product,
@@ -37,6 +38,7 @@ export function SingleProductPage({
       quantity: number;
       setQuantity: (quantity: number) => void;
 }) {
+      const router = useRouter();
       const queryClient = useQueryClient();
 
       const { mutate, isError, isSuccess, error } = useMutation({
@@ -55,10 +57,7 @@ export function SingleProductPage({
       }, [isSuccess]);
 
       const handleAddToCart = () => {
-            console.log(product);
-            console.log(selectedColor);
             const variation = product?.variations.find((variant) => variant.color === selectedColor);
-            console.log(variation);
             if (!variation) {
                   toast.error("Please select a valid color variant");
                   return;
@@ -68,12 +67,7 @@ export function SingleProductPage({
       };
 
       if (isError) {
-            console.error("Error adding to cart:", error);
-            return (
-                  <div className="min-h-screen flex items-center justify-center">
-                        <p className="text-red-500">Error adding product to cart. {error?.message}</p>
-                  </div>
-            );
+            router.push("/login");
       }
 
       if (!product || product.variations.length === 0) {
