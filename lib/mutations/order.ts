@@ -44,6 +44,21 @@ export const getAllOrders = async () => {
       return data;
 };
 
+export const getSingleOrder = async (id: string) => {
+      const response = await fetch(`${API_URL}/orders/${id}`, {
+            method: "GET",
+            credentials: "include",
+      });
+      if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || "Failed to fetch all orders.");
+      }
+      const data = await response.json();
+
+      console.log(data);
+      return data;
+};
+
 export const updateOrderStatus = async ({ orderId, status }: { orderId: string; status: string }) => {
       console.log(status);
       const response = await fetch(`${API_URL}/orders/${orderId}/status`, {

@@ -1,65 +1,37 @@
 "use client";
 
 import Image from "next/image";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { getUserOrders } from "@/lib/mutations/order";
-import {
-      Sheet,
-      SheetClose,
-      SheetContent,
-      SheetFooter,
-      SheetDescription,
-      SheetTrigger,
-      SheetHeader,
-      SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { CustomerOrder } from "@/lib/types";
-import { addProductReview } from "@/lib/mutations/review";
-import { useState } from "react";
-import { ReviewDialog } from "@/components/features/client/review-dialog";
-import { OrderItem } from "@/lib/types";
+import { Spinner } from "@/components/ui/spinner";
 
 const OrderHistoryView: React.FC = () => {
-      const [review, setReview] = useState({ rating: 0, comment: "" });
-      const [showReviewDialog, setShowReviewDialog] = useState<boolean>(false);
-      const [orderItems, setOrderItems] = useState<OrderItem[] | null>(null);
       const isMobile = useIsMobile();
 
-      const { data: ordersData, isLoading: ordersLoading } = useQuery<CustomerOrder[]>({
+      const { data: ordersData, isFetching: ordersisFetching } = useQuery<CustomerOrder[]>({
             queryKey: ["orders"],
             queryFn: getUserOrders, // Ensure this function is also typed to return Promise<CustomerOrder[]>
       });
 
-      const { mutate } = useMutation({
-            mutationKey: ["reviews"],
-            mutationFn: addProductReview,
-      });
-
-      const handleAddReview = (orderId: string, productId: string) => {
-            mutate({ ...review, orderId, productId });
-      };
-
-      const handleReviewDialog = (items: OrderItem[]) => {
-            setShowReviewDialog(true);
-            setOrderItems(items);
-      };
+      if (ordersisFetching) {
+            return (
+                  <div>
+                        {" "}
+                        <Spinner /> Fetching Orders...
+                  </div>
+            );
+      }
 
       return (
             <div className="space-y-6  p-4 lg:p-8">
                   <h2 className="text-xl font-bold text-gray-900">Your Orders</h2>
                   <div className="flex flex-col gap-4 lg:gap-12">
-                        {
-                              <ReviewDialog
-                                    showReviewDialog={showReviewDialog}
-                                    setShowReviewDialog={setShowReviewDialog}
-                                    orderItems={orderItems}
-                              />
-                        }
                         {ordersData?.map((order) => (
                               <>
                                     <Card key={order._id} className="p-4 lg:p-8 overflow-hidden">
@@ -101,11 +73,7 @@ const OrderHistoryView: React.FC = () => {
                                                             </p>
                                                             {order.status === "delivered" &&
                                                             order.items.map((item) => !item.isReviewed).length > 0 ? (
-                                                                  <Button
-                                                                        size="sm"
-                                                                        className="bg-orange-500"
-                                                                        onClick={() => handleReviewDialog(order.items)}
-                                                                  >
+                                                                  <Button size="sm" className="bg-orange-500">
                                                                         Leave a review
                                                                   </Button>
                                                             ) : (

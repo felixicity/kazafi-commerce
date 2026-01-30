@@ -139,3 +139,10 @@ export interface Address {
       postcode?: string;
       isDefault: boolean;
 }
+
+export interface ReviewData {
+      rating: number;
+      comment: string;
+      productId: string;
+      orderId: string;
+}

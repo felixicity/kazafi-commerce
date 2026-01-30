@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,26 +12,34 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogOverlay, Dialog
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IconStar } from "@tabler/icons-react";
-import { CustomerOrder, OrderItem } from "@/lib/types";
+import { IconCamera, IconStar } from "@tabler/icons-react";
+import { addProductReview } from "@/lib/mutations/review";
+// import { CustomerOrder, OrderItem, ReviewData } from "@/lib/types";
 
 // Schema for validation
 const formSchema = z.object({
       rating: z.number().min(1, "Please select a rating").max(5),
-      comment: z.string().min(10, "Comment must be at least 10 characters."),
+      comment: z.string().min(10, "Comment must be at least 10 characters.").optional(),
       image: z.any().optional(),
 });
 
 export function ReviewDialog({
       showReviewDialog,
       setShowReviewDialog,
-      orderItems,
+      productId,
+      orderId,
 }: {
       showReviewDialog: boolean;
       setShowReviewDialog: (value: boolean) => void;
-      orderItems: OrderItem[] | null;
+      productId: string;
+      orderId: string | undefined;
 }) {
       const [preview, setPreview] = useState<string | null>(null);
+
+      const { mutate } = useMutation({
+            mutationKey: ["reviews"],
+            mutationFn: addProductReview,
+      });
 
       const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
@@ -47,9 +56,21 @@ export function ReviewDialog({
             }
       };
 
-      function onSubmit(values: z.infer<typeof formSchema>) {
-            console.log("Submitted Review:", values);
-            // Add your API call here
+      async function onSubmit(values: z.infer<typeof formSchema>) {
+            const formData = new FormData();
+
+            // Append text fields
+            formData.append("rating", values.rating.toString());
+            formData.append("comment", values.comment || "");
+
+            // Append the file
+            if (values.image) {
+                  formData.append("image", values.image);
+            }
+
+            // Now pass this formData to your mutation
+            mutate({ formData, orderId, productId });
+
             setShowReviewDialog(false);
             form.reset();
             setPreview(null);
@@ -61,7 +82,7 @@ export function ReviewDialog({
                         <DialogOverlay className="bg-transparent backdrop-blur-none" />
                         <DialogContent className="sm:max-w-[425px]">
                               <DialogHeader>
-                                    <DialogTitle>Share your thoughts</DialogTitle>
+                                    <DialogTitle>Share your shopping experience</DialogTitle>
                               </DialogHeader>
 
                               <Form {...form}>
@@ -117,7 +138,7 @@ export function ReviewDialog({
                                                 <div className="flex items-center gap-4">
                                                       {!preview ? (
                                                             <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed rounded-lg cursor-pointer hover:bg-accent">
-                                                                  <Camera className="w-6 h-6 text-muted-foreground" />
+                                                                  <IconCamera className="w-6 h-6 text-muted-foreground" />
                                                                   <Input
                                                                         type="file"
                                                                         className="hidden"
@@ -127,7 +148,7 @@ export function ReviewDialog({
                                                             </label>
                                                       ) : (
                                                             <div className="relative w-24 h-24">
-                                                                  <Image
+                                                                  <img
                                                                         src={preview}
                                                                         alt="Preview"
                                                                         className="object-cover w-full h-full rounded-lg"

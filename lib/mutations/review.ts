@@ -1,17 +1,19 @@
+// import { ReviewData } from "../types";
+
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-interface ReviewData {
-      rating: number;
-      comment: string;
+export const addProductReview = async ({
+      formData,
+      productId,
+      orderId,
+}: {
+      formData: FormData;
       productId: string;
-      orderId: string;
-}
-
-export const addProductReview = async ({ rating, comment, productId, orderId }: ReviewData) => {
-      const response = await fetch(`${API_URL}/reviews/${productId}/add`, {
+      orderId: string | undefined;
+}) => {
+      const response = await fetch(`${API_URL}/reviews/${orderId}/${productId}/add`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ rating, comment, orderId }),
+            body: formData,
             credentials: "include",
       });
 
@@ -21,6 +23,6 @@ export const addProductReview = async ({ rating, comment, productId, orderId }: 
       }
 
       const data = response.json();
-      console.log(data);
+
       return data;
 };
