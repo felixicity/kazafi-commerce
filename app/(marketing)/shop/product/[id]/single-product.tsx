@@ -2,11 +2,12 @@
 
 import { useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { MaterialItem, ProductSize } from "@/lib/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
       IconCheck,
       IconRotateClockwise,
@@ -16,10 +17,10 @@ import {
       IconTruckDelivery,
 } from "@tabler/icons-react";
 import { Separator } from "@/components/ui/separator";
-// import { Rating } from "@/components/features/client/rating";
+import { Rating } from "@/components/features/client/rating";
 import { addItemToCart } from "@/lib/mutations/cart";
 import { Product } from "@/lib/types";
-import { useRouter } from "next/navigation";
+import { fetchProductReviews } from "@/lib/mutations/review";
 
 export function SingleProductPage({
       product,
@@ -41,7 +42,12 @@ export function SingleProductPage({
       const router = useRouter();
       const queryClient = useQueryClient();
 
-      const { mutate, isError, isSuccess, error } = useMutation({
+      const { data: reviewsData } = useQuery({
+            queryKey: ["reviews", product._id],
+            queryFn: () => fetchProductReviews(product._id),
+      });
+
+      const { mutate, isError, isSuccess } = useMutation({
             mutationFn: addItemToCart,
             onSuccess: () => {
                   queryClient.invalidateQueries({ queryKey: ["cart"] });
@@ -50,6 +56,16 @@ export function SingleProductPage({
             },
       });
 
+      const number_of_reviews = reviewsData.length;
+      const avg_rating =
+            reviewsData.length > 0
+                  ? (
+                          reviewsData.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) /
+                          number_of_reviews
+                    ).toFixed(1)
+                  : 1;
+
+      console.log(avg_rating);
       useEffect(() => {
             if (isSuccess) {
                   toast.success(`Item added to cart successfully!`);
@@ -91,10 +107,9 @@ export function SingleProductPage({
                                           <Image
                                                 src={productImageURL[0]}
                                                 alt={`${product.name} - ${selectedColor}`}
-                                                width={1200}
-                                                height={1200}
+                                                width={2000}
+                                                height={2000}
                                                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.03]"
-                                                quality={80}
                                           />
                                     }
                               </div>
@@ -139,9 +154,9 @@ export function SingleProductPage({
                                           }).format(productPrice)}
                                     </div>
 
-                                    {/* <div className="pt-2 flex items-center gap-4">
-                                                  <Rating rating={product.reviews.rating} count={product.reviews.count} />
-                                            </div> */}
+                                    <div className="pt-2 flex items-center gap-4">
+                                          <Rating rating={avg_rating} count={number_of_reviews} />
+                                    </div>
                               </div>
 
                               {/* Short Description */}

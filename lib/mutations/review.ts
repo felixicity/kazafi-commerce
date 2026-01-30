@@ -26,3 +26,18 @@ export const addProductReview = async ({
 
       return data;
 };
+
+export const fetchProductReviews = async (productId: string) => {
+      const response = await fetch(`${API_URL}/reviews/${productId}`, {
+            method: "GET",
+            credentials: "include",
+      });
+      if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.message || "Failed to add review.");
+      }
+
+      const data = response.json();
+
+      return data;
+};
