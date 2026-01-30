@@ -59,10 +59,14 @@ export function SingleProductPage({
       const number_of_reviews = reviewsData.length;
       const avg_rating =
             reviewsData.length > 0
-                  ? (
-                          reviewsData.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) /
-                          number_of_reviews
-                    ).toFixed(1)
+                  ? Number(
+                          (
+                                reviewsData.reduce(
+                                      (sum: number, review: { rating: number }) => sum + review.rating,
+                                      0,
+                                ) / number_of_reviews
+                          ).toFixed(1),
+                    )
                   : 1;
 
       console.log(avg_rating);
