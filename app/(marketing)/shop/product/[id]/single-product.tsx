@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { MaterialItem, ProductSize } from "@/lib/types";
+// import { MaterialItem, ProductSize } from "@/lib/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
       IconCheck,
@@ -15,12 +15,23 @@ import {
       IconChargingPile,
       IconShoppingBag,
       IconTruckDelivery,
+      IconStarFilled,
+      IconStarHalfFilled,
+      IconStar,
 } from "@tabler/icons-react";
 import { Separator } from "@/components/ui/separator";
 import { Rating } from "@/components/features/client/rating";
 import { addItemToCart } from "@/lib/mutations/cart";
 import { Product } from "@/lib/types";
 import { fetchProductReviews } from "@/lib/mutations/review";
+
+export interface Review {
+      _id?: string;
+      rating: number;
+      image?: string;
+      comment: string;
+      user?: { email: string; addresses: [{ isDefault: boolean; country: string }] } | null;
+}
 
 export function SingleProductPage({
       product,
@@ -42,9 +53,14 @@ export function SingleProductPage({
       const router = useRouter();
       const queryClient = useQueryClient();
 
-      const { data: reviewsData } = useQuery({
+      const {
+            data: reviewsData,
+            isError: fetchReviewIsError,
+            error,
+      } = useQuery({
             queryKey: ["reviews", product._id],
             queryFn: () => fetchProductReviews(product._id),
+            enabled: !!product?._id,
       });
 
       const { mutate, isError, isSuccess } = useMutation({
@@ -56,9 +72,19 @@ export function SingleProductPage({
             },
       });
 
-      const number_of_reviews = reviewsData.length;
+      useEffect(() => {
+            if (isSuccess) {
+                  toast.success(`Item added to cart successfully!`);
+            }
+      }, [isSuccess]);
+
+      if (fetchReviewIsError) {
+            return <div>An error Occured:{error.message}</div>;
+      }
+
+      const number_of_reviews = reviewsData?.length;
       const avg_rating =
-            reviewsData.length > 0
+            reviewsData?.length > 0
                   ? Number(
                           (
                                 reviewsData.reduce(
@@ -68,13 +94,6 @@ export function SingleProductPage({
                           ).toFixed(1),
                     )
                   : 1;
-
-      console.log(avg_rating);
-      useEffect(() => {
-            if (isSuccess) {
-                  toast.success(`Item added to cart successfully!`);
-            }
-      }, [isSuccess]);
 
       const handleAddToCart = () => {
             const variation = product?.variations.find((variant) => variant.color === selectedColor);
@@ -138,6 +157,60 @@ export function SingleProductPage({
                                           />
                                     ))}
                               </div>
+                              <section className="py-8">
+                                    <h2 className="text-xl font-semibold">Customer Reviews</h2>
+                                    <Separator />
+
+                                    {reviewsData?.map((review: Review) => (
+                                          <div key={review._id}>
+                                                <div className="pt-2 text-lg">{`${review.user?.email} in ${review.user?.addresses?.find((addr) => addr.isDefault)?.country || "Unknown Location"}`}</div>
+                                                <div className="flex items-center gap-1 py-2">
+                                                      {[...Array(5)].map((_, index) => {
+                                                            const starNumber = index + 1;
+                                                            if (review.rating >= starNumber) {
+                                                                  return (
+                                                                        <IconStarFilled
+                                                                              key={index}
+                                                                              className="w-5 h-5"
+                                                                        />
+                                                                  );
+                                                            } else if (
+                                                                  review.rating > index &&
+                                                                  review.rating < starNumber
+                                                            ) {
+                                                                  return (
+                                                                        <IconStarHalfFilled
+                                                                              key={index}
+                                                                              className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                                                                        />
+                                                                  );
+                                                            } else {
+                                                                  return (
+                                                                        <IconStar
+                                                                              key={index}
+                                                                              className="w-5 h-5 text-gray-300"
+                                                                        />
+                                                                  );
+                                                            }
+                                                      })}
+
+                                                      <span className="ml-2 text-sm font-medium text-gray-600">
+                                                            {review.rating}
+                                                      </span>
+                                                </div>
+                                                <div>
+                                                      <Image
+                                                            src={review.image || "photo"}
+                                                            alt={review.image || "photo"}
+                                                            height={200}
+                                                            width={200}
+                                                      />
+                                                </div>
+                                                <p className="py-8">{review.comment}</p>
+                                                <Separator />
+                                          </div>
+                                    ))}
+                              </section>
                         </div>
 
                         {/* Column 2: Product Details and Options */}
@@ -162,9 +235,6 @@ export function SingleProductPage({
                                           <Rating rating={avg_rating} count={number_of_reviews} />
                                     </div>
                               </div>
-
-                              {/* Short Description */}
-                              <p className="text-lg text-gray-600 leading-relaxed">{product.description}</p>
 
                               <Separator />
 
@@ -276,7 +346,12 @@ export function SingleProductPage({
                               <div className="text-sm text-gray-600 space-y-1 pt-4">
                                     <div className="flex items-center">
                                           <IconTruckDelivery size={32} className="mr-2 text-gray-400" />
-                                          Free shipping on all orders over $75.
+                                          Free shipping on all orders over{" "}
+                                          {new Intl.NumberFormat("en-NG", {
+                                                style: "currency",
+                                                currency: "NGN",
+                                          }).format(3000)}
+                                          .
                                     </div>
                                     <div className="flex items-center">
                                           <IconRotateClockwise size={32} className="mr-2 text-gray-400" />

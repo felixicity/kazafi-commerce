@@ -9,7 +9,7 @@ export const Rating: React.FC<{ rating: number; count: number }> = ({ rating, co
                         key={i}
                         size={14}
                         className={i < fullStars ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
-                  />
+                  />,
             );
       }
       return (

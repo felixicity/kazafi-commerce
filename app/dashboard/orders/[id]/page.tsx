@@ -80,7 +80,7 @@ export default function SingleOrder() {
                                                 </div>
 
                                                 <CardAction
-                                                      className="bg-orange-500 text-white rounded-lg py-1 px-3"
+                                                      className="bg-orange-500 text-white rounded-lg py-1 px-3 cursor-pointer"
                                                       onClick={() => handleShowDialog(item.productId)}
                                                 >
                                                       Leave a review

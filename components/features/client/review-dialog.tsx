@@ -6,7 +6,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Camera, X } from "lucide-react";
+import { X } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogOverlay, DialogPortal } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -36,7 +37,7 @@ export function ReviewDialog({
 }) {
       const [preview, setPreview] = useState<string | null>(null);
 
-      const { mutate } = useMutation({
+      const { mutate, isSuccess } = useMutation({
             mutationKey: ["reviews"],
             mutationFn: addProductReview,
       });
@@ -45,6 +46,10 @@ export function ReviewDialog({
             resolver: zodResolver(formSchema),
             defaultValues: { rating: 0, comment: "" },
       });
+
+      if (isSuccess) {
+            toast.success("Review collected successfully. Thank you!!");
+      }
 
       const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
@@ -82,7 +87,7 @@ export function ReviewDialog({
                         <DialogOverlay className="bg-transparent backdrop-blur-none" />
                         <DialogContent className="sm:max-w-[425px]">
                               <DialogHeader>
-                                    <DialogTitle>Share your shopping experience</DialogTitle>
+                                    <DialogTitle>Share your experience with this product</DialogTitle>
                               </DialogHeader>
 
                               <Form {...form}>

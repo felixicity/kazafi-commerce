@@ -58,7 +58,7 @@ export function DashboardWrapper({
                               <h1 className="text-xl font-bold text-gray-900">Your Dashboard</h1>
 
                               <Sheet>
-                                    <SheetTrigger>
+                                    <SheetTrigger asChild>
                                           <Button variant="ghost" size="icon">
                                                 <IconMenu size={24} />
                                           </Button>

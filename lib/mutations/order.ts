@@ -1,3 +1,6 @@
+import { Order } from "@/components/features/admin/orders/order-table-column";
+import { OrderProduct } from "../types";
+
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const createOrder = async ({ address, shippingMethod }: { address: string; shippingMethod: string }) => {
@@ -72,6 +75,17 @@ export const updateOrderStatus = async ({ orderId, status }: { orderId: string; 
             throw new Error(errorBody.message || "Failed to update order status.");
       }
       const order = response.json();
-      console.log("order: ", order);
+
       return order;
+};
+
+export const downloadOrderReceipt = async (orderId: string) => {
+      const res = await fetch(`${API_URL}/orders/${orderId}/receipt`, {
+            method: "GET",
+            credentials: "include",
+      });
+      if (!res.ok) {
+            const errorBody = await res.json();
+            throw new Error(errorBody.message || "Failed to update order status.");
+      }
 };
