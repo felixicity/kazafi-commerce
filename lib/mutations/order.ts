@@ -86,6 +86,20 @@ export const downloadOrderReceipt = async (orderId: string) => {
       });
       if (!res.ok) {
             const errorBody = await res.json();
-            throw new Error(errorBody.message || "Failed to update order status.");
+            throw new Error(errorBody.message || "Failed to download receipt.");
       }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+
+      a.href = url;
+      a.download = `kazafi-receipt-${orderId}.pdf`;
+      document.body.appendChild(a);
+
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      console.log("Receipt ready!!!");
 };

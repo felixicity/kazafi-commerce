@@ -11,12 +11,12 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/s
 import { fetchUserDetails } from "@/lib/mutations/users";
 
 const navItems = [
-      { name: "Tables", href: "./" },
-      { name: "Chairs", href: "./shop" },
-      { name: "Sofas", href: "./shop" },
-      { name: "Artworks", href: "./shop" },
-      { name: "Wardrobes", href: "./shop" },
-      { name: "Consoles", href: "./shop" },
+      { name: "Tables", href: "/shop" },
+      { name: "Chairs", href: "/shop" },
+      { name: "Sofas", href: "/shop" },
+      { name: "Artworks", href: "/shop" },
+      { name: "Wardrobes", href: "/shop" },
+      { name: "Consoles", href: "/shop" },
 ];
 
 export function Navigation() {
@@ -72,7 +72,9 @@ export function Navigation() {
                                     </div>
                               </button>
                               <Link href="/" className="lg:hidden">
-                                    <span className="text-2xl font-black italic tracking-tighter">Kazafi</span>
+                                    <span className="text-lg font-black italic tracking-tighter md:text-2xl">
+                                          Kazafi
+                                    </span>
                               </Link>
                               <Link
                                     data-slot="button"
@@ -106,7 +108,7 @@ export function Navigation() {
                                     </InputGroup>
 
                                     <Link
-                                          href={isSuccess ? "./dashboard" : "./login"}
+                                          href={isSuccess ? "/dashboard" : "/login"}
                                           className="flex items-center gap-0.5 hover:cursor-pointer hover:bg-gray-200 lg:rounded-2xl "
                                     >
                                           <span className="sr-only">User profile</span>

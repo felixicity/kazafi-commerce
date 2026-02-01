@@ -122,7 +122,7 @@ export function SingleProductPage({
       return (
             <div className="max-w-7xl mx-auto p-6 sm:p-10 lg:py-12">
                   {/* {isSuccess && toast.success(`Item added to cart successfully!`)} */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+                  <div className="grid grid-cols-1 grid-rows-2 gap-6 lg:grid-cols-2 lg:gap-16">
                         {/* Column 1: Product Image Gallery */}
                         <div className="lg:sticky lg:top-8">
                               <div className="aspect-4/5 bg-gray-100 rounded-2xl overflow-hidden shadow-xl border border-gray-100">
@@ -157,69 +157,15 @@ export function SingleProductPage({
                                           />
                                     ))}
                               </div>
-                              <section className="py-8">
-                                    <h2 className="text-xl font-semibold">Customer Reviews</h2>
-                                    <Separator />
-
-                                    {reviewsData?.map((review: Review) => (
-                                          <div key={review._id}>
-                                                <div className="pt-2 text-lg">{`${review.user?.email} in ${review.user?.addresses?.find((addr) => addr.isDefault)?.country || "Unknown Location"}`}</div>
-                                                <div className="flex items-center gap-1 py-2">
-                                                      {[...Array(5)].map((_, index) => {
-                                                            const starNumber = index + 1;
-                                                            if (review.rating >= starNumber) {
-                                                                  return (
-                                                                        <IconStarFilled
-                                                                              key={index}
-                                                                              className="w-5 h-5"
-                                                                        />
-                                                                  );
-                                                            } else if (
-                                                                  review.rating > index &&
-                                                                  review.rating < starNumber
-                                                            ) {
-                                                                  return (
-                                                                        <IconStarHalfFilled
-                                                                              key={index}
-                                                                              className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                                                                        />
-                                                                  );
-                                                            } else {
-                                                                  return (
-                                                                        <IconStar
-                                                                              key={index}
-                                                                              className="w-5 h-5 text-gray-300"
-                                                                        />
-                                                                  );
-                                                            }
-                                                      })}
-
-                                                      <span className="ml-2 text-sm font-medium text-gray-600">
-                                                            {review.rating}
-                                                      </span>
-                                                </div>
-                                                <div>
-                                                      <Image
-                                                            src={review.image || "photo"}
-                                                            alt={review.image || "photo"}
-                                                            height={200}
-                                                            width={200}
-                                                      />
-                                                </div>
-                                                <p className="py-8">{review.comment}</p>
-                                                <Separator />
-                                          </div>
-                                    ))}
-                              </section>
                         </div>
 
                         {/* Column 2: Product Details and Options */}
-                        <div className="space-y-8">
+                        <div className="lg:space-y-8">
                               <div className="border-b pb-4 space-y-3">
                                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                           {product.category}
                                     </span>
-                                    <h1 className="text-xl lg:text-3xl font-bold text-gray-900 leading-tight">
+                                    <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
                                           {product.name}
                                     </h1>
 
@@ -307,7 +253,7 @@ export function SingleProductPage({
                               )}
 
                               {/* Add to Cart Section */}
-                              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                              <div className="flex flex-col sm:flex-row gap-4 pt-4 sticky top-2 z-50 w-full bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 border-b shadow-sm">
                                     {/* Quantity Selector Mock */}
                                     <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden h-14 w-32 shrink-0">
                                           <Button
@@ -350,7 +296,7 @@ export function SingleProductPage({
                                           {new Intl.NumberFormat("en-NG", {
                                                 style: "currency",
                                                 currency: "NGN",
-                                          }).format(3000)}
+                                          }).format(30000)}
                                           .
                                     </div>
                                     <div className="flex items-center">
@@ -403,6 +349,47 @@ export function SingleProductPage({
                               )}
                         </div>
                   </div>
+                  <section className="py-8">
+                        <h2 className="text-xl font-semibold">Customer Reviews</h2>
+                        <Separator />
+
+                        {reviewsData?.map((review: Review) => (
+                              <div key={review._id}>
+                                    <div className="pt-2 text-lg">{`${review.user?.email} in ${review.user?.addresses?.find((addr) => addr.isDefault)?.country || "Unknown Location"}`}</div>
+                                    <div className="flex items-center gap-1 py-2">
+                                          {[...Array(5)].map((_, index) => {
+                                                const starNumber = index + 1;
+                                                if (review.rating >= starNumber) {
+                                                      return <IconStarFilled key={index} className="w-5 h-5" />;
+                                                } else if (review.rating > index && review.rating < starNumber) {
+                                                      return (
+                                                            <IconStarHalfFilled
+                                                                  key={index}
+                                                                  className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                                                            />
+                                                      );
+                                                } else {
+                                                      return <IconStar key={index} className="w-5 h-5 text-gray-300" />;
+                                                }
+                                          })}
+
+                                          <span className="ml-2 text-sm font-medium text-gray-600">
+                                                {review.rating}
+                                          </span>
+                                    </div>
+                                    <div>
+                                          <Image
+                                                src={review.image || "photo"}
+                                                alt={review.image || "photo"}
+                                                height={200}
+                                                width={200}
+                                          />
+                                    </div>
+                                    <p className="py-8">{review.comment}</p>
+                                    <Separator />
+                              </div>
+                        ))}
+                  </section>
             </div>
       );
 }

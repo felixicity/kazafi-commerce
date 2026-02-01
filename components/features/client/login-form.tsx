@@ -34,7 +34,7 @@ export function LoginForm() {
                   setEmail("");
                   setSuccessMessage(data.message);
                   setTimeout(() => setSuccessMessage(""), 2000);
-                  router.push("/");
+                  router.back();
             },
       });
 

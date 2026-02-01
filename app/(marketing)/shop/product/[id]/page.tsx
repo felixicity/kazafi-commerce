@@ -13,7 +13,6 @@ const SingleProductRoute: React.FC<{ product: Product }> = () => {
       const [quantity, setQuantity] = useState<number>(1);
       const params = useParams();
       const productId = params.id as string;
-      //   const [productId,setProductId] = useState<string>(params.id as string); // Ensure this matches your [productId] folder name
 
       // Make a query to the dtb to get the product details based on productId
       const {
