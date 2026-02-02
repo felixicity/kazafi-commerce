@@ -83,7 +83,11 @@ export const downloadOrderReceipt = async (orderId: string) => {
       const res = await fetch(`${API_URL}/orders/${orderId}/receipt`, {
             method: "GET",
             credentials: "include",
+            headers: {
+                  Accept: "application/pdf",
+            },
       });
+
       if (!res.ok) {
             const errorBody = await res.json();
             throw new Error(errorBody.message || "Failed to download receipt.");
@@ -100,6 +104,4 @@ export const downloadOrderReceipt = async (orderId: string) => {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-
-      console.log("Receipt ready!!!");
 };
