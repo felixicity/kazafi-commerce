@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import { Separator } from "../ui/separator";
 import NavLink from "./nav-link";
@@ -47,7 +48,9 @@ export const Sidebar = ({ handleNavClick, activeSection }: SidebarProps) => {
       return (
             <nav className="p-6 space-y-4">
                   <div className="flex items-center space-x-3 pb-4 border-b">
-                        <h2 className="text-xl font-bold text-gray-900">Kazafi</h2>
+                        <Link href="/">
+                              <h2 className="text-xl font-bold text-gray-900 cursor-pointer">Kazafi</h2>
+                        </Link>
                   </div>
 
                   <div className="space-y-1 pt-2">

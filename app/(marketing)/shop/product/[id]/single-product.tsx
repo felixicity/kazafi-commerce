@@ -178,7 +178,11 @@ export function SingleProductPage({
                                     </div>
 
                                     <div className="pt-2 flex items-center gap-4">
-                                          <Rating rating={avg_rating} count={number_of_reviews} />
+                                          <Rating
+                                                rating={avg_rating}
+                                                count={number_of_reviews}
+                                                avg_rating={avg_rating}
+                                          />
                                     </div>
                               </div>
 
@@ -253,7 +257,7 @@ export function SingleProductPage({
                               )}
 
                               {/* Add to Cart Section */}
-                              <div className="flex flex-col sm:flex-row gap-4 pt-4 sticky top-2 z-50 w-full bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 border-b shadow-sm">
+                              <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                     {/* Quantity Selector Mock */}
                                     <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden h-14 w-32 shrink-0">
                                           <Button
@@ -350,7 +354,7 @@ export function SingleProductPage({
                         </div>
                   </div>
                   <section className="py-8">
-                        <h2 className="text-xl font-semibold">Customer Reviews</h2>
+                        <h2 className="text-xl font-semibold">Customer Reviews ({avg_rating})</h2>
                         <Separator />
 
                         {reviewsData?.map((review: Review) => (

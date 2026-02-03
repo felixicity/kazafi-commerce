@@ -1,6 +1,10 @@
 import { IconStar } from "@tabler/icons-react";
 
-export const Rating: React.FC<{ rating: number; count: number }> = ({ rating, count }) => {
+export const Rating: React.FC<{ rating: number; count: number; avg_rating: number }> = ({
+      rating,
+      count,
+      avg_rating,
+}) => {
       const fullStars = Math.floor(rating);
       const stars = [];
       for (let i = 0; i < 5; i++) {
@@ -14,7 +18,7 @@ export const Rating: React.FC<{ rating: number; count: number }> = ({ rating, co
       }
       return (
             <div className="flex items-center gap-1">
-                  {stars}{" "}
+                  {stars} ({})
                   {count !== undefined && <span className={`text-sm text-gray-500 ml-1`}>({count} reviews)</span>}
             </div>
       );

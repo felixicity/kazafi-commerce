@@ -66,13 +66,14 @@ const OrderHistoryView: React.FC = () => {
                                                             : "Order is still pending"}{" "}
                                                       {order.status === "delivered" && (
                                                             <span>
-                                                                  (
                                                                   {order.items.filter((item) => !item.isReviewed)
                                                                         .length >= 1
-                                                                        ? order.items.filter((item) => !item.isReviewed)
-                                                                                .length
-                                                                        : "No"}{" "}
-                                                                  item awaiting review )
+                                                                        ? `(${
+                                                                                order.items.filter(
+                                                                                      (item) => !item.isReviewed,
+                                                                                ).length
+                                                                          }) item awaiting review `
+                                                                        : ""}
                                                             </span>
                                                       )}
                                                 </CardTitle>

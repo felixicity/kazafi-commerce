@@ -60,6 +60,8 @@ export const logoutUser = async () => {
             const errorBody = await response.json();
             throw new Error(errorBody.message || "Failed to logout user.");
       }
+
+      console.log(response.json());
       return response.json();
 };
 
