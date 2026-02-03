@@ -93,7 +93,7 @@ export function SingleProductPage({
                                 ) / number_of_reviews
                           ).toFixed(1),
                     )
-                  : 1;
+                  : 0;
 
       const handleAddToCart = () => {
             const variation = product?.variations.find((variant) => variant.color === selectedColor);
@@ -160,7 +160,7 @@ export function SingleProductPage({
                         </div>
 
                         {/* Column 2: Product Details and Options */}
-                        <div className="lg:space-y-8">
+                        <div className="space-y-2 lg:space-y-8">
                               <div className="border-b pb-4 space-y-3">
                                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                           {product.category}
@@ -178,11 +178,13 @@ export function SingleProductPage({
                                     </div>
 
                                     <div className="pt-2 flex items-center gap-4">
-                                          <Rating
-                                                rating={avg_rating}
-                                                count={number_of_reviews}
-                                                avg_rating={avg_rating}
-                                          />
+                                          {number_of_reviews >= 1 && (
+                                                <Rating
+                                                      rating={avg_rating}
+                                                      count={number_of_reviews}
+                                                      avg_rating={avg_rating}
+                                                />
+                                          )}
                                     </div>
                               </div>
 
@@ -353,47 +355,54 @@ export function SingleProductPage({
                               )}
                         </div>
                   </div>
-                  <section className="py-8">
-                        <h2 className="text-xl font-semibold">Customer Reviews ({avg_rating})</h2>
-                        <Separator />
+                  {number_of_reviews >= 1 && (
+                        <section className="py-8">
+                              <h2 className="text-xl font-semibold">Customer Reviews ({avg_rating})</h2>
+                              <Separator />
 
-                        {reviewsData?.map((review: Review) => (
-                              <div key={review._id}>
-                                    <div className="pt-2 text-lg">{`${review.user?.email} in ${review.user?.addresses?.find((addr) => addr.isDefault)?.country || "Unknown Location"}`}</div>
-                                    <div className="flex items-center gap-1 py-2">
-                                          {[...Array(5)].map((_, index) => {
-                                                const starNumber = index + 1;
-                                                if (review.rating >= starNumber) {
-                                                      return <IconStarFilled key={index} className="w-5 h-5" />;
-                                                } else if (review.rating > index && review.rating < starNumber) {
-                                                      return (
-                                                            <IconStarHalfFilled
-                                                                  key={index}
-                                                                  className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                                                            />
-                                                      );
-                                                } else {
-                                                      return <IconStar key={index} className="w-5 h-5 text-gray-300" />;
-                                                }
-                                          })}
+                              {reviewsData?.map((review: Review) => (
+                                    <div key={review._id}>
+                                          <div className="pt-2 text-lg">{`${review.user?.email} in ${review.user?.addresses?.find((addr) => addr.isDefault)?.country || "Unknown Location"}`}</div>
+                                          <div className="flex items-center gap-1 py-2">
+                                                {[...Array(5)].map((_, index) => {
+                                                      const starNumber = index + 1;
+                                                      if (review.rating >= starNumber) {
+                                                            return <IconStarFilled key={index} className="w-5 h-5" />;
+                                                      } else if (review.rating > index && review.rating < starNumber) {
+                                                            return (
+                                                                  <IconStarHalfFilled
+                                                                        key={index}
+                                                                        className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                                                                  />
+                                                            );
+                                                      } else {
+                                                            return (
+                                                                  <IconStar
+                                                                        key={index}
+                                                                        className="w-5 h-5 text-gray-300"
+                                                                  />
+                                                            );
+                                                      }
+                                                })}
 
-                                          <span className="ml-2 text-sm font-medium text-gray-600">
-                                                {review.rating}
-                                          </span>
+                                                <span className="ml-2 text-sm font-medium text-gray-600">
+                                                      {review.rating}
+                                                </span>
+                                          </div>
+                                          <div>
+                                                <Image
+                                                      src={review.image || "photo"}
+                                                      alt={review.image || "photo"}
+                                                      height={200}
+                                                      width={200}
+                                                />
+                                          </div>
+                                          <p className="py-8">{review.comment}</p>
+                                          <Separator />
                                     </div>
-                                    <div>
-                                          <Image
-                                                src={review.image || "photo"}
-                                                alt={review.image || "photo"}
-                                                height={200}
-                                                width={200}
-                                          />
-                                    </div>
-                                    <p className="py-8">{review.comment}</p>
-                                    <Separator />
-                              </div>
-                        ))}
-                  </section>
+                              ))}
+                        </section>
+                  )}
             </div>
       );
 }
