@@ -122,7 +122,7 @@ export function SingleProductPage({
       return (
             <div className="max-w-7xl mx-auto p-6 sm:p-10 lg:py-12">
                   {/* {isSuccess && toast.success(`Item added to cart successfully!`)} */}
-                  <div className="grid grid-cols-1 grid-rows-2 gap-6 lg:grid-cols-2 lg:gap-16">
+                  <div className="grid grid-cols-1 grid-rows-2 gap-2 lg:grid-cols-2 lg:gap-16">
                         {/* Column 1: Product Image Gallery */}
                         <div className="lg:sticky lg:top-8">
                               <div className="aspect-4/5 bg-gray-100 rounded-2xl overflow-hidden shadow-xl border border-gray-100">
@@ -160,7 +160,7 @@ export function SingleProductPage({
                         </div>
 
                         {/* Column 2: Product Details and Options */}
-                        <div className="space-y-2 lg:space-y-8">
+                        <div className="lg:space-y-8">
                               <div className="border-b pb-4 space-y-3">
                                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                           {product.category}
