@@ -23,8 +23,8 @@ const shippingOptions = [
       {
             id: 1,
             label: "Delivery",
-            amount: { currency: "NGN", value: 1020 },
-            estimatedDeliveryTime: "Within 2 - 3 work days",
+            amount: { currency: "NGN", value: 5000 },
+            estimatedDeliveryTime: "2 - 3 work days for shipping within Lagos",
       },
       {
             id: 2,
@@ -103,7 +103,7 @@ const CheckoutPage: React.FC = () => {
                         address: finalAddress,
                         shippingMethod: deliveryMethod.toLowerCase(),
                   });
-                  const payment = await paymentMutation({ orderId: res.order._id, provider: "paystack" });
+                  const payment = await paymentMutation({ orderId: res.orderId.toString(), provider: "paystack" });
                   if (payment?.paymentUrl) window.location.href = payment.paymentUrl;
             } catch (err) {
                   console.error("Checkout failed", err);

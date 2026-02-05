@@ -122,7 +122,7 @@ export function SingleProductPage({
       return (
             <div className="max-w-7xl mx-auto p-6 sm:p-10 lg:py-12">
                   {/* {isSuccess && toast.success(`Item added to cart successfully!`)} */}
-                  <div className="grid grid-cols-1 grid-rows-2 gap-2 lg:grid-cols-2 lg:gap-16">
+                  <div className="grid grid-cols-1 gap-2 lg:grid-cols-2 lg:gap-16">
                         {/* Column 1: Product Image Gallery */}
                         <div className="lg:sticky lg:top-8">
                               <div className="aspect-4/5 bg-gray-100 rounded-2xl overflow-hidden shadow-xl border border-gray-100">
@@ -161,7 +161,7 @@ export function SingleProductPage({
 
                         {/* Column 2: Product Details and Options */}
                         <div className="lg:space-y-8">
-                              <div className="border-b pb-4 space-y-3">
+                              <div className="pb-4 space-y-3">
                                     <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
                                           {product.category}
                                     </span>
@@ -178,13 +178,11 @@ export function SingleProductPage({
                                     </div>
 
                                     <div className="pt-2 flex items-center gap-4">
-                                          {number_of_reviews >= 1 && (
-                                                <Rating
-                                                      rating={avg_rating}
-                                                      count={number_of_reviews}
-                                                      avg_rating={avg_rating}
-                                                />
-                                          )}
+                                          <Rating
+                                                rating={avg_rating}
+                                                count={number_of_reviews}
+                                                avg_rating={avg_rating}
+                                          />
                                     </div>
                               </div>
 
@@ -192,7 +190,7 @@ export function SingleProductPage({
 
                               {/* Color Selector */}
                               <div className="space-y-4">
-                                    <h2 className="text-xl font-bold text-gray-800">
+                                    <h2 className="text-xl font-bold text-gray-800 mt-2">
                                           Color:{" "}
                                           <span className="font-medium text-black">
                                                 {product.variations.find((v) => v.color === selectedColor)?.color}
@@ -208,7 +206,7 @@ export function SingleProductPage({
                                                             borderColor:
                                                                   hexCode === "#FFFFFF" ? "#e5e7eb" : "transparent",
                                                       }}
-                                                      className={`w-12 h-12 rounded-full border-2 cursor-pointer transition-all duration-200 ${
+                                                      className={`w-9 h-9 lg:w-12 lg:h-12 rounded-full border-2 cursor-pointer transition-all duration-200 ${
                                                             selectedColor === color
                                                                   ? "ring-4 ring-offset-2 ring-black shadow-md"
                                                                   : "hover:ring-2 ring-gray-400"
@@ -259,7 +257,7 @@ export function SingleProductPage({
                               )}
 
                               {/* Add to Cart Section */}
-                              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                              <div className="flex flex-col lg:flex-row gap-8 lg:gap-4 py-8">
                                     {/* Quantity Selector Mock */}
                                     <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden h-14 w-32 shrink-0">
                                           <Button
@@ -286,7 +284,7 @@ export function SingleProductPage({
 
                                     <Button
                                           variant="default"
-                                          className="flex-1 h-14 text-lg font-bold shadow-lg shadow-black/30 hover:shadow-xl"
+                                          className="flex-1 h-14 text-lg font-bold shadow-lg shadow-black/30 hover:shadow-xl py-4"
                                           onClick={handleAddToCart}
                                     >
                                           <IconShoppingBag size={50} className="mr-2" />

@@ -18,8 +18,10 @@ export const Rating: React.FC<{ rating: number; count: number; avg_rating: numbe
       }
       return (
             <div className="flex items-center gap-1">
-                  {stars} ({})
-                  {count !== undefined && <span className={`text-sm text-gray-500 ml-1`}>({count} reviews)</span>}
+                  {stars} {avg_rating > 0 ? avg_rating : ""}
+                  {count !== undefined && (
+                        <span className={`text-sm text-gray-500 ml-1`}>{count >= 1 ? count : "No"} reviews</span>
+                  )}
             </div>
       );
 };

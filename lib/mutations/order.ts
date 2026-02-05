@@ -1,6 +1,3 @@
-import { Order } from "@/components/features/admin/orders/order-table-column";
-import { OrderProduct } from "../types";
-
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const createOrder = async ({ address, shippingMethod }: { address: string; shippingMethod: string }) => {

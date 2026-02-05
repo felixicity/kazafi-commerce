@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
-// import { OrdersTable } from "@/components/features/admin/orders/orders-table";
 import { getAllOrders } from "@/lib/mutations/order";
 
 const OrdersTable = dynamic(

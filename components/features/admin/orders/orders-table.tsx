@@ -28,7 +28,7 @@ import { IconChevronsRight, IconChevronsLeft, IconChevronRight, IconChevronLeft 
 
 interface RawOrder {
       _id?: string;
-      customer: string | { email: string };
+      customer: { email: string };
       createdAt?: string;
       date?: string;
       totalAmount?: number;
@@ -45,7 +45,7 @@ export function OrdersTable({ data: initialData }: { data: RawOrder[] }) {
             if (!initialData) return [];
             return initialData.map((order) => ({
                   ...order,
-                  customer: typeof order.customer === "object" ? order.customer.email : order.customer,
+                  customer: order.customer.email,
                   id: order._id || "",
                   createdAt: order.createdAt || "",
                   amount: order.totalAmount || 0,
