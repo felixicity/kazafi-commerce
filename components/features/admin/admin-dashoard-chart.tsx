@@ -9,7 +9,7 @@ import {
       ChartLegend,
       ChartLegendContent,
 } from "@/components/ui/chart";
-import { Line, LineChart, XAxis, YAxis, CartesianGrid, LabelList, Dot } from "recharts";
+import { Line, LineChart, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
 import { SectionCards } from "./section-cards";
 import { Payment } from "./payments/payment-table-column";
 
@@ -42,7 +42,7 @@ export type RevenueDataPoint = {
 const chartConfig = {
       currentRevenue: {
             label: "Current Period",
-            color: "blue", // Primary color (e.g., blue)
+            color: "#0000FF", // Primary color (e.g., blue)
       },
 } satisfies ChartConfig;
 
@@ -144,10 +144,11 @@ export function RevenueChart({
                                     {/* Current Revenue Line */}
                                     <Line
                                           dataKey="currentRevenue"
-                                          type="natural"
+                                          type="monotone"
                                           stroke={chartConfig.currentRevenue.color}
                                           strokeWidth={2}
-                                          activeDot={{ r: 4 }}
+                                          dot={false} // Removes the clutter
+                                          activeDot={{ r: 6, strokeWidth: 0 }}
                                     >
                                           {/* Adding Annotations for Key Events */}
                                           <LabelList

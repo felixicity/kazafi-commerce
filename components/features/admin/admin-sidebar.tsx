@@ -27,7 +27,7 @@ import {
 
 const data = {
       user: {
-            name: "shadcn",
+            name: "Felix",
             email: "m@example.com",
             avatar: "/avatars/shadcn.jpg",
       },
@@ -99,7 +99,6 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
                               <SidebarMenuItem className="flex justify-between">
                                     <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
                                           <a href="#">
-                                                <IconInnerShadowTop className="size-5!" />
                                                 <span className="text-base font-semibold">Kazafi</span>
                                           </a>
                                     </SidebarMenuButton>
